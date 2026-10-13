@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
-import { ArrowRight, ArrowUpRight, Check, CheckCircle2, CreditCard, Loader2, LockKeyhole, Minus, PackageCheck, Plus, ReceiptText, RefreshCw, ShieldCheck, ShoppingBag, ShoppingCart, TriangleAlert, X } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ArrowRight, ArrowUpRight, Check, CheckCircle2, Loader2, LockKeyhole, Minus, Plus, ReceiptText, RefreshCw, ShieldCheck, ShoppingBag, ShoppingCart, TriangleAlert, X } from 'lucide-react';
 import type { CommerceConfig, CommerceOrder, CommercePaymentVerification, Product } from '@bizplus/shared';
 import type { Workspace } from '../hooks/useWorkspace';
 import { Badge, EmptyState, SectionLabel, shortId, time } from '../components/UI';
 import { commerceApi, loadRazorpay, type RazorpayInstance } from '../services/commerce';
 
 interface CartState { items: Record<string, number>; checkoutKey: string | null; orderId: string | null }
+const MAX_CART_ITEMS = 10;
 const blankCart = (): CartState => ({ items: {}, checkoutKey: null, orderId: null });
 const cartStorageKey = (session: string) => `bizplus.cart.v1.${session}`;
 const receiptStorageKey = (session: string) => `bizplus.receipt.v1.${session}`;
@@ -21,16 +22,22 @@ function readCart(session: string): CartState {
   return blankCart();
 }
 const money = (minor: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: minor % 100 ? 2 : 0 }).format(minor / 100);
-function ProductVisual({ product, compact = false }: { product: Product; compact?: boolean }) {
-  const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 2.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
-  return <div className={`product-visual ${compact ? 'compact' : ''}`} style={{ '--product-accent': product.accent } as CSSProperties}><div className="product-halo"/><svg viewBox="0 0 180 145" aria-hidden="true"><ellipse cx="90" cy="130" rx="51" ry="5" fill="currentColor" opacity=".08"/>
-    {product.id.includes('headphones') ? <g {...common}><path d="M46 84V66c0-57 88-57 88 0v18" strokeWidth="9" opacity=".35"/><path d="M46 78V65c0-49 88-49 88 0v13" strokeWidth="4"/><rect x="35" y="70" width="29" height="49" rx="11" fill="currentColor" fillOpacity=".12"/><rect x="116" y="70" width="29" height="49" rx="11" fill="currentColor" fillOpacity=".12"/><path d="M46 79v31M134 79v31" opacity=".5"/></g> : product.id.includes('keyboard') ? <g {...common} transform="rotate(-10 90 75)"><rect x="22" y="40" width="137" height="75" rx="9" fill="currentColor" fillOpacity=".08"/>{[0,1,2].map(row => <g key={row}>{[0,1,2,3,4,5,6,7,8].map(col => <rect key={col} x={31 + col * 13.5} y={50 + row * 15} width="9" height="9" rx="2" strokeWidth="1.5" opacity={.7}/>)}</g>)}<rect x="54" y="95" width="66" height="9" rx="2" strokeWidth="1.5"/><path d="M33 119h115" opacity=".25"/></g> : product.id.includes('speaker') ? <g {...common}><rect x="44" y="24" width="92" height="99" rx="20" fill="currentColor" fillOpacity=".07"/><circle cx="90" cy="77" r="28" strokeWidth="3"/><circle cx="90" cy="77" r="21" opacity=".35"/><circle cx="90" cy="77" r="7" fill="currentColor" fillOpacity=".12"/><path d="M72 38h22" opacity=".5"/><circle cx="108" cy="38" r="2" fill="currentColor"/></g> : product.id.includes('watch') ? <g {...common} transform="rotate(12 90 75)"><path d="M72 40V10h36v30M72 106v29h36v-29" fill="currentColor" fillOpacity=".09"/><rect x="58" y="34" width="64" height="75" rx="19" fill="currentColor" fillOpacity=".12"/><rect x="64" y="41" width="52" height="61" rx="13" opacity=".25"/><path d="M90 55v17l12 8" strokeWidth="3"/><circle cx="90" cy="72" r="20" opacity=".5"/><path d="M124 56v11" strokeWidth="4"/></g> : product.id.includes('backpack') ? <g {...common}><path d="M60 44C60 8 120 8 120 44M67 24v-9h46v9" opacity=".55"/><rect x="48" y="31" width="84" height="94" rx="22" fill="currentColor" fillOpacity=".1"/><rect x="63" y="71" width="54" height="37" rx="10"/><path d="M68 83h41M44 51l-7 23v36M136 51l7 23v36M68 51h43" opacity=".55"/><path d="M105 78v11" strokeWidth="4"/></g> : <g {...common}><path d="M78 17h38l19 34H60z" fill="currentColor" fillOpacity=".15"/><path d="M94 52v29l-23 39M94 82l31 38" strokeWidth="4"/><path d="M58 121h78" strokeWidth="5"/><ellipse cx="98" cy="54" rx="40" ry="10" fill="currentColor" fillOpacity=".05" stroke="none"/><path d="M66 65l-7 20M130 65l8 20" opacity=".15"/></g>}
-  </svg>{!compact ? <span className="visual-spec">BIZPLUS / SELECT</span> : null}</div>;
+const productIllustrations: Record<string, string> = {
+  'bp-headphones': '/assets/figma/bp-headphones.svg',
+  'bp-keyboard': '/assets/figma/bp-keyboard.svg',
+  'bp-speaker': '/assets/figma/bp-speaker.svg',
+  'bp-watch': '/assets/figma/bp-watch.svg',
+  'bp-backpack': '/assets/figma/bp-backpack.svg',
+  'bp-desk-lamp': '/assets/figma/bp-desk-lamp.svg',
+};
+function ProductVisual({ product }: { product: Product }) {
+  return <div className="product-visual"><img src={productIllustrations[product.id] || product.image} width={180} height={145} alt="" aria-hidden="true"/></div>;
 }
 
 export default function Shop({ workspace }: { workspace: Workspace }) {
   const session = workspace.session;
   const [products, setProducts] = useState<Product[]>([]);
+  const [category, setCategory] = useState('All essentials');
   const [config, setConfig] = useState<CommerceConfig | null>(null);
   const [orders, setOrders] = useState<CommerceOrder[]>([]);
   const [cart, setCart] = useState<CartState>(() => readCart(session));
@@ -132,15 +139,20 @@ export default function Shop({ workspace }: { workspace: Workspace }) {
   const lines = products.filter(product => cart.items[product.id]).map(product => ({ product, quantity: cart.items[product.id] }));
   const quantity = lines.reduce((sum, line) => sum + line.quantity, 0);
   const subtotal = lines.reduce((sum, line) => sum + line.product.priceMinor * line.quantity, 0);
+  const visibleProducts = category === 'All essentials' ? products : products.filter(product => product.category === category);
   const selectedOrder = orders.find(order => order.id === selectedOrderId) || null;
   const checkoutOrder = orders.find(order => order.id === cart.orderId) || null;
   const awaitingCapture = !!checkoutOrder && checkoutOrder.status !== 'paid' && checkoutOrder.status !== 'failed' && (!!checkoutOrder.razorpayPaymentId || captureProofOrder.current === checkoutOrder.id);
   const cartLocked = busy || paymentOpen || awaitingCapture;
+  const historyPolicy = workspace.metrics?.historyPolicy || workspace.health?.historyPolicy;
+  const storageDescription = historyPolicy === 'temporary' ? 'Temporary hosted history · resets after restart' : historyPolicy === 'cloud' ? 'Cloud database' : historyPolicy === 'local' ? 'Local SQLite history' : config?.database === 'postgres' ? 'Cloud database' : 'Checking history storage…';
   function changeQuantity(id: string, change: number) {
     if (cartLocked) return;
     const items = { ...cartRef.current.items };
     const nextQuantity = Math.max(0, Math.min(5, (items[id] || 0) + change));
     if (nextQuantity === items[id]) return;
+    const totalItems = Object.values(items).reduce((sum, itemQuantity) => sum + itemQuantity, 0);
+    if (nextQuantity > (items[id] || 0) && totalItems >= MAX_CART_ITEMS) { setError('Your test cart can contain up to 10 items. Remove an item before adding another.'); return; }
     if (nextQuantity) items[id] = nextQuantity; else delete items[id];
     const next = { items, checkoutKey: Object.keys(items).length ? crypto.randomUUID() : null, orderId: null };
     cartRef.current = next; setCart(next); setError(null); setNotice(null);
@@ -167,7 +179,7 @@ export default function Shop({ workspace }: { workspace: Workspace }) {
     finally { if (current()) { verifying.current = false; requestBusy.current = false; setBusy(false); } }
   }
   async function checkout() {
-    if (!current() || requestBusy.current || awaitingCapture || !config?.configured || !config.keyId || !lines.length || workspace.connection !== 'ready') return;
+    if (!current() || requestBusy.current || awaitingCapture || !config?.configured || !config.keyId || !lines.length || quantity > MAX_CART_ITEMS || subtotal > 1000000 || workspace.connection !== 'ready') return;
     requestBusy.current = true; setBusy(true); setError(null); setNotice(null);
     const requestedCart = cartRef.current;
     const checkoutKey = requestedCart.checkoutKey || crypto.randomUUID();
@@ -187,13 +199,78 @@ export default function Shop({ workspace }: { workspace: Workspace }) {
       paymentRef.current = instance; setPaymentOpen(true); setBusy(false); instance.open();
     } catch (cause) { if (current()) { setError(cause instanceof Error ? cause.message : 'Checkout could not start.'); requestBusy.current = false; setBusy(false); setPaymentOpen(false); } }
   }
-  return <>
-    <section className="shop-hero"><div><SectionLabel><ShoppingBag size={13}/> BIZPLUS SELECT / TEST STOREFRONT</SectionLabel><h1>Good things.<br/><span>Great everyday.</span></h1><p>A considered collection for work, play, and everything between. Add something to your cart and follow its real test payment from checkout to verified receipt.</p><div className="shop-hero-tags"><span><ShieldCheck size={14}/> Razorpay Test Mode</span><span><PackageCheck size={14}/> Server-priced orders</span><span><ReceiptText size={14}/> Verified receipts</span></div></div><div className="shop-hero-art" aria-hidden="true"><span className="shop-art-line"/><ShoppingBag size={73} strokeWidth={1}/><div><span>THE EVERYDAY EDIT</span><strong>Six essentials.<br/>One smooth checkout.</strong></div></div></section>
-    {error ? <div className="feedback error" role="alert"><TriangleAlert size={18}/><span>{error}</span><button className="text-button" onClick={() => void load()}>Refresh</button><button className="icon-button" aria-label="Dismiss storefront error" onClick={() => setError(null)}><X size={16}/></button></div> : null}
-    {notice ? <div className="feedback notice" role="status"><CheckCircle2 size={18}/><span>{notice}</span><button className="icon-button" aria-label="Dismiss storefront message" onClick={() => setNotice(null)}><X size={16}/></button></div> : null}
-    <div className={`shop-config ${config?.configured ? 'configured' : ''}`}><div className="config-icon">{config?.configured ? <CreditCard size={20}/> : <LockKeyhole size={20}/>}</div><div><strong>{config ? config.configured ? 'Test checkout is connected' : 'Payment setup is required' : 'Checking payment configuration…'}</strong><p>{config?.message || 'The server is checking whether Razorpay Test Mode is available.'}</p></div><span className="test-mode-tag">TEST MODE ONLY</span></div>
-    <div className="shop-layout"><section className="catalog-section"><div className="section-heading"><div><SectionLabel>CURATED FOR YOUR EVERYDAY</SectionLabel><h2>The essentials collection</h2></div><span className="small-meta">{products.length} products · INR</span></div>{loading && !products.length ? <div className="panel"><EmptyState icon={Loader2} title="Loading the collection">Fetching the product catalog and current prices from the server.</EmptyState></div> : products.length ? <div className="product-grid">{products.map(product => <article className="product-card" key={product.id}><div className="product-image-wrap"><span className="product-badge">{product.badge}</span><ProductVisual product={product}/></div><div className="product-copy"><span className="product-category">{product.category}</span><h3>{product.name}</h3><p>{product.description}</p><div className="product-bottom"><strong>{money(product.priceMinor)}</strong><button className="add-cart-button" disabled={cartLocked || (cart.items[product.id] || 0) >= 5} onClick={() => changeQuantity(product.id, 1)} aria-label={`Add ${product.name} to cart`}><Plus size={15}/> Add{cart.items[product.id] ? <span>{cart.items[product.id]}</span> : null}</button></div></div></article>)}</div> : <div className="panel"><EmptyState icon={ShoppingBag} title="The collection is unavailable">Reconnect to the backend or refresh to retrieve the live catalog.</EmptyState></div>}</section>
-    <aside className="cart-panel panel"><div className="panel-header"><div><SectionLabel>YOUR SELECTION</SectionLabel><h2>Shopping cart</h2></div><span className="cart-count"><ShoppingCart size={15}/>{quantity}</span></div>{lines.length ? <><div className="cart-lines">{lines.map(({ product, quantity: itemQuantity }) => <div className="cart-line" key={product.id}><ProductVisual product={product} compact/><div><strong>{product.name}</strong><span>{money(product.priceMinor)} each</span><div className="quantity-control"><button disabled={cartLocked} onClick={() => changeQuantity(product.id, -1)} aria-label={`Remove one ${product.name}`}><Minus size={12}/></button><span>{itemQuantity}</span><button disabled={cartLocked || itemQuantity >= 5} onClick={() => changeQuantity(product.id, 1)} aria-label={`Add one ${product.name}`}><Plus size={12}/></button></div></div><strong className="line-price">{money(product.priceMinor * itemQuantity)}</strong></div>)}</div><div className="cart-totals"><div><span>Subtotal</span><strong>{money(subtotal)}</strong></div><div><span>Delivery</span><span className="cyan">Test purchase</span></div><div className="cart-grand-total"><span>Total</span><strong>{money(subtotal)}</strong></div></div>{subtotal > 1000000 ? <p className="cart-limit">This test order exceeds ₹10,000. Reduce a quantity to continue.</p> : null}<button className="primary-button checkout-button" disabled={!config?.configured || subtotal > 1000000 || workspace.connection !== 'ready' || cartLocked} onClick={() => void checkout()}>{busy ? <Loader2 className="spin" size={17}/> : <LockKeyhole size={16}/>} {busy ? 'Checking your order…' : paymentOpen ? 'Checkout is open' : awaitingCapture ? 'Awaiting capture verification' : cart.orderId ? 'Resume test checkout' : 'Pay with Razorpay'}{!busy && !paymentOpen ? <ArrowRight size={16}/> : null}</button><p className="cart-disclaimer">Up to 5 of each item and ₹10,000 per test order. Only test payments are enabled. The server calculates the final total and verifies the payment before marking an order paid.</p>{cart.orderId ? <div className="pending-order-note"><ReceiptText size={14}/><span>Saved order <code>{shortId(cart.orderId)}</code><small>{awaitingCapture ? 'Payment received; this cart stays bound to its original order while capture is checked.' : 'Unchanged-cart retries reuse this order.'}</small>{awaitingCapture ? <button className="text-button capture-refresh" onClick={() => void refreshOrders(true)}><RefreshCw size={12}/> Check capture status</button> : null}</span></div> : null}</> : <EmptyState icon={ShoppingBag} title="A little room for something good">Add an essential from the collection to start a test purchase.</EmptyState>}<div className="cart-security"><ShieldCheck size={14}/><span>Signature checked on the server</span></div></aside></div>
-    <section className="shop-orders"><div className="section-heading"><div><SectionLabel>YOUR SESSION, YOUR ORDERS</SectionLabel><h2>Purchase history</h2></div><button className="text-button" onClick={() => void refreshOrders(true)}><RefreshCw size={14}/> Refresh orders</button></div>{orders.length ? <div className="orders-layout"><div className="order-list panel">{orders.map(order => <button key={order.id} className={`shop-order-row ${order.id === selectedOrderId ? 'selected' : ''}`} onClick={() => setSelectedOrderId(order.id)}><span className={`order-row-icon ${order.status}`}>{order.status === 'paid' ? <Check size={18}/> : <ReceiptText size={18}/>}</span><span><strong>{order.items.map(item => item.name).join(', ')}</strong><small>{time(order.createdAt)} · {shortId(order.id)}</small></span><strong>{money(order.amountMinor)}</strong><Badge status={order.status === 'paid' ? 'passed' : order.status === 'failed' ? 'failed' : 'pending'}>{order.status === 'provider_unknown' ? 'Provider status unknown' : order.status}</Badge><ArrowUpRight size={14}/></button>)}</div><div className="panel order-receipt"><div className="panel-header"><div><SectionLabel>ORDER RECEIPT</SectionLabel><h2>{selectedOrder?.status === 'paid' ? 'Payment verified' : 'Order details'}</h2></div>{selectedOrder?.status === 'paid' ? <ShieldCheck size={23} className="cyan"/> : <ReceiptText size={23} className="muted"/>}</div>{selectedOrder ? <><div className={`receipt-status ${selectedOrder.status}`}><Badge status={selectedOrder.status === 'paid' ? 'passed' : 'pending'}>{selectedOrder.status === 'paid' ? 'Paid · server verified' : selectedOrder.status.replace(/_/g, ' ')}</Badge><strong>{money(selectedOrder.amountMinor)}</strong></div><div className="receipt-lines">{selectedOrder.items.map(item => <div key={item.productId}><span>{item.quantity} × {item.name}</span><strong>{money(item.lineAmountMinor)}</strong></div>)}</div><dl className="receipt-identifiers"><div><dt>Order</dt><dd>{selectedOrder.id}</dd></div><div><dt>Provider order</dt><dd>{selectedOrder.razorpayOrderId || 'Awaiting provider'}</dd></div><div><dt>Payment</dt><dd>{selectedOrder.razorpayPaymentId || 'Not captured yet'}</dd></div><div><dt>Storage</dt><dd>{config ? config.database === 'postgres' ? 'Cloud database' : 'Local database' : 'Awaiting storage status'}</dd></div></dl>{selectedOrder.status !== 'paid' ? <div className="receipt-pending-copy"><p>A pending or unknown order is never shown as paid. Its status changes only after the server verifies the provider response.</p><button className="secondary-button" disabled={cartLocked} onClick={() => restoreOrder(selectedOrder)}>Restore saved order to cart <ArrowRight size={14}/></button></div> : <div className="receipt-verified"><CheckCircle2 size={16}/> Verified payment. Receipt retained.</div>}</> : <EmptyState icon={ReceiptText} title="Select an order">Inspect its immutable items, provider references, and verified status.</EmptyState>}</div></div> : <div className="panel"><EmptyState icon={ReceiptText} title="Your first receipt starts here">Completed and pending orders appear here, separate from synthetic monitoring runs.</EmptyState></div>}</section>
-  </>;
+  const purchaseStage = cart.orderId || paymentOpen || busy ? 2 : selectedOrder?.status === 'paid' && quantity === 0 ? 3 : 1;
+  return <div className="shop-page">
+    <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{quantity ? `Cart updated: ${quantity} ${quantity === 1 ? 'item' : 'items'}, total ${money(subtotal)}.` : 'Your cart is empty.'}</p>
+    <section className="shop-hero">
+      <SectionLabel>BIZPLUS SELECT · TEST STOREFRONT</SectionLabel>
+      <h1>Everyday essentials. Thoughtfully chosen.</h1>
+      <p>Six demo products. A real Razorpay Test Mode checkout. A receipt verified by the server.</p>
+    </section>
+    <div className="shop-cart-shortcut">
+      <span>{quantity} {quantity === 1 ? 'item' : 'items'} · {money(subtotal)}</span>
+      <a className="primary-button" href="#shopping-cart">View cart</a>
+    </div>
+    {error ? <div className="feedback error" role="alert"><TriangleAlert size={20}/><span>{error}</span><button className="text-button" onClick={() => void load()}>Refresh</button><button className="icon-button" aria-label="Dismiss storefront error" onClick={() => setError(null)}><X size={20}/></button></div> : null}
+    {notice ? <div className="feedback notice" role="status"><CheckCircle2 size={20}/><span>{notice}</span><button className="icon-button" aria-label="Dismiss storefront message" onClick={() => setNotice(null)}><X size={20}/></button></div> : null}
+    <ol className="shop-purchase-guide" aria-label="Test purchase progress">
+      <li className={purchaseStage >= 1 ? 'current' : ''} aria-current={purchaseStage === 1 ? 'step' : undefined}>1&nbsp; Choose products</li>
+      <li className={purchaseStage >= 2 ? 'current' : ''} aria-current={purchaseStage === 2 ? 'step' : undefined}>2&nbsp; Test checkout</li>
+      <li className={purchaseStage === 3 ? 'current' : ''} aria-current={purchaseStage === 3 ? 'step' : undefined}>3&nbsp; Verified receipt</li>
+    </ol>
+    <section className={`shop-config ${config?.configured ? 'configured' : ''}`} aria-label="Test checkout information">
+      <strong>{config && !config.configured ? 'Test checkout needs setup.' : 'Test payments. No real charge or delivery.'}</strong>
+      <p>{config && !config.configured ? config.message : 'Choose a product, complete test checkout, and follow the verified receipt.'}</p>
+      <span className="sr-only">{config ? config.configured ? 'Razorpay Test Mode is connected.' : 'Payment setup is required.' : 'Checking payment configuration.'}</span>
+    </section>
+    <div className="shop-layout">
+      <section className="catalog-section" aria-label="Demo product collection">
+        <h2 className="sr-only">The essentials collection</h2>
+        <div className="shop-categories" aria-label="Filter products by category">
+          {['All essentials', 'Audio', 'Workspace'].map(item => <button key={item} className={category === item ? 'primary-button' : 'secondary-button'} aria-pressed={category === item} onClick={() => setCategory(item)}>{item}</button>)}
+        </div>
+        <p className="sr-only" role="status" aria-live="polite">{visibleProducts.length} products shown in {category}.</p>
+        {loading && !products.length ? <div className="panel"><EmptyState icon={Loader2} title="Loading the collection">Fetching the product catalog and current prices from the server.</EmptyState></div> : products.length ? <div className="product-grid">
+          {visibleProducts.map(product => <article className="product-card" key={product.id} aria-label={product.name}>
+            <div className="product-image-wrap"><ProductVisual product={product}/></div>
+            <span className="product-category">{product.category}</span>
+            <h3>{product.name}</h3>
+            <p className="sr-only">{product.description}</p>
+            <strong className="product-price">{money(product.priceMinor)}</strong>
+            <button className="secondary-button add-cart-button" disabled={cartLocked || quantity >= MAX_CART_ITEMS || (cart.items[product.id] || 0) >= 5} onClick={() => changeQuantity(product.id, 1)} aria-label={`Add ${product.name} to cart`}>Add to cart{cart.items[product.id] ? <span aria-label={`${cart.items[product.id]} in cart`}>{cart.items[product.id]}</span> : null}</button>
+          </article>)}
+        </div> : <div className="panel"><EmptyState icon={ShoppingBag} title="The collection is unavailable">Reconnect to the backend or refresh to retrieve the catalog.</EmptyState></div>}
+      </section>
+      <aside className="cart-panel panel" id="shopping-cart" tabIndex={-1} aria-label="Shopping cart">
+        <div className="panel-header"><h2>Your cart</h2>{quantity ? <span className="cart-count"><ShoppingCart size={18}/>{quantity}</span> : null}</div>
+        {lines.length ? <>
+          <div className="cart-lines">{lines.map(({ product, quantity: itemQuantity }) => <div className="cart-line" key={product.id}>
+            <div className="cart-line-copy"><strong>{product.name}</strong><span>{money(product.priceMinor)} each</span>
+              <div className="quantity-control"><button disabled={cartLocked} onClick={() => changeQuantity(product.id, -1)} aria-label={`Remove one ${product.name}`}><Minus size={18}/></button><span>{itemQuantity}</span><button disabled={cartLocked || quantity >= MAX_CART_ITEMS || itemQuantity >= 5} onClick={() => changeQuantity(product.id, 1)} aria-label={`Add one ${product.name}`}><Plus size={18}/></button></div>
+            </div><strong className="line-price">{money(product.priceMinor * itemQuantity)}</strong>
+          </div>)}</div>
+          <div className="cart-totals"><div><span>Subtotal</span><strong>{money(subtotal)}</strong></div><div><span>Delivery</span><span className="cyan">Test purchase</span></div><div className="cart-grand-total"><span>Total</span><strong>{money(subtotal)}</strong></div></div>
+          {quantity > MAX_CART_ITEMS ? <p className="cart-limit" role="alert">This saved cart contains more than 10 items. Reduce a quantity to continue.</p> : null}
+          {subtotal > 1000000 ? <p className="cart-limit">This test order exceeds ₹10,000. Reduce a quantity to continue.</p> : null}
+          <button className="primary-button checkout-button" disabled={!config?.configured || quantity > MAX_CART_ITEMS || subtotal > 1000000 || workspace.connection !== 'ready' || cartLocked} onClick={() => void checkout()}>{busy ? <Loader2 className="spin" size={18}/> : <LockKeyhole size={18}/>} {busy ? 'Checking your order…' : paymentOpen ? 'Checkout is open' : awaitingCapture ? 'Awaiting capture verification' : cart.orderId ? 'Resume test checkout' : 'Pay with Razorpay'}</button>
+          <p className="cart-disclaimer">Test payments only. Up to 10 items, 5 of each product, and ₹10,000 per order. The server verifies your payment before marking this order paid.</p>
+          {cart.orderId ? <div className="pending-order-note"><ReceiptText size={18}/><span>Saved order <code>{shortId(cart.orderId)}</code><small>{awaitingCapture ? 'Payment received. This cart stays bound to its original order while capture is checked.' : 'Unchanged-cart retries reuse this order.'}</small>{awaitingCapture ? <button className="text-button capture-refresh" onClick={() => void refreshOrders(true)}><RefreshCw size={16}/> Check capture status</button> : null}</span></div> : null}
+        </> : <div className="cart-empty"><p>A little room for something good.</p><p>Add an essential to start a test purchase.</p><button className="primary-button checkout-button" disabled>Pay with Razorpay</button><small>Up to 10 items · No real charge</small></div>}
+      </aside>
+    </div>
+    <section className="shop-orders" aria-label="Purchase history">
+      {orders.length ? <>
+        <div className="section-heading"><h2>Your receipts, in one place.</h2><button className="text-button" onClick={() => void refreshOrders(true)}><RefreshCw size={18}/> Refresh orders</button></div>
+        <div className="orders-layout"><div className="order-list panel">{orders.map(order => <button key={order.id} aria-pressed={order.id === selectedOrderId} aria-label={`Inspect ${order.status.replace(/_/g, ' ')} order ${shortId(order.id)}, ${money(order.amountMinor)}`} className={`shop-order-row ${order.id === selectedOrderId ? 'selected' : ''}`} onClick={() => setSelectedOrderId(order.id)}>
+          <span className={`order-row-icon ${order.status}`}>{order.status === 'paid' ? <Check size={20}/> : <ReceiptText size={20}/>}</span><span className="order-row-copy"><strong>{order.items.map(item => item.name).join(', ')}</strong><small>{time(order.createdAt)} · {shortId(order.id)}</small></span><strong>{money(order.amountMinor)}</strong><Badge status={order.status === 'paid' ? 'passed' : order.status === 'failed' ? 'failed' : 'pending'}>{order.status === 'provider_unknown' ? 'Provider status unknown' : order.status}</Badge><ArrowUpRight size={18}/>
+        </button>)}</div>
+        <div className="panel order-receipt"><div className="panel-header"><h2>{selectedOrder?.status === 'paid' ? 'Payment verified' : 'Order details'}</h2>{selectedOrder?.status === 'paid' ? <ShieldCheck size={24} className="cyan"/> : <ReceiptText size={24} className="muted"/>}</div>
+          {selectedOrder ? <><div className={`receipt-status ${selectedOrder.status}`}><Badge status={selectedOrder.status === 'paid' ? 'passed' : 'pending'}>{selectedOrder.status === 'paid' ? 'Paid · server verified' : selectedOrder.status.replace(/_/g, ' ')}</Badge><strong>{money(selectedOrder.amountMinor)}</strong></div>
+          <div className="receipt-lines">{selectedOrder.items.map(item => <div key={item.productId}><span>{item.quantity} × {item.name}</span><strong>{money(item.lineAmountMinor)}</strong></div>)}</div>
+          <details className="receipt-details"><summary>Payment references &amp; storage</summary><dl className="receipt-identifiers"><div><dt>Order</dt><dd>{selectedOrder.id}</dd></div><div><dt>Provider order</dt><dd>{selectedOrder.razorpayOrderId || 'Awaiting provider'}</dd></div><div><dt>Payment</dt><dd>{selectedOrder.razorpayPaymentId || 'Not captured yet'}</dd></div><div><dt>History storage</dt><dd>{storageDescription}</dd></div></dl></details>
+          {selectedOrder.status !== 'paid' ? <div className="receipt-pending-copy"><p>A pending or unknown order is never shown as paid. Its status changes only after the server verifies the provider response.</p><button className="secondary-button" disabled={cartLocked} onClick={() => restoreOrder(selectedOrder)}>Restore saved order to cart <ArrowRight size={18}/></button></div> : <div className="receipt-verified"><CheckCircle2 size={20}/><span>{historyPolicy === 'temporary' ? 'Payment verified · temporary hosted receipt' : 'Payment verified · receipt saved'}</span></div>}</> : <EmptyState icon={ReceiptText} title="Select an order">Inspect its items, payment references, and verified status.</EmptyState>}
+        </div></div>
+      </> : <div className="panel shop-empty-history"><h2>Your receipts, in one place.</h2><p>Orders appear after checkout. A receipt is marked paid only after server verification.</p></div>}
+    </section>
+  </div>;
 }

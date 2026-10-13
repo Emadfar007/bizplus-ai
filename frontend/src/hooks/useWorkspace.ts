@@ -3,6 +3,9 @@ import type { Health, IncidentList, Metrics, Run, Scenario, Workflow } from '@bi
 import { api, newSession, readSession, RequestError } from '../services/api';
 
 const EMPTY_INCIDENTS: IncidentList = { incidents: [], groups: [] };
+function keepCompletedRun(previous: Run | null, current: Run): Run {
+  return previous?.id === current.id && ['passed','failed'].includes(previous.status) && ['queued','running'].includes(current.status) ? previous : current;
+}
 export function useWorkspace() {
   const [session, setSession] = useState(readSession);
   const [health, setHealth] = useState<Health | null>(null);
@@ -72,7 +75,7 @@ export function useWorkspace() {
     if (id) {
       try {
         const result = await api.run(session, id);
-        if (isCurrentSession(requestedSession, generation) && runIdRef.current === id) setRun(result);
+        if (isCurrentSession(requestedSession, generation) && runIdRef.current === id) setRun(previous => keepCompletedRun(previous, result));
       } catch (cause) {
         if (!isCurrentSession(requestedSession, generation) || runIdRef.current !== id) return;
         if (cause instanceof RequestError && cause.status === 404) {
@@ -102,6 +105,26 @@ export function useWorkspace() {
     return () => { cancelled = true; if (timer) clearTimeout(timer); document.removeEventListener('visibilitychange', visible); };
   }, [connection, refresh]);
 
+  // Follow persisted step changes during the short sandbox journey. Full metrics
+  // keep their slower refresh cadence so progress does not multiply dashboard reads.
+  useEffect(() => {
+    if (!runId || !['queued','running'].includes(run?.status || '') || connection !== 'ready') return;
+    const generation = sessionGeneration.current;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    async function followProgress() {
+      try {
+        const current = await api.run(session, runId!);
+        if (cancelled || !isCurrentSession(session, generation) || runIdRef.current !== runId) return;
+        setRun(previous => keepCompletedRun(previous, current));
+        if (!['queued','running'].includes(current.status)) return;
+      } catch { /* The normal refresh reports connection and retrieval errors. */ }
+      if (!cancelled) timer = setTimeout(followProgress, 250);
+    }
+    void followProgress();
+    return () => { cancelled = true; if (timer) clearTimeout(timer); };
+  }, [runId, run?.status, connection, session, isCurrentSession]);
+
   const active = starting || recovering || run?.status === 'queued' || run?.status === 'running' || !!metrics?.recentRuns.some(item => item.status === 'queued' || item.status === 'running');
   const startRun = useCallback(async () => {
     const generation = sessionGeneration.current;
@@ -115,7 +138,7 @@ export function useWorkspace() {
       setRunId(result.runId);
       const current = await api.run(session, result.runId);
       if (!isCurrentSession(session, generation)) return;
-      if (runIdRef.current === result.runId) setRun(current);
+      if (runIdRef.current === result.runId) setRun(previous => keepCompletedRun(previous, current));
       await refresh();
     } catch (cause) { if (isCurrentSession(session, generation)) setError(cause instanceof Error ? cause.message : 'The workflow could not start.'); }
     finally { if (isCurrentSession(session, generation)) { activeRequest.current = false; setStarting(false); } }
@@ -135,7 +158,7 @@ export function useWorkspace() {
     setRunId(id); runIdRef.current = id; setError(null);
     try {
       const selected = await api.run(session, id);
-      if (isCurrentSession(session, generation) && runIdRef.current === id) setRun(selected);
+      if (isCurrentSession(session, generation) && runIdRef.current === id) setRun(previous => keepCompletedRun(previous, selected));
     } catch (cause) {
       if (isCurrentSession(session, generation) && runIdRef.current === id) setError(cause instanceof Error ? cause.message : 'Unable to open this run.');
     }

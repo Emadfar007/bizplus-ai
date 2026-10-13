@@ -1,0 +1,124 @@
+{
+  "checkedAt": "2026-10-13T09:02:33.438Z",
+  "sourceFrozen": true,
+  "frontendTypecheck": "passed",
+  "figmaAssetManifest": "artifacts/design/figma-asset-manifest.json",
+  "storefront": {
+    "desktop": {
+      "viewport": 1440,
+      "cartWidth": 336,
+      "productColumns": 2,
+      "productArtwork": {
+        "width": 180,
+        "height": 145,
+        "allSixLoaded": true
+      },
+      "productNameSize": 16,
+      "addControlHeight": 44
+    },
+    "phone": {
+      "viewport": 390,
+      "productColumns": 1,
+      "cardWidth": 350.4,
+      "noHorizontalOverflow": true,
+      "artworkUnscaled": true,
+      "cartShortcut": {
+        "nativeAnchor": true,
+        "focusedElement": "shopping-cart",
+        "landingOffset": 20
+      }
+    },
+    "categories": {
+      "audioProducts": 2,
+      "workspaceProducts": 2
+    },
+    "cart": {
+      "tenItemsDisabledAdd": true,
+      "removingOneReenabledAdd": true,
+      "quantityControlSize": 44,
+      "testCartRestoredEmpty": true,
+      "purchasesExecuted": false
+    },
+    "accessibility": {
+      "cartUpdatesAnnounced": true,
+      "historySelectionExposed": true,
+      "receiptStorageUsesActualHistoryPolicy": true
+    }
+  },
+  "live": {
+    "phone": {
+      "viewport": 390,
+      "documentWidth": 375,
+      "noHorizontalOverflow": true,
+      "helperFontSize": 14,
+      "runControlHeight": 44
+    },
+    "healthyHttp": {
+      "status": 200,
+      "durationMs": 214,
+      "runShortId": "34b5f3ee"
+    },
+    "controlledFailure": {
+      "status": 500,
+      "durationMs": 15,
+      "runShortId": "16771e6a",
+      "capturedAssertions": true,
+      "diagnosisLinkedToObservedEvidence": true
+    },
+    "approvedRecovery": {
+      "status": 200,
+      "durationMs": 5,
+      "assertionsPassed": 3,
+      "assertionsTotal": 3,
+      "verificationRunShortId": "c4f86513",
+      "originalFailureRetained": true,
+      "incidentResolved": true
+    },
+    "independentObserver": "not configured locally",
+    "browserJourney": "awaiting configured independent browser runner"
+  },
+  "browser": {
+    "provider": "Chrome",
+    "temporaryViewportReset": true,
+    "agentCreatedTabsClosed": true,
+    "fullPageScreenshotApi": "timed out; viewport captures saved"
+  },
+  "screenshots": [
+    {
+      "path": "artifacts/screenshots/figma-redesign/local-live-desktop-recovery.png",
+      "bytes": 199069
+    },
+    {
+      "path": "artifacts/screenshots/figma-redesign/local-live-desktop.png",
+      "bytes": 202704
+    },
+    {
+      "path": "artifacts/screenshots/figma-redesign/local-live-mobile.png",
+      "bytes": 39438
+    },
+    {
+      "path": "artifacts/screenshots/figma-redesign/local-mobile-overview.png",
+      "bytes": 126776
+    },
+    {
+      "path": "artifacts/screenshots/figma-redesign/local-recovery.png",
+      "bytes": 345799
+    },
+    {
+      "path": "artifacts/screenshots/figma-redesign/local-shop-desktop-bottom.png",
+      "bytes": 92998
+    },
+    {
+      "path": "artifacts/screenshots/figma-redesign/local-shop-desktop.png",
+      "bytes": 102908
+    },
+    {
+      "path": "artifacts/screenshots/figma-redesign/local-shop-mobile-cart.png",
+      "bytes": 32334
+    },
+    {
+      "path": "artifacts/screenshots/figma-redesign/local-shop-mobile.png",
+      "bytes": 40136
+    }
+  ]
+}

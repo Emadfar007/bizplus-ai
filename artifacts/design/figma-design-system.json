@@ -1,0 +1,1092 @@
+{
+  "fileKey": "344gY1vPHJBMCDec9nO2lq",
+  "fileUrl": "https://www.figma.com/design/344gY1vPHJBMCDec9nO2lq",
+  "exportedAt": "2026-10-13T08:57:08.223Z",
+  "foundation": {
+    "collections": {
+      "primitives": {
+        "id": "VariableCollectionId:3:2",
+        "modes": {
+          "Value": "3:0"
+        }
+      },
+      "colors": {
+        "id": "VariableCollectionId:3:3",
+        "modes": {
+          "Dark": "3:1"
+        }
+      },
+      "geometry": {
+        "id": "VariableCollectionId:3:4",
+        "modes": {
+          "Value": "3:2"
+        }
+      },
+      "iconContext": {
+        "id": "VariableCollectionId:8:39",
+        "modes": {
+          "Default": "8:0",
+          "Active": "8:1"
+        }
+      }
+    },
+    "variables": {
+      "palette/bg": {
+        "id": "VariableID:3:5",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-bg)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.03921568766236305,
+            "g": 0.05882352963089943,
+            "b": 0.0941176488995552,
+            "a": 1
+          }
+        }
+      },
+      "palette/panel": {
+        "id": "VariableID:3:6",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-panel)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.07058823853731155,
+            "g": 0.10980392247438431,
+            "b": 0.16862745583057404,
+            "a": 1
+          }
+        }
+      },
+      "palette/panel-high": {
+        "id": "VariableID:3:7",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-panel-high)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.0941176488995552,
+            "g": 0.14509804546833038,
+            "b": 0.2235294133424759,
+            "a": 1
+          }
+        }
+      },
+      "palette/line": {
+        "id": "VariableID:3:8",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-line)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.16470588743686676,
+            "g": 0.22745098173618317,
+            "b": 0.3137255012989044,
+            "a": 1
+          }
+        }
+      },
+      "palette/text": {
+        "id": "VariableID:3:9",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-text)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.95686274766922,
+            "g": 0.9686274528503418,
+            "b": 0.9843137264251709,
+            "a": 1
+          }
+        }
+      },
+      "palette/muted": {
+        "id": "VariableID:3:10",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-muted)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.6392157077789307,
+            "g": 0.7019608020782471,
+            "b": 0.7843137383460999,
+            "a": 1
+          }
+        }
+      },
+      "palette/quiet": {
+        "id": "VariableID:3:11",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-quiet)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.5176470875740051,
+            "g": 0.5921568870544434,
+            "b": 0.6901960968971252,
+            "a": 1
+          }
+        }
+      },
+      "palette/cyan": {
+        "id": "VariableID:3:12",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-cyan)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.46666666865348816,
+            "g": 0.929411768913269,
+            "b": 0.800000011920929,
+            "a": 1
+          }
+        }
+      },
+      "palette/cyan-dark": {
+        "id": "VariableID:3:13",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-cyan-dark)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.08627451211214066,
+            "g": 0.22745098173618317,
+            "b": 0.2078431397676468,
+            "a": 1
+          }
+        }
+      },
+      "palette/red": {
+        "id": "VariableID:3:14",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-red)"
+        },
+        "values": {
+          "3:0": {
+            "r": 1,
+            "g": 0.6078431606292725,
+            "b": 0.6509804129600525,
+            "a": 1
+          }
+        }
+      },
+      "palette/amber": {
+        "id": "VariableID:3:15",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-amber)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.9529411792755127,
+            "g": 0.7921568751335144,
+            "b": 0.5215686559677124,
+            "a": 1
+          }
+        }
+      },
+      "palette/blue": {
+        "id": "VariableID:3:16",
+        "scopes": [],
+        "syntax": {
+          "WEB": "var(--primitive-blue)"
+        },
+        "values": {
+          "3:0": {
+            "r": 0.6470588445663452,
+            "g": 0.7176470756530762,
+            "b": 1,
+            "a": 1
+          }
+        }
+      },
+      "color/bg": {
+        "id": "VariableID:3:17",
+        "scopes": [
+          "FRAME_FILL",
+          "SHAPE_FILL",
+          "TEXT_FILL",
+          "STROKE_COLOR"
+        ],
+        "syntax": {
+          "WEB": "var(--bg)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:5"
+          }
+        }
+      },
+      "color/panel": {
+        "id": "VariableID:3:18",
+        "scopes": [
+          "FRAME_FILL",
+          "SHAPE_FILL",
+          "TEXT_FILL",
+          "STROKE_COLOR"
+        ],
+        "syntax": {
+          "WEB": "var(--panel)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:6"
+          }
+        }
+      },
+      "color/panel-high": {
+        "id": "VariableID:3:19",
+        "scopes": [
+          "FRAME_FILL",
+          "SHAPE_FILL",
+          "TEXT_FILL",
+          "STROKE_COLOR"
+        ],
+        "syntax": {
+          "WEB": "var(--panel-high)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:7"
+          }
+        }
+      },
+      "color/line": {
+        "id": "VariableID:3:20",
+        "scopes": [
+          "STROKE_COLOR"
+        ],
+        "syntax": {
+          "WEB": "var(--line)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:8"
+          }
+        }
+      },
+      "color/text": {
+        "id": "VariableID:3:21",
+        "scopes": [
+          "TEXT_FILL"
+        ],
+        "syntax": {
+          "WEB": "var(--text)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:9"
+          }
+        }
+      },
+      "color/muted": {
+        "id": "VariableID:3:22",
+        "scopes": [
+          "TEXT_FILL"
+        ],
+        "syntax": {
+          "WEB": "var(--muted)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:10"
+          }
+        }
+      },
+      "color/quiet": {
+        "id": "VariableID:3:23",
+        "scopes": [
+          "TEXT_FILL",
+          "SHAPE_FILL"
+        ],
+        "syntax": {
+          "WEB": "var(--quiet)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:11"
+          }
+        }
+      },
+      "color/cyan": {
+        "id": "VariableID:3:24",
+        "scopes": [
+          "FRAME_FILL",
+          "SHAPE_FILL",
+          "TEXT_FILL",
+          "STROKE_COLOR"
+        ],
+        "syntax": {
+          "WEB": "var(--cyan)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:12"
+          }
+        }
+      },
+      "color/cyan-dark": {
+        "id": "VariableID:3:25",
+        "scopes": [
+          "FRAME_FILL",
+          "SHAPE_FILL",
+          "TEXT_FILL",
+          "STROKE_COLOR"
+        ],
+        "syntax": {
+          "WEB": "var(--cyan-dark)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:13"
+          }
+        }
+      },
+      "color/red": {
+        "id": "VariableID:3:26",
+        "scopes": [
+          "FRAME_FILL",
+          "SHAPE_FILL",
+          "TEXT_FILL",
+          "STROKE_COLOR"
+        ],
+        "syntax": {
+          "WEB": "var(--red)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:14"
+          }
+        }
+      },
+      "color/amber": {
+        "id": "VariableID:3:27",
+        "scopes": [
+          "FRAME_FILL",
+          "SHAPE_FILL",
+          "TEXT_FILL",
+          "STROKE_COLOR"
+        ],
+        "syntax": {
+          "WEB": "var(--amber)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:15"
+          }
+        }
+      },
+      "color/blue": {
+        "id": "VariableID:3:28",
+        "scopes": [
+          "FRAME_FILL",
+          "SHAPE_FILL",
+          "TEXT_FILL",
+          "STROKE_COLOR"
+        ],
+        "syntax": {
+          "WEB": "var(--blue)"
+        },
+        "values": {
+          "3:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:16"
+          }
+        }
+      },
+      "space/zero": {
+        "id": "VariableID:3:29",
+        "scopes": [
+          "GAP"
+        ],
+        "syntax": {
+          "WEB": "var(--space-0)"
+        },
+        "values": {
+          "3:2": 0
+        }
+      },
+      "space/xs": {
+        "id": "VariableID:3:30",
+        "scopes": [
+          "GAP"
+        ],
+        "syntax": {
+          "WEB": "var(--space-xs)"
+        },
+        "values": {
+          "3:2": 4
+        }
+      },
+      "space/sm": {
+        "id": "VariableID:3:31",
+        "scopes": [
+          "GAP"
+        ],
+        "syntax": {
+          "WEB": "var(--space-sm)"
+        },
+        "values": {
+          "3:2": 8
+        }
+      },
+      "space/md": {
+        "id": "VariableID:3:32",
+        "scopes": [
+          "GAP"
+        ],
+        "syntax": {
+          "WEB": "var(--space-md)"
+        },
+        "values": {
+          "3:2": 12
+        }
+      },
+      "space/lg": {
+        "id": "VariableID:3:33",
+        "scopes": [
+          "GAP"
+        ],
+        "syntax": {
+          "WEB": "var(--space-lg)"
+        },
+        "values": {
+          "3:2": 16
+        }
+      },
+      "space/xl": {
+        "id": "VariableID:3:34",
+        "scopes": [
+          "GAP"
+        ],
+        "syntax": {
+          "WEB": "var(--space-xl)"
+        },
+        "values": {
+          "3:2": 20
+        }
+      },
+      "space/2xl": {
+        "id": "VariableID:3:35",
+        "scopes": [
+          "GAP"
+        ],
+        "syntax": {
+          "WEB": "var(--space-2xl)"
+        },
+        "values": {
+          "3:2": 24
+        }
+      },
+      "space/3xl": {
+        "id": "VariableID:3:36",
+        "scopes": [
+          "GAP"
+        ],
+        "syntax": {
+          "WEB": "var(--space-3xl)"
+        },
+        "values": {
+          "3:2": 32
+        }
+      },
+      "radius/control": {
+        "id": "VariableID:3:37",
+        "scopes": [
+          "CORNER_RADIUS"
+        ],
+        "syntax": {
+          "WEB": "var(--radius-control)"
+        },
+        "values": {
+          "3:2": 12
+        }
+      },
+      "radius/panel": {
+        "id": "VariableID:3:38",
+        "scopes": [
+          "CORNER_RADIUS"
+        ],
+        "syntax": {
+          "WEB": "var(--radius-panel)"
+        },
+        "values": {
+          "3:2": 16
+        }
+      },
+      "radius/full": {
+        "id": "VariableID:3:39",
+        "scopes": [
+          "CORNER_RADIUS"
+        ],
+        "syntax": {
+          "WEB": "var(--radius-full)"
+        },
+        "values": {
+          "3:2": 999
+        }
+      },
+      "border/default": {
+        "id": "VariableID:3:40",
+        "scopes": [
+          "STROKE_FLOAT"
+        ],
+        "syntax": {
+          "WEB": "var(--border-width)"
+        },
+        "values": {
+          "3:2": 1
+        }
+      },
+      "control/min-height": {
+        "id": "VariableID:3:41",
+        "scopes": [
+          "WIDTH_HEIGHT"
+        ],
+        "syntax": {
+          "WEB": "var(--control-height)"
+        },
+        "values": {
+          "3:2": 44
+        }
+      },
+      "color/icon": {
+        "id": "VariableID:8:40",
+        "scopes": [
+          "SHAPE_FILL",
+          "STROKE_COLOR"
+        ],
+        "syntax": {
+          "WEB": "var(--nav-icon)"
+        },
+        "values": {
+          "8:0": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:22"
+          },
+          "8:1": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:3:24"
+          }
+        }
+      }
+    },
+    "styles": {
+      "caption": {
+        "id": "S:fcfef034791349e90317ff822db81064de264193,",
+        "fontSize": 12,
+        "lineHeight": 16,
+        "weight": "Medium"
+      },
+      "body": {
+        "id": "S:929659bb4053f99d82ee3eb218198ec0713242ec,",
+        "fontSize": 14,
+        "lineHeight": 20,
+        "weight": "Regular"
+      },
+      "label": {
+        "id": "S:4c617bfe42e36df0114d81a36d087c46be9abcec,",
+        "fontSize": 16,
+        "lineHeight": 24,
+        "weight": "Semi Bold"
+      },
+      "value": {
+        "id": "S:19643b79cc295304491d05728aece8246f786424,",
+        "fontSize": 24,
+        "lineHeight": 32,
+        "weight": "Semi Bold"
+      },
+      "title": {
+        "id": "S:ae98872198a97ecb5692468f01c2b4b14f33a5ff,",
+        "fontSize": 32,
+        "lineHeight": 40,
+        "weight": "Bold"
+      }
+    },
+    "counts": {
+      "collections": 3,
+      "variables": 37,
+      "textStyles": 5
+    },
+    "components": {
+      "createdNodeIds": [
+        "4:7",
+        "4:2",
+        "4:8",
+        "4:3",
+        "4:9",
+        "4:4",
+        "4:10",
+        "4:5",
+        "4:11",
+        "4:12",
+        "4:6",
+        "4:13",
+        "4:19",
+        "4:14",
+        "4:20",
+        "4:21",
+        "4:15",
+        "4:22",
+        "4:23",
+        "4:16",
+        "4:24",
+        "4:25",
+        "4:17",
+        "4:26",
+        "4:27",
+        "4:18",
+        "4:28",
+        "4:29",
+        "4:32",
+        "4:30",
+        "4:33",
+        "4:34",
+        "4:35",
+        "4:36",
+        "4:37",
+        "4:31",
+        "4:38",
+        "4:39",
+        "4:40",
+        "4:41",
+        "4:42",
+        "4:45",
+        "4:43",
+        "4:46",
+        "4:47",
+        "4:48",
+        "4:49",
+        "4:44",
+        "4:50",
+        "4:51",
+        "4:52",
+        "4:53",
+        "4:54",
+        "4:55",
+        "4:56",
+        "4:57",
+        "4:58",
+        "4:59",
+        "4:60",
+        "4:61",
+        "4:62",
+        "4:63",
+        "4:64",
+        "4:65",
+        "4:66",
+        "4:67",
+        "4:68",
+        "4:69",
+        "4:70",
+        "4:71",
+        "4:72",
+        "4:73",
+        "4:74",
+        "4:75",
+        "4:76",
+        "4:77",
+        "4:78",
+        "4:79",
+        "4:80",
+        "4:81",
+        "4:82",
+        "4:83",
+        "4:84",
+        "4:85",
+        "4:86",
+        "4:87",
+        "4:88",
+        "4:89",
+        "4:90",
+        "4:91",
+        "4:92",
+        "4:93",
+        "4:94",
+        "4:95",
+        "4:96",
+        "4:97",
+        "4:98",
+        "4:99",
+        "4:100",
+        "I4:100;4:8",
+        "4:102",
+        "I4:102;4:9",
+        "4:104",
+        "I4:104;4:10",
+        "4:106",
+        "I4:106;4:11",
+        "I4:106;4:12",
+        "4:109",
+        "I4:109;4:13",
+        "4:111",
+        "4:112",
+        "4:113",
+        "I4:113;4:20",
+        "I4:113;4:21",
+        "4:116",
+        "I4:116;4:22",
+        "I4:116;4:23",
+        "4:119",
+        "I4:119;4:24",
+        "I4:119;4:25",
+        "4:122",
+        "I4:122;4:26",
+        "I4:122;4:27",
+        "4:125",
+        "I4:125;4:28",
+        "I4:125;4:29",
+        "4:128",
+        "4:129",
+        "4:130",
+        "I4:130;4:46",
+        "I4:130;4:47",
+        "I4:130;4:48",
+        "I4:130;4:49",
+        "4:135",
+        "I4:135;4:50",
+        "I4:135;4:51",
+        "I4:135;4:52",
+        "I4:135;4:53",
+        "4:140",
+        "4:141",
+        "I4:141;4:55",
+        "I4:141;4:56",
+        "I4:141;4:57",
+        "4:145",
+        "4:146",
+        "I4:146;4:33",
+        "I4:146;4:34",
+        "I4:146;4:35",
+        "I4:146;4:36",
+        "I4:146;4:37",
+        "4:152",
+        "I4:152;4:38",
+        "I4:152;4:39",
+        "I4:152;4:40",
+        "I4:152;4:41",
+        "I4:152;4:42",
+        "4:158"
+      ],
+      "mutatedNodeIds": [],
+      "families": {
+        "Button": {
+          "setId": "4:7",
+          "props": {
+            "Label": "Label#4:0"
+          },
+          "variants": {
+            "Style=Primary, State=Default": "4:2",
+            "Style=Primary, State=Hover": "4:3",
+            "Style=Primary, State=Disabled": "4:4",
+            "Style=Primary, State=Loading": "4:5",
+            "Style=Secondary, State=Default": "4:6"
+          }
+        },
+        "StatusBadge": {
+          "setId": "4:19",
+          "props": {},
+          "variants": {
+            "Status=Idle": "4:14",
+            "Status=Running": "4:15",
+            "Status=Passed": "4:16",
+            "Status=Failed": "4:17",
+            "Status=Resolved": "4:18"
+          }
+        },
+        "NavItem": {
+          "setId": "4:32",
+          "props": {
+            "Label": "Label#4:6",
+            "Icon": "Icon#8:0"
+          },
+          "variants": {
+            "State=Default": "4:30",
+            "State=Active": "4:31"
+          }
+        },
+        "ScenarioTile": {
+          "setId": "4:45",
+          "props": {
+            "Label": "Label#4:9",
+            "Description": "Description#4:12"
+          },
+          "variants": {
+            "State=Normal": "4:43",
+            "State=Selected": "4:44"
+          }
+        },
+        "MetricCard": {
+          "componentId": "4:54",
+          "props": {
+            "Label": "Label#4:15",
+            "Value": "Value#4:16",
+            "Help": "Help#4:17"
+          }
+        }
+      },
+      "specimenId": "4:58",
+      "counts": {
+        "families": 5,
+        "componentSets": 4,
+        "components": 15,
+        "instances": 15
+      },
+      "bounds": {
+        "specimen": {
+          "width": 1060,
+          "height": 930
+        },
+        "assets": [
+          {
+            "id": "4:7",
+            "name": "BizPlus/Button",
+            "x": 1300,
+            "y": 80,
+            "width": 816,
+            "height": 184
+          },
+          {
+            "id": "4:19",
+            "name": "BizPlus/StatusBadge",
+            "x": 1300,
+            "y": 312,
+            "width": 684,
+            "height": 108
+          },
+          {
+            "id": "4:32",
+            "name": "BizPlus/NavItem",
+            "x": 1300,
+            "y": 468,
+            "width": 536,
+            "height": 128
+          },
+          {
+            "id": "4:45",
+            "name": "BizPlus/ScenarioTile",
+            "x": 1300,
+            "y": 644,
+            "width": 664,
+            "height": 192
+          },
+          {
+            "id": "4:54",
+            "name": "BizPlus/MetricCard",
+            "x": 1300,
+            "y": 884,
+            "width": 260,
+            "height": 148
+          }
+        ]
+      }
+    },
+    "validation": {
+      "createdNodeIds": [],
+      "mutatedNodeIds": [],
+      "specimen": {
+        "id": "4:58",
+        "width": 1060,
+        "height": 930,
+        "rows": [
+          {
+            "id": "4:61",
+            "width": 996,
+            "height": 144
+          },
+          {
+            "id": "4:99",
+            "width": 996,
+            "height": 44
+          },
+          {
+            "id": "4:112",
+            "width": 996,
+            "height": 28
+          },
+          {
+            "id": "4:129",
+            "width": 996,
+            "height": 112
+          },
+          {
+            "id": "4:140",
+            "width": 996,
+            "height": 148
+          }
+        ]
+      },
+      "checks": {
+        "families": 5,
+        "components": 15,
+        "instances": 15,
+        "variables": 37,
+        "aliases": 12,
+        "brokenAliases": 0,
+        "noWebSyntax": 0,
+        "allScopes": 0,
+        "defects": []
+      },
+      "minimumButtonHeight": 44,
+      "font": "Inter",
+      "actionLabel": "16 px Semi Bold / 24 px line-height"
+    }
+  },
+  "screens": [
+    {
+      "id": "12:149",
+      "name": "Desktop · Overview",
+      "width": 1440,
+      "height": 1210,
+      "mainHeight": 1210,
+      "instances": 28,
+      "texts": 59,
+      "frames": 30
+    },
+    {
+      "id": "12:333",
+      "name": "Desktop · Healthy result",
+      "width": 1440,
+      "height": 1210,
+      "mainHeight": 1210,
+      "instances": 29,
+      "texts": 60,
+      "frames": 30
+    },
+    {
+      "id": "12:508",
+      "name": "Desktop · Failure",
+      "width": 1440,
+      "height": 1210,
+      "mainHeight": 1210,
+      "instances": 29,
+      "texts": 60,
+      "frames": 30
+    },
+    {
+      "id": "12:694",
+      "name": "Desktop · Approve recovery",
+      "width": 1440,
+      "height": 1030,
+      "mainHeight": 850,
+      "instances": 18,
+      "texts": 46,
+      "frames": 24
+    },
+    {
+      "id": "12:833",
+      "name": "Desktop · Verified recovery",
+      "width": 1440,
+      "height": 1030,
+      "mainHeight": 850,
+      "instances": 18,
+      "texts": 46,
+      "frames": 24
+    },
+    {
+      "id": "12:972",
+      "name": "Desktop · Storefront",
+      "width": 1440,
+      "height": 1816,
+      "mainHeight": 1816,
+      "instances": 36,
+      "texts": 61,
+      "frames": 30
+    },
+    {
+      "id": "12:1260",
+      "name": "Desktop · Live tests",
+      "width": 1440,
+      "height": 2514,
+      "mainHeight": 2514,
+      "instances": 30,
+      "texts": 89,
+      "frames": 34
+    },
+    {
+      "id": "12:1393",
+      "name": "Mobile · Overview",
+      "width": 390,
+      "height": 844,
+      "mainHeight": 1886,
+      "instances": 15,
+      "texts": 43,
+      "frames": 24
+    },
+    {
+      "id": "12:1499",
+      "name": "Mobile · Storefront",
+      "width": 390,
+      "height": 844,
+      "mainHeight": 3466,
+      "instances": 24,
+      "texts": 47,
+      "frames": 24
+    }
+  ],
+  "screenIds": {
+    "Desktop · Overview": "12:149",
+    "Desktop · Healthy result": "12:333",
+    "Desktop · Failure": "12:508",
+    "Desktop · Approve recovery": "12:694",
+    "Desktop · Verified recovery": "12:833",
+    "Desktop · Storefront": "12:972",
+    "Desktop · Live tests": "12:1260",
+    "Mobile · Overview": "12:1393",
+    "Mobile · Storefront": "12:1499"
+  },
+  "nativeNodeCounts": {
+    "FRAME": 231,
+    "INSTANCE": 218,
+    "VECTOR": 347,
+    "TEXT": 467,
+    "ELLIPSE": 21,
+    "GROUP": 18
+  },
+  "prototypeActions": 47,
+  "qa": {
+    "reviewedScreenCount": 9,
+    "horizontalOverflowCount": 0,
+    "nativeProductArt": {
+      "width": 180,
+      "height": 145
+    },
+    "textAutoHeight": true,
+    "temporaryCaptureDeleted": true,
+    "foundationPreserved": true,
+    "screenshotPaths": {
+      "overview": "artifacts/design/figma/overview.png",
+      "healthy": "artifacts/design/figma/healthy.png",
+      "failure": "artifacts/design/figma/failure.png",
+      "recovery-approve": "artifacts/design/figma/recovery-approve.png",
+      "recovery-verified": "artifacts/design/figma/recovery-verified.png",
+      "storefront": "artifacts/design/figma/storefront.png",
+      "live": "artifacts/design/figma/live.png",
+      "mobile-overview": "artifacts/design/figma/mobile-overview.png",
+      "mobile-storefront": "artifacts/design/figma/mobile-storefront.png"
+    }
+  },
+  "scope": "Editable native Figma design and QA; prototype states are not measured app results."
+}

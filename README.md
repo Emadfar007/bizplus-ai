@@ -8,6 +8,8 @@ Source repository: [Emadfar007/bizplus-ai](https://github.com/Emadfar007/bizplus
 
 The complete frontend and API are live on **Render**: [dashboard](https://bizplus-ai-api.onrender.com), [storefront](https://bizplus-ai-api.onrender.com/shop), and [live tests](https://bizplus-ai-api.onrender.com/live-tests). See [verification results](docs/verification-results.md) for the tested scope and current database limitation.
 
+The interface is designed in [Figma — BizPlus AI Product Redesign](https://www.figma.com/design/344gY1vPHJBMCDec9nO2lq). Its editable design system uses semantic variables, Auto Layout, component variants, text and icon-swap properties, and linked desktop/mobile prototypes. The React app uses the same colors, typography and spacing, with actual API results replacing design placeholders. See [design handoff](docs/design-system.md).
+
 Workflow payments and customers are synthetic. The storefront uses real Razorpay **Test Mode** checkout without moving money or shipping products. Diagnosis is visibly labelled **Rules-based diagnosis**. No LLM account or API key is required.
 
 Live website failures now include evidence-linked explanations and solutions. The isolated website fault lab supports HTTP errors, missing content, empty responses, real timeouts and browser journey failures, with approved restoration and a passing verification required for resolution. A separate observer checks the app and dependencies without relying on the dashboard tab. See [live errors and controlled recovery](docs/live-errors.md) for the workflow, independent observer, verified scope and hosting limits.

@@ -1,0 +1,87 @@
+{
+  "figmaFileKey": "344gY1vPHJBMCDec9nO2lq",
+  "designNodes": {
+    "storefrontDesktop": "12:972",
+    "storefrontMobileMain": "12:1500",
+    "liveDesktop": "12:1260"
+  },
+  "assets": [
+    {
+      "name": "bp-headphones",
+      "nodeId": "12:58",
+      "sourceUrl": "https://www.figma.com/api/mcp/asset/676b38fa-c93b-4b63-a7f0-689c2ac4f907/6bbe3.svg",
+      "repositoryPath": "frontend/public/assets/figma/bp-headphones.svg",
+      "width": 180,
+      "height": 145,
+      "callsite": "frontend/src/pages/Shop.tsx: ProductVisual",
+      "byteLength": 1445,
+      "sha256": "aec5bb51ace22a325a8b7c8290b94b0927ccf0c3e8807ad900fc85b850024442"
+    },
+    {
+      "name": "bp-keyboard",
+      "nodeId": "12:95",
+      "sourceUrl": "https://www.figma.com/api/mcp/asset/676b38fa-c93b-4b63-a7f0-689c2ac4f907/2aac9.svg",
+      "repositoryPath": "frontend/public/assets/figma/bp-keyboard.svg",
+      "width": 180,
+      "height": 145,
+      "callsite": "frontend/src/pages/Shop.tsx: ProductVisual",
+      "byteLength": 12076,
+      "sha256": "e677acd0a3bd5126f82961081f0fdf2bf8097d3769a546f5aa8c0a0723252a70"
+    },
+    {
+      "name": "bp-speaker",
+      "nodeId": "12:105",
+      "sourceUrl": "https://www.figma.com/api/mcp/asset/676b38fa-c93b-4b63-a7f0-689c2ac4f907/39bb8.svg",
+      "repositoryPath": "frontend/public/assets/figma/bp-speaker.svg",
+      "width": 180,
+      "height": 145,
+      "callsite": "frontend/src/pages/Shop.tsx: ProductVisual",
+      "byteLength": 1829,
+      "sha256": "5b65807bfb44423c32be114159dcdef847d3e9c32de8142f4b2cd58c4efc07d9"
+    },
+    {
+      "name": "bp-watch",
+      "nodeId": "12:115",
+      "sourceUrl": "https://www.figma.com/api/mcp/asset/676b38fa-c93b-4b63-a7f0-689c2ac4f907/d3970.svg",
+      "repositoryPath": "frontend/public/assets/figma/bp-watch.svg",
+      "width": 180,
+      "height": 145,
+      "callsite": "frontend/src/pages/Shop.tsx: ProductVisual",
+      "byteLength": 2274,
+      "sha256": "a0b1d7afef77ee6509ae1710d9855407bbf80837a5b0a6cd3e8f9c404b27ef2f"
+    },
+    {
+      "name": "bp-backpack",
+      "nodeId": "12:124",
+      "sourceUrl": "https://www.figma.com/api/mcp/asset/676b38fa-c93b-4b63-a7f0-689c2ac4f907/4704f.svg",
+      "repositoryPath": "frontend/public/assets/figma/bp-backpack.svg",
+      "width": 180,
+      "height": 145,
+      "callsite": "frontend/src/pages/Shop.tsx: ProductVisual",
+      "byteLength": 1426,
+      "sha256": "c94df0e91103bc80e428f6396e0763dc910392e361d78af6de79c8b4d1c9209f"
+    },
+    {
+      "name": "bp-desk-lamp",
+      "nodeId": "12:133",
+      "sourceUrl": "https://www.figma.com/api/mcp/asset/676b38fa-c93b-4b63-a7f0-689c2ac4f907/7d75c.svg",
+      "repositoryPath": "frontend/public/assets/figma/bp-desk-lamp.svg",
+      "width": 180,
+      "height": 145,
+      "callsite": "frontend/src/pages/Shop.tsx: ProductVisual",
+      "byteLength": 1197,
+      "sha256": "ac7ffd15d32da762581ef3c18cfca43d820ff147251bc03f2b8b2ac91ae26e3a"
+    },
+    {
+      "name": "live-globe",
+      "nodeId": "8:76",
+      "sourceUrl": "https://www.figma.com/api/mcp/asset/3e4a1bd2-32f5-4c0d-828f-a7f40d8fe9b7/ab215.svg",
+      "repositoryPath": "frontend/public/assets/figma/live-globe.svg",
+      "width": 20,
+      "height": 20,
+      "callsite": "frontend/src/pages/LiveTests.tsx: approved website panel header",
+      "byteLength": 1633,
+      "sha256": "f1f989960d715af1861704a84135e9b7b68b8af3d1b290e95623616e91b43626"
+    }
+  ]
+}

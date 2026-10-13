@@ -1,0 +1,28 @@
+{
+  "designUrl": "https://www.figma.com/design/344gY1vPHJBMCDec9nO2lq",
+  "appUrl": "https://bizplus-ai-api.onrender.com",
+  "scope": "Figma design, implemented UI, and real browser/API verification. No simulated result data copied from designs.",
+  "nativeDesign": { "screensReviewed":9, "prototypeActions":47, "horizontalOverflow":0, "editableVectors":true, "mobileViewport":{"width":390,"height":844}, "ledger":"artifacts/design/figma-design-system.json" },
+  "localChecks": {
+    "backendTests":{"passed":47,"failed":0,"skipped":0},
+    "typecheck":"passed",
+    "productionBuild":"passed",
+    "coreBrowser": {
+      "healthyWorkflow":"passed",
+      "missingConfirmation":"HTTP 200 failed its business assertion; evidence-linked investigation opened",
+      "recovery":"verified the original order",
+      "originalOrder":"2d6f6a27-6d17-4e93-bc37-6ac59bf6835d",
+      "paymentsBefore":1,
+      "paymentsAfter":1,
+      "olderIncidentComparison":"remained loaded across subsequent polls while another run was selected",
+      "mobileMenu":"closed sidebar inert; Escape restores trigger focus; reset dialog makes surrounding app inert",
+      "routeFocus":"heading focused and viewport reset to top",
+      "liveProgress":"observed Inventory running with inspector following; completion selects verified confirmation",
+      "mobileOverflow":false
+    },
+    "commerceAndLiveLedger":"artifacts/design/frontend-redesign-qa.json",
+    "paymentScope":"New UI checks did not perform a purchase. Prior verified Razorpay Test Mode purchase evidence is retained separately."
+  },
+  "deployment":{"status":"pending_public_verification"},
+  "limitations":["The hosted service uses temporary SQLite history. Supabase remains pending a valid PostgreSQL connection URI.","Prototype layouts show fixed states; measured results come from the deployed API."]
+}
