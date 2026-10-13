@@ -144,6 +144,25 @@ test('independent dashboard displays observed history safely while target remain
   } finally { await browser.close(); await observer.close(); }
 });
 
+test('storefront waits for delayed hydration within its total budget and still checks actual controls', { timeout: 20000 }, async () => {
+  const target = createServer((_req, res) => {
+    res.setHeader('Content-Type', 'text/html');
+    res.end(`<p>Storefront is loading</p><script>setTimeout(()=>{
+      const add=document.createElement('button');add.setAttribute('aria-label','Add Demo item to cart');add.textContent='Add';document.body.append(add);
+      const count=document.createElement('span');count.className='cart-count';count.textContent='0';document.body.append(count);
+      const control=document.createElement('div');control.className='quantity-control';const minus=document.createElement('button');minus.setAttribute('aria-label','Remove one Demo item');const quantity=document.createElement('span');quantity.textContent='0';const plus=document.createElement('button');plus.setAttribute('aria-label','Add one Demo item');control.append(minus,quantity,plus);document.body.append(control);
+      const checkout=document.createElement('button');checkout.className='checkout-button';checkout.textContent='Test checkout';document.body.append(checkout);
+      add.onclick=()=>{count.textContent='1';quantity.textContent='1'};plus.onclick=()=>quantity.textContent='2';minus.onclick=()=>quantity.textContent='1';
+    },3400)</script>`);
+  });
+  const origin = await listen(target); const probes = new BrowserProbes(origin);
+  try {
+    const result = await probes.storefront();
+    assert.equal(result.assertions.every(item => item.passed), true);
+    assert.equal(result.assertions.some(item => item.code === 'STOREFRONT_QUANTITY'), true);
+  } finally { await close(target); }
+});
+
 test('actual Chromium detects JavaScript, button, login, database, and confirmation faults then verifies restored journey', { timeout: 60000 }, async () => {
   let fault = 'healthy';
   const target = createServer((req, res) => {
@@ -171,6 +190,7 @@ test('actual Chromium detects JavaScript, button, login, database, and confirmat
       fault = selected;
       const result = await probes.probe(randomUUID());
       assert.equal(result.assertions.some(item => !item.passed), true, `${selected} must fail the actual browser flow`);
+      assert.equal(result.evidence.some(item => item.startsWith('Actual browser failure at ')), true, 'Failed action must retain its actual browser error.');
       if (selected === 'javascript') {
         assert.equal(result.assertions.find(item => item.code === 'BROWSER_JAVASCRIPT').passed, false);
         assert.match(result.evidence.join(' '), /Controlled laboratory JavaScript exception/);

@@ -2,7 +2,10 @@ import { chromium } from 'playwright';
 import { randomUUID } from 'node:crypto';
 import { UUID } from './config.mjs';
 
-const clean = value => String(value).replace(/(bearer\s+|token[=:]\s*)[^\s,;]+/gi, '$1[redacted]').slice(0, 250);
+const clean = value => String(value)
+  .replace(/(bearer\s+|token[=:]\s*)[^\s,;]+/gi, '$1[redacted]')
+  .replace(/https?:\/\/[^\s)"']+/gi, url => { try { const parsed = new URL(url); return `${parsed.origin}${parsed.pathname}`; } catch { return '[URL redacted]'; } })
+  .replace(/\s+/g, ' ').slice(0, 250);
 const assertion = (code, expected, actual, passed) => ({ code, expected, actual: clean(actual), passed });
 
 export class BrowserProbes {
@@ -61,7 +64,10 @@ export class BrowserProbes {
           result.assertions.push(assertion(stage, 'Synthetic order confirmed after pressing checkout', await page.getByTestId('confirmation').innerText(), true));
         } else {
           stage = 'STOREFRONT_ADD_TO_CART';
-          await page.getByRole('button', { name: /^Add .+ to cart$/ }).first().click();
+          // The first control depends on HTML, JavaScript hydration, health and catalog
+          // reads. Allow that bootstrap to use the remaining bounded journey budget.
+          const bootstrapTimeout = Math.max(1, Math.min(10000, 15000 - (Date.now() - started) - 500));
+          await page.getByRole('button', { name: /^Add .+ to cart$/ }).first().click({ timeout: bootstrapTimeout });
           await page.locator('.cart-count').filter({ hasText: /1/ }).waitFor();
           result.assertions.push(assertion(stage, 'Cart quantity becomes 1', await page.locator('.cart-count').innerText(), true));
           stage = 'STOREFRONT_QUANTITY';
@@ -87,10 +93,11 @@ export class BrowserProbes {
         result.error = this.health.lastError;
         result.assertions.push(assertion(stage, 'Observer Chromium runtime available', this.health.lastError, false));
       } else {
-        const actual = `Browser did not satisfy ${stage} within its deadline.`;
+        const detail = clean(error instanceof Error ? error.message : 'Unknown browser execution failure');
+        const actual = `${stage}: ${detail}`;
         result.error = actual;
         result.assertions.push(assertion(stage, 'Browser action completes and visible business outcome changes', actual, false));
-        result.evidence.push('An actual Chromium page action or navigation failed; inspect observed browser and network evidence.');
+        result.evidence.push(`Actual browser failure at ${stage}: ${detail}`);
       }
     } finally {
       clearTimeout(timer);

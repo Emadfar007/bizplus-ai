@@ -1,5 +1,31 @@
 # BizPlus AI verification results
 
+## Live incident release — 13 October 2026
+
+Live checks now include rules-based failure explanations, observed facts, confirmed versus possible causes, suggested solutions, preserved incident evidence, and fresh recovery verification. The fault lab is session-isolated, expires after at most two minutes, and affects only the dedicated synthetic test website.
+
+| Scope | Observed result |
+| --- | --- |
+| Complete backend suite | **47/47 passed**, including actual local PostgreSQL |
+| Independent observer suite | **11/11 passed**, including actual Chromium |
+| TypeScript and production build | Passed; the exact publication tree also built successfully |
+| Local controlled failures | **11/11** detected, explained, restored and verified |
+| Public controlled failures | **11/11** detected, explained, restored and verified through real HTTPS and the separately hosted Chromium observer |
+| Real request timeout | Delayed response exceeded the actual twelve-second deadline; recovery passed |
+| Local browser UI | Healthy → HTTP 500 → verified recovery; HTTP 200 JavaScript failure → verified recovery; original failures retained |
+| Mobile UI | 390-pixel layout had no document overflow or application page errors |
+| Independent OS-process outage test | Dedicated target process stopped; observer stayed available, opened an outage incident, and verified recovery after target restart |
+| Public dependency readiness | Primary database reads and actual read-only Razorpay Test Mode authentication passed |
+| Public observer | Availability, readiness, storefront document, real storefront cart controls, and synthetic login-to-confirmation journey passed |
+
+Evidence: [public fault replay](../artifacts/verification/render-live-errors.json), [local fault replay](../artifacts/verification/live-errors-local.json), [local browser workflow](../artifacts/verification/live-errors-browser-local.json), and [separate-process outage proof](../artifacts/verification/observer-process-outage-local.json). The independent monitor is [bizplus-ai-observer.onrender.com](https://bizplus-ai-observer.onrender.com).
+
+The public observer also recorded a transient hosted application interruption during deployment and resolved the affected availability/readiness/storefront incidents after passing checks. That observation alone does not establish the hosting failure's underlying cause. The browser runner now retains bounded, sanitized action errors and permits initial storefront hydration within its overall fifteen-second budget.
+
+All fault operations were isolated; no real database outage or provider payment was introduced. Restoring a test site clears only the matching session fault and resolves the incident only after a new passing check. Browser incidents cannot resolve through HTTP-only verification when the browser monitor is unavailable. Public lab requests are rate- and concurrency-bounded; unknown UUIDs cannot allocate test sessions.
+
+The observer runs in a separate free Render service, so its process is independent of the monitored application. Free instances can sleep and hosted SQLite history remains temporary. Uninterrupted production monitoring requires an always-on host and durable storage. Unattended storefront checks cover cart controls and checkout availability; they do not submit real payment checkout or arbitrary customer authentication. See [live errors and controlled recovery](live-errors.md).
+
 ## Current commerce release — 13 October 2026
 
 The complete frontend and API are live on [Render](https://bizplus-ai-api.onrender.com). Monitoring scenarios, storefront purchases, and live website checks use separate records and metrics.
