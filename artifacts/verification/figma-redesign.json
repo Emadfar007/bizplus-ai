@@ -2,27 +2,121 @@
   "designUrl": "https://www.figma.com/design/344gY1vPHJBMCDec9nO2lq",
   "appUrl": "https://bizplus-ai-api.onrender.com",
   "scope": "Figma design, implemented UI, and real browser/API verification. No simulated result data copied from designs.",
-  "nativeDesign": { "screensReviewed":9, "prototypeActions":47, "horizontalOverflow":0, "editableVectors":true, "mobileViewport":{"width":390,"height":844}, "ledger":"artifacts/design/figma-design-system.json" },
-  "localChecks": {
-    "backendTests":{"passed":47,"failed":0,"skipped":0},
-    "typecheck":"passed",
-    "productionBuild":"passed",
-    "coreBrowser": {
-      "healthyWorkflow":"passed",
-      "missingConfirmation":"HTTP 200 failed its business assertion; evidence-linked investigation opened",
-      "recovery":"verified the original order",
-      "originalOrder":"2d6f6a27-6d17-4e93-bc37-6ac59bf6835d",
-      "paymentsBefore":1,
-      "paymentsAfter":1,
-      "olderIncidentComparison":"remained loaded across subsequent polls while another run was selected",
-      "mobileMenu":"closed sidebar inert; Escape restores trigger focus; reset dialog makes surrounding app inert",
-      "routeFocus":"heading focused and viewport reset to top",
-      "liveProgress":"observed Inventory running with inspector following; completion selects verified confirmation",
-      "mobileOverflow":false
+  "nativeDesign": {
+    "screensReviewed": 9,
+    "prototypeActions": 47,
+    "horizontalOverflow": 0,
+    "editableVectors": true,
+    "mobileViewport": {
+      "width": 390,
+      "height": 844
     },
-    "commerceAndLiveLedger":"artifacts/design/frontend-redesign-qa.json",
-    "paymentScope":"New UI checks did not perform a purchase. Prior verified Razorpay Test Mode purchase evidence is retained separately."
+    "ledger": "artifacts/design/figma-design-system.json"
   },
-  "deployment":{"status":"pending_public_verification"},
-  "limitations":["The hosted service uses temporary SQLite history. Supabase remains pending a valid PostgreSQL connection URI.","Prototype layouts show fixed states; measured results come from the deployed API."]
+  "localChecks": {
+    "backendTests": {
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "coreBrowser": {
+      "healthyWorkflow": "passed",
+      "missingConfirmation": "HTTP 200 failed its business assertion; evidence-linked investigation opened",
+      "recovery": "verified the original order",
+      "originalOrder": "2d6f6a27-6d17-4e93-bc37-6ac59bf6835d",
+      "paymentsBefore": 1,
+      "paymentsAfter": 1,
+      "olderIncidentComparison": "remained loaded across subsequent polls while another run was selected",
+      "mobileMenu": "closed sidebar inert; Escape restores trigger focus; reset dialog makes surrounding app inert",
+      "routeFocus": "heading focused and viewport reset to top",
+      "liveProgress": "observed Inventory running with inspector following; completion selects verified confirmation",
+      "mobileOverflow": false
+    },
+    "commerceAndLiveLedger": "artifacts/design/frontend-redesign-qa.json",
+    "paymentScope": "New UI checks did not perform a purchase. Prior verified Razorpay Test Mode purchase evidence is retained separately."
+  },
+  "deployment": {
+    "status": "live",
+    "serviceId": "srv-db6sad0m7kps73b684jg",
+    "deployId": "dep-db6vd58jo6nc738851jg",
+    "commit": "1d05c982b093f3a5882023c91c12d98960a04f68",
+    "health": {
+      "status": "ok",
+      "app": "BizPlus AI",
+      "instanceId": "90148441-62e5-4e29-9083-34340755bf30",
+      "instanceStartedAt": "2026-10-13T09:16:02.912Z",
+      "historyPolicy": "temporary",
+      "diagnosis": "rules"
+    }
+  },
+  "limitations": [
+    "The hosted service uses temporary SQLite history. Supabase remains pending a valid PostgreSQL connection URI.",
+    "Prototype layouts show fixed states; measured results come from the deployed API."
+  ],
+  "verifiedAt": "2026-10-13T09:21:08.596Z",
+  "publicChecks": {
+    "functionalReleaseCommit": "b324395d0177d0d15e16284b44744b2c8f9e2294",
+    "finalLayoutCommit": "1d05c982b093f3a5882023c91c12d98960a04f68",
+    "followUpScope": "Only three mobile verification-card CSS rules changed. Backend, contracts, TypeScript UI and payment logic remained identical.",
+    "coreJourney": {
+      "healthy": "passed",
+      "missingConfirmation": "HTTP 200 with missing order detected",
+      "incidentId": "c01ee314-5c77-49fc-b246-8780e2c1c501",
+      "recovery": "resolved",
+      "originalOrder": "72097f18-b04b-4c15-a94f-51d06d840240",
+      "paymentsBefore": 1,
+      "paymentsAfter": 1
+    },
+    "checkout": {
+      "categoryFilter": "Audio shows two products",
+      "cart": "One Orbit Mini Speaker, INR599",
+      "razorpay": "Real provider checkout opened in Test Mode",
+      "result": "Closed without payment; pending order retained for unchanged-cart retry",
+      "pendingOrderPrefix": "9637826e",
+      "newPurchasePerformed": false
+    },
+    "live": {
+      "session": "37942d11-bce3-49a1-9829-588b8a09a00f",
+      "originalFailure": {
+        "id": "eefd16d9-7452-4e5d-a6ef-e233df346d72",
+        "httpStatus": 500,
+        "durationMs": 60,
+        "incidentStatus": "resolved"
+      },
+      "verification": {
+        "id": "d70e5fc4-b266-4f3e-a823-d4adca8e74e2",
+        "httpStatus": 200,
+        "durationMs": 5506,
+        "passedAssertions": 8,
+        "totalAssertions": 8
+      },
+      "observer": "Separate observer connected; availability and browser journey checks reported passing"
+    },
+    "phone": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "horizontalOverflow": false,
+      "verificationLayout": "32px icon column and 216px content; status badge on a separate row",
+      "productArtwork": {
+        "width": 180,
+        "height": 145,
+        "loaded": true
+      }
+    },
+    "directRouteRefresh": [
+      "/live-tests",
+      "/shop"
+    ],
+    "historyPolicy": "temporary",
+    "screenshots": [
+      "artifacts/screenshots/figma-redesign/render-storefront-full.png",
+      "artifacts/screenshots/figma-redesign/render-recovery.png",
+      "artifacts/screenshots/figma-redesign/render-shop-mobile.png",
+      "artifacts/screenshots/figma-redesign/render-live-mobile-recovery-final.png"
+    ]
+  }
 }

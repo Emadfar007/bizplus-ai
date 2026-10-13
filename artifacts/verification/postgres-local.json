@@ -13,6 +13,6 @@
     "Read-only SQLite import retains ledger/order IDs, is repeatable, and preserves source file hash",
     "Configured PostgreSQL failure stops startup without SQLite failover"
   ],
-  "durationMs": 12422,
-  "completedAt": "2026-10-13T06:50:39.867Z"
+  "durationMs": 18383,
+  "completedAt": "2026-10-13T08:41:45.088Z"
 }
