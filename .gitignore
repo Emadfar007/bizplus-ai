@@ -12,3 +12,4 @@ artifacts/.build/
 .playwright/
 *.log
 test-results/
+*.tsbuildinfo
