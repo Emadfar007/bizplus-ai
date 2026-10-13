@@ -10,7 +10,9 @@
     "start": "npm run start -w @bizplus/backend",
     "dev": "npm run build:shared && concurrently -k -n api,web -c cyan,magenta \"npm run dev -w @bizplus/backend\" \"npm run dev -w @bizplus/frontend\"",
     "test": "npm run build:shared && npm run test -w @bizplus/backend",
-    "typecheck": "npm run build:shared && npm run typecheck -w @bizplus/backend && npm run typecheck -w @bizplus/frontend"
+    "typecheck": "npm run build:shared && npm run typecheck -w @bizplus/backend && npm run typecheck -w @bizplus/frontend",
+    "deploy:check": "node scripts/deploy-hosts.mjs --check",
+    "deploy": "node scripts/deploy-hosts.mjs --deploy"
   },
   "devDependencies": { "concurrently": "^9.2.1", "typescript": "^5.9.3" }
 }

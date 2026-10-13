@@ -82,6 +82,8 @@ Set `VITE_API_BASE_URL` before the build, then redeploy after changing it. `VITE
 
 The frontend waits for backend readiness before enabling tests. Test the actual cold start before presenting, and open the demo ahead of the judging slot. See [Render Free limits](https://render.com/docs/free), [Render monorepos](https://render.com/docs/monorepo-support), and [Netlify Vite setup](https://docs.netlify.com/build/frameworks/framework-setup-guides/vite/).
 
+For the resumable API deployment helper, see [hosting authentication and deployment](docs/deployment-auth.md). `npm.cmd run deploy:check` checks access without creating resources. `npm.cmd run deploy` uses the locally provided credentials to create this project's free hosts and upload the frontend; it requires clean, pushed source. Provider credentials remain in the ignored `.local/deployment.env` file.
+
 ## API contract
 
 Requests for session data include `X-Demo-Session` with the browser's UUID. Use `/health` without a session to check readiness. The shared TypeScript types define run, evidence, assertion, diagnosis, incident, and recovery responses.
