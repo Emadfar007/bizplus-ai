@@ -15,5 +15,13 @@ services:
         value: temporary
       - key: DATABASE_PATH
         value: .local/bizplus.sqlite
+      - key: SERVE_FRONTEND
+        value: "true"
+      - key: VITE_API_BASE_URL
+        value: https://bizplus-ai-api.onrender.com
       - key: CORS_ORIGIN
+        value: https://bizplus-ai-api.onrender.com
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
         sync: false

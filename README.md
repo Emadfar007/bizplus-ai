@@ -10,7 +10,17 @@ Backend deployed: [Render readiness endpoint](https://bizplus-ai-api.onrender.co
 
 All payments and customers are synthetic. Diagnosis is visibly labelled **Rules-based diagnosis**. No LLM account or API key is required.
 
-Sandbox requests include a deliberate 220 ms delay so judges can follow the step progression. Measured timings include this delay and are demonstration results, not production benchmarks.
+Sandbox requests include a deliberate 220 ms delay so judges can follow the step progression. Measured timings include this delay and are demonstration results, not production benchmarks. Live website checks have no injected delay.
+
+## Storefront, Razorpay and live websites
+
+The **Storefront** at `/shop` has six demo products, quantity controls, a session cart, Razorpay Standard Checkout in Test Mode, saved orders, and verified receipts. The server calculates prices, creates the provider order, checks the callback signature, and confirms the captured payment and matching provider totals before marking an order paid. Unchanged-cart retries reuse the original checkout. A delayed capture can be reconciled by reading the same order; checkout is never repeated for verification.
+
+An actual ₹599 Razorpay Test Mode purchase was completed through the browser and its paid receipt survived refresh. No real funds moved and demo products are not shipped. See [payment evidence](artifacts/verification/razorpay-test-purchase.json) and [integration setup](docs/commerce-and-live-tests.md).
+
+**Live tests** at `/live-tests` send bounded HTTPS GET requests to configured owned websites. The default target is the deployed BizPlus Render `/health` URL. Results retain measured latency, status/content assertions, a short text excerpt, and failure fingerprints. A 30-second toggle runs only while the page is visible. It checks HTTP responses; it does not automate browser logins or payments on third-party stores.
+
+`DATABASE_URL` selects PostgreSQL as the primary store for monitoring, live tests, and shop orders. The private schema, strict TLS, restart persistence, and SQLite migration were tested against an actual local PostgreSQL instance. **The hosted Supabase migration remains pending a valid PostgreSQL connection string.** See [database setup and migration](backend/database.md). The current local presentation explicitly uses SQLite until this setting is corrected.
 
 ## Run locally on Windows
 

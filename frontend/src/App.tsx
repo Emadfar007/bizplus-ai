@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink, Route, Routes, useNavigate, useParams } from 'react-router-dom';
-import { Activity, ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronDown, ChevronRight, CircleDot, FileSearch, FlaskConical, GitBranch, LayoutDashboard, Loader2, Menu, RefreshCw, RotateCcw, ShieldCheck, Sparkles, Terminal, TriangleAlert, X } from 'lucide-react';
+import { Link, NavLink, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Activity, ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronDown, ChevronRight, CircleDot, FileSearch, FlaskConical, GitBranch, Globe2, LayoutDashboard, Loader2, Menu, RefreshCw, RotateCcw, ShieldCheck, ShoppingBag, Sparkles, Terminal, TriangleAlert, X } from 'lucide-react';
 import type { Incident } from '@bizplus/shared';
 import { useWorkspace, type Workspace } from './hooks/useWorkspace';
 import { api } from './services/api';
 import { Badge, EmptyState, EvidencePanel, IncidentSummary, Journey, MetricRow, RunList, ScenarioControl, SectionLabel, shortId, StepComparison, time, TrendPanel } from './components/UI';
+import Shop from './pages/Shop';
+import LiveTests from './pages/LiveTests';
 
 function Brand() { return <Link to="/" className="brand"><span className="brand-mark"><Activity size={27}/></span><span>BizPlus <strong>AI</strong><small>BUSINESS RELIABILITY</small></span></Link>; }
-const NAVIGATION = [{ to: '/', title: 'Overview', icon: LayoutDashboard }, { to: '/workflows', title: 'Workflows', icon: GitBranch }, { to: '/incidents', title: 'Investigation', icon: FileSearch }, { to: '/recovery', title: 'Recovery', icon: ShieldCheck }];
+const NAVIGATION = [{ to: '/', title: 'Overview', icon: LayoutDashboard }, { to: '/workflows', title: 'Workflows', icon: GitBranch }, { to: '/incidents', title: 'Investigation', icon: FileSearch }, { to: '/recovery', title: 'Recovery', icon: ShieldCheck }, { to: '/shop', title: 'Storefront', icon: ShoppingBag }, { to: '/live-tests', title: 'Live tests', icon: Globe2 }];
 
 export default function App() {
   const workspace = useWorkspace();
@@ -15,9 +17,12 @@ export default function App() {
   const [resetDialog, setResetDialog] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const storefrontView = location.pathname.startsWith('/shop');
+  const liveView = location.pathname.startsWith('/live-tests');
   const investigate = (id: string) => navigate(`/incidents/${id}`);
   const historyPolicy = workspace.metrics?.historyPolicy || workspace.health?.historyPolicy;
-  const historyLabel = historyPolicy === 'temporary' ? 'Temporary history · resets when the hosted service restarts' : historyPolicy === 'local' ? 'Local history · saved on this machine' : 'History status available when the engine connects';
+  const historyLabel = historyPolicy === 'cloud' ? 'Cloud history · saved in PostgreSQL' : historyPolicy === 'temporary' ? 'Temporary history · resets when the hosted service restarts' : historyPolicy === 'local' ? 'Local history · saved on this machine' : 'History status available when the engine connects';
   useEffect(() => {
     if (!resetDialog) return;
     const priorFocus = document.activeElement as HTMLElement | null;
@@ -38,14 +43,14 @@ export default function App() {
     {menuOpen ? <button className="sidebar-scrim" aria-label="Close menu" onClick={() => setMenuOpen(false)}/> : null}
     <aside className={`sidebar ${menuOpen ? 'mobile-open' : ''}`}>
       <Brand/><button className="sidebar-close icon-button" aria-label="Close menu" onClick={() => setMenuOpen(false)}><X size={20}/></button>
-      <div className="workspace-pill"><span className="workspace-icon">B</span><span><strong>Demo workspace</strong><small>Commerce sandbox</small></span><ChevronDown size={14}/></div>
+      <div className="workspace-pill"><span className="workspace-icon">B</span><span><strong>Demo workspace</strong><small>Store + monitoring</small></span><ChevronDown size={14}/></div>
       <SectionLabel>WORKSPACE</SectionLabel>
       <nav aria-label="Main navigation">{NAVIGATION.map(item => <NavLink key={item.to} to={item.to} end={item.to === '/'} onClick={() => setMenuOpen(false)} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><item.icon size={18}/><span>{item.title}</span>{item.to === '/incidents' && workspace.metrics?.openIncidents ? <span className="nav-count">{workspace.metrics.openIncidents}</span> : null}</NavLink>)}</nav>
       <div className="sidebar-engine"><div className="engine-icon"><Sparkles size={19}/></div><strong>Evidence over guesswork.</strong><p>Every diagnosis points back to captured responses and logs.</p><span className="engine-label"><CircleDot size={12}/> Rules-based engine</span></div>
-      <div className="sidebar-bottom"><div><span className="sidebar-dot"/> Owned sandbox only</div><button className="text-button" disabled={workspace.active} onClick={() => setResetDialog(true)}><RotateCcw size={14}/> Fresh demo session</button><code>SESSION {shortId(workspace.session)}</code></div>
+      <div className="sidebar-bottom"><div><span className="sidebar-dot"/> Sandbox + approved websites</div><button className="text-button" disabled={workspace.active} onClick={() => setResetDialog(true)}><RotateCcw size={14}/> Fresh demo session</button><code>SESSION {shortId(workspace.session)}</code></div>
     </aside>
     <div className="main-shell">
-      <header className="topbar"><div className="breadcrumb"><button className="mobile-menu icon-button" aria-label="Open menu" onClick={() => setMenuOpen(true)}><Menu size={20}/></button><span>Workspace</span><ChevronRight size={14}/><strong>Commerce reliability</strong></div><div className="topbar-right"><span className="demo-tag"><FlaskConical size={13}/> LIVE SANDBOX</span><span className={`connection-status ${workspace.connection}`}><span/>{workspace.connection === 'ready' ? 'Backend online' : workspace.connection === 'connecting' ? 'Waking backend' : 'Backend offline'}</span><div className="avatar" title="Your isolated demo session">B</div></div></header>
+      <header className="topbar"><div className="breadcrumb"><button className="mobile-menu icon-button" aria-label="Open menu" onClick={() => setMenuOpen(true)}><Menu size={20}/></button><span>Workspace</span><ChevronRight size={14}/><strong>{storefrontView ? 'BizPlus Select storefront' : liveView ? 'Live website checks' : 'Commerce reliability'}</strong></div><div className="topbar-right"><span className="demo-tag"><FlaskConical size={13}/>{storefrontView ? 'RAZORPAY TEST MODE' : liveView ? 'LIVE HTTPS' : 'LIVE SANDBOX'}</span><span className={`connection-status ${workspace.connection}`}><span/>{workspace.connection === 'ready' ? 'Backend online' : workspace.connection === 'connecting' ? 'Waking backend' : 'Backend offline'}</span><div className="avatar" title="Your isolated demo session">B</div></div></header>
       <main>
         {workspace.connection !== 'ready' ? <div className={`connection-banner ${workspace.connection}`} role="status">{workspace.connection === 'connecting' ? <Loader2 size={18} className="spin"/> : <TriangleAlert size={18}/>}<div><strong>{workspace.connection === 'connecting' ? 'Connecting to the monitoring engine…' : 'The monitoring engine is unavailable'}</strong><p>{workspace.connection === 'connecting' ? 'Free hosting may take about a minute to wake. We’ll retry for up to two minutes; tests unlock when it is ready.' : 'Confirm the backend is running, or retry the connection. You can also use the local presentation fallback.'}</p></div>{workspace.connection === 'offline' ? <button className="secondary-button" onClick={workspace.reconnect}><RefreshCw size={14}/> Retry connection</button> : null}</div> : null}
         {workspace.error ? <div className="feedback error" role="alert"><TriangleAlert size={18}/><span>{workspace.error}</span><button className="text-button" onClick={() => void workspace.refresh()}>Retry</button><button className="icon-button" aria-label="Dismiss error" onClick={workspace.clearError}><X size={16}/></button></div> : null}
@@ -57,12 +62,14 @@ export default function App() {
           <Route path="/incidents/:id" element={<Investigation workspace={workspace}/>}/>
           <Route path="/recovery" element={<Recovery workspace={workspace}/>}/>
           <Route path="/recovery/:id" element={<Recovery workspace={workspace}/>}/>
+          <Route path="/shop" element={<Shop key={workspace.session} workspace={workspace}/>}/>
+          <Route path="/live-tests" element={<LiveTests key={workspace.session} workspace={workspace}/>}/>
           <Route path="*" element={<EmptyState title="This view could not be found"><Link to="/">Return to the overview</Link></EmptyState>}/>
         </Routes>
-        <footer className="app-footer"><span><ShieldCheck size={13}/> Synthetic data. Simulated payments. Verified outcomes.</span><span>{historyLabel} <span className="footer-separator">/</span> {workspace.lastUpdated ? `Synced ${workspace.lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Waiting for connection'}</span></footer>
+        <footer className="app-footer"><span><ShieldCheck size={13}/>{storefrontView ? 'Razorpay Test Mode. Store orders are separate from synthetic runs.' : liveView ? 'Approved owned websites. Actual HTTPS checks. Measured outcomes.' : 'Synthetic data. Simulated payments. Verified outcomes.'}</span><span>{historyLabel} <span className="footer-separator">/</span> {workspace.lastUpdated ? `Synced ${workspace.lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Waiting for connection'}</span></footer>
       </main>
     </div>
-    {resetDialog ? <div className="modal-backdrop" onClick={() => setResetDialog(false)}><div ref={modalRef} className="modal" role="dialog" aria-modal="true" aria-labelledby="reset-title" onClick={event => event.stopPropagation()}><span className="modal-icon"><RotateCcw size={23}/></span><h2 id="reset-title">Start a fresh demo?</h2><p>A new session gives you an empty dashboard and independent test transactions. Your previous session’s runs are retained until the server history resets.</p><div className="modal-actions"><button className="secondary-button" onClick={() => setResetDialog(false)}>Keep this session</button><button className="primary-button" onClick={() => { workspace.resetSession(); navigate('/'); setResetDialog(false); }}>Start fresh <ArrowRight size={15}/></button></div></div></div> : null}
+    {resetDialog ? <div className="modal-backdrop" onClick={() => setResetDialog(false)}><div ref={modalRef} className="modal" role="dialog" aria-modal="true" aria-labelledby="reset-title" onClick={event => event.stopPropagation()}><span className="modal-icon"><RotateCcw size={23}/></span><h2 id="reset-title">Start a fresh demo?</h2><p>A new session gives you an empty dashboard and independent test transactions. Previous runs and orders remain in their existing session; this starts an independent demo.</p><div className="modal-actions"><button className="secondary-button" onClick={() => setResetDialog(false)}>Keep this session</button><button className="primary-button" onClick={() => { workspace.resetSession(); navigate('/'); setResetDialog(false); }}>Start fresh <ArrowRight size={15}/></button></div></div></div> : null}
   </div>;
 }
 

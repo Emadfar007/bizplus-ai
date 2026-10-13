@@ -2,14 +2,15 @@ import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { Incident, IncidentList, Run } from '@bizplus/shared';
+import type { CommerceOrder, Incident, IncidentList, LiveRun, Run } from '@bizplus/shared';
+import type { DataStore, PaymentRow } from './types.js';
 
 type JsonRow = { data: string };
-type PaymentRow = { order_id: string; transaction_id: string; amount_minor: number };
 export const AMOUNT_MINOR = 129900;
 export const PRODUCT_ID = 'BP-HEADSET';
 
-export class Store {
+export class Store implements DataStore {
+  readonly driver = 'sqlite' as const;
   readonly db: DatabaseSync;
   constructor(path: string) {
     if (path !== ':memory:') mkdirSync(dirname(path), { recursive: true });
@@ -51,7 +52,29 @@ export class Store {
         id TEXT PRIMARY KEY, run_id TEXT NOT NULL REFERENCES runs(id) ON DELETE CASCADE,
         timestamp TEXT NOT NULL, message TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS commerce_orders (
+        id TEXT PRIMARY KEY, session_id TEXT NOT NULL, checkout_key TEXT NOT NULL,
+        status TEXT NOT NULL, razorpay_order_id TEXT UNIQUE, razorpay_payment_id TEXT UNIQUE,
+        created_at TEXT NOT NULL, updated_at TEXT NOT NULL, data TEXT NOT NULL,
+        UNIQUE(session_id,checkout_key)
+      );
+      CREATE INDEX IF NOT EXISTS commerce_orders_session ON commerce_orders(session_id, created_at);
+      CREATE TABLE IF NOT EXISTS live_runs (
+        id TEXT PRIMARY KEY, session_id TEXT NOT NULL, status TEXT NOT NULL,
+        created_at TEXT NOT NULL, data TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS live_runs_session ON live_runs(session_id,created_at);
     `);
+  }
+  initialize(): void {
+    const rows = this.db.prepare("SELECT session_id,data FROM live_runs WHERE status IN ('queued','running')").all() as { session_id: string; data: string }[];
+    for (const row of rows) {
+      const run = JSON.parse(row.data) as LiveRun;
+      run.status = 'failed'; run.error = 'The backend restarted before this website test completed.'; run.message = run.error;
+      run.completedAt = new Date().toISOString();
+      run.assertions.push({ code: 'REQUEST_COMPLETED', expected: 'Completed website response', actual: 'Interrupted by backend restart', passed: false });
+      this.saveLiveRun(row.session_id,run);
+    }
   }
 
   transaction<T>(operation: () => T): T {
@@ -166,6 +189,41 @@ export class Store {
   }
   prune(before: string): void {
     this.db.prepare("DELETE FROM runs WHERE created_at<? AND status NOT IN ('queued','running') AND id NOT IN (SELECT run_id FROM incidents WHERE status='recovering')").run(before);
+  }
+  saveCommerceOrder(session: string, order: CommerceOrder): void {
+    const result = this.db.prepare(`INSERT INTO commerce_orders(id,session_id,checkout_key,status,razorpay_order_id,razorpay_payment_id,created_at,updated_at,data)
+      VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET status=excluded.status,razorpay_order_id=excluded.razorpay_order_id,
+      razorpay_payment_id=excluded.razorpay_payment_id,updated_at=excluded.updated_at,data=excluded.data
+      WHERE commerce_orders.session_id=excluded.session_id AND commerce_orders.checkout_key=excluded.checkout_key`).run(
+      order.id, session, order.checkoutKey, order.status, order.razorpayOrderId, order.razorpayPaymentId, order.createdAt, order.updatedAt, JSON.stringify(order));
+    if (result.changes !== 1) throw new Error('Commerce order ownership or checkout key does not match');
+  }
+  getCommerceOrder(id: string, session: string): CommerceOrder | null {
+    const row = this.db.prepare('SELECT data FROM commerce_orders WHERE id=? AND session_id=?').get(id, session) as JsonRow | undefined;
+    return row ? JSON.parse(row.data) as CommerceOrder : null;
+  }
+  getCommerceOrderByCheckoutKey(session: string, key: string): CommerceOrder | null {
+    const row = this.db.prepare('SELECT data FROM commerce_orders WHERE session_id=? AND checkout_key=?').get(session, key) as JsonRow | undefined;
+    return row ? JSON.parse(row.data) as CommerceOrder : null;
+  }
+  getCommerceOrderByProviderId(id: string): { session: string; order: CommerceOrder } | null {
+    const row = this.db.prepare('SELECT session_id,data FROM commerce_orders WHERE razorpay_order_id=? OR razorpay_payment_id=?').get(id, id) as { session_id: string; data: string } | undefined;
+    return row ? { session: row.session_id, order: JSON.parse(row.data) as CommerceOrder } : null;
+  }
+  listCommerceOrders(session: string): CommerceOrder[] {
+    return (this.db.prepare('SELECT data FROM commerce_orders WHERE session_id=? ORDER BY created_at DESC,rowid DESC LIMIT 100').all(session) as JsonRow[]).map(row => JSON.parse(row.data) as CommerceOrder);
+  }
+  saveLiveRun(session: string, run: LiveRun): void {
+    const result = this.db.prepare(`INSERT INTO live_runs(id,session_id,status,created_at,data) VALUES(?,?,?,?,?)
+      ON CONFLICT(id) DO UPDATE SET status=excluded.status,data=excluded.data WHERE live_runs.session_id=excluded.session_id`).run(run.id, session, run.status, run.startedAt, JSON.stringify(run));
+    if (result.changes !== 1) throw new Error('Live run ownership does not match');
+  }
+  getLiveRun(id: string, session: string): LiveRun | null {
+    const row = this.db.prepare('SELECT data FROM live_runs WHERE id=? AND session_id=?').get(id, session) as JsonRow | undefined;
+    return row ? JSON.parse(row.data) as LiveRun : null;
+  }
+  listLiveRuns(session: string): LiveRun[] {
+    return (this.db.prepare('SELECT data FROM live_runs WHERE session_id=? ORDER BY created_at DESC,rowid DESC LIMIT 100').all(session) as JsonRow[]).map(row => JSON.parse(row.data) as LiveRun);
   }
   close(): void { this.db.close(); }
 }

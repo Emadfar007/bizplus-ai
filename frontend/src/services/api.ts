@@ -17,7 +17,7 @@ export function newSession(): string {
 export class RequestError extends Error {
   constructor(message: string, public status: number, public code?: string) { super(message); }
 }
-async function request<T>(path: string, session: string, init: RequestInit = {}, timeoutMs = 15000): Promise<T> {
+export async function request<T>(path: string, session: string, init: RequestInit = {}, timeoutMs = 15000): Promise<T> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {

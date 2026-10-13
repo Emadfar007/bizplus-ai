@@ -1,0 +1,37 @@
+{
+  "id": "bccee08a-8789-4850-9abe-52baf1764bbc",
+  "targetId": "bizplus-public-api",
+  "url": "https://bizplus-ai-api.onrender.com/health",
+  "status": "passed",
+  "httpStatus": 200,
+  "durationMs": 215,
+  "startedAt": "2026-10-13T06:33:40.280Z",
+  "completedAt": "2026-10-13T06:33:40.498Z",
+  "error": null,
+  "message": "Website returned its expected status and content.",
+  "assertions": [
+    {
+      "code": "HTTP_STATUS",
+      "expected": "HTTP 200",
+      "actual": "HTTP 200",
+      "passed": true
+    },
+    {
+      "code": "EXPECTED_CONTENT",
+      "expected": "\"status\":\"ok\"",
+      "actual": "Expected content found",
+      "passed": true
+    },
+    {
+      "code": "RESPONSE_PRESENT",
+      "expected": "Non-empty response body",
+      "actual": "181 bytes",
+      "passed": true
+    }
+  ],
+  "evidence": {
+    "responseBytes": 181,
+    "excerpt": "{\"status\":\"ok\",\"app\":\"BizPlus AI\",\"instanceId\":\"1e593580-0c99-412a-a004-7ffa39795574\",\"instanceStartedAt\":\"2026-10-13T06:25:56.153Z\",\"historyPolicy\":\"temporary\",\"diagnosis\":\"rules\"}"
+  },
+  "fingerprint": null
+}

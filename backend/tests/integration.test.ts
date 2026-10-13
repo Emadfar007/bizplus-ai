@@ -7,6 +7,8 @@ import { join, dirname, basename, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import type { Incident, IncidentList, Metrics, RecoveryResult, Run, Scenario } from '@bizplus/shared';
 import { startServer, type AppOptions } from '../src/app.js';
+import { Store } from '../src/database/store.js';
+import type { DataStore } from '../src/database/types.js';
 
 type Runtime = Awaited<ReturnType<typeof startServer>>;
 async function api(runtime: Runtime, session: string, path: string, body?: unknown, headers: Record<string, string> = {}) {
@@ -134,6 +136,31 @@ test('one active run per session while another session can run independently', a
     await runtime.engine.drain();
     assert.equal(runtime.store.listRuns(session)[0]?.status, 'passed');
   }, { sandboxLatencyMs: 20 });
+});
+
+test('transient running-state persistence failure becomes terminal and releases the session without restart', async () => {
+  const underlying = new Store(':memory:'); let saves = 0;
+  const store: DataStore = new Proxy(underlying, {
+    get(target, property) {
+      if (property === 'saveRun') return async (session: string, run: Run) => {
+        if (++saves === 2) throw new Error('Fixture transient running-state write failure');
+        target.saveRun(session, run);
+      };
+      const value = Reflect.get(target, property);
+      return typeof value === 'function' ? value.bind(target) : value;
+    },
+  });
+  await withRuntime(async (runtime, session) => {
+    const failed = await runScenario(runtime, session, 'healthy');
+    assert.equal(failed.status, 'failed'); assert.ok(failed.completedAt); assert.equal(failed.paymentCount, 0);
+    assert.equal(failed.steps[0]?.errorCategory, 'runner_error'); assert.ok(failed.steps[0]?.actual.includes('transient running-state write failure'));
+    assert.ok(failed.steps[0]?.evidence.some(e => e.message.includes('transient running-state write failure')));
+    assert.ok(failed.steps.slice(1).every(step => step.status === 'skipped'));
+    assert.equal(underlying.getIncident(failed.incidentId!, session)?.status, 'open');
+    assert.equal((await runScenario(runtime, session, 'healthy')).status, 'passed');
+    const metrics = await (await api(runtime, session, '/api/metrics')).json() as Metrics;
+    assert.equal(metrics.totalRuns, 2); assert.equal(metrics.failedRuns, 1); assert.equal(metrics.passedRuns, 1);
+  }, { store });
 });
 
 test('request deadline creates timeout evidence without leaving the run active', async () => {

@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "scope": "Actual temporary Windows PostgreSQL 18 instance, not hosted Supabase verification",
+  "checks": [
+    "PostgreSQL primary selected and reports cloud history",
+    "Nine private tables deny Data API roles and enable RLS",
+    "All three actual HTTP scenarios satisfy expected payment and outcome assertions",
+    "Concurrent checkout retries return one original payment",
+    "Concurrent approved recovery is idempotent with one payment",
+    "Cloud monitoring reads remain session isolated",
+    "Commerce order keys/provider IDs are unique and lookups preserve ownership",
+    "API restart retains cloud data and finalizes interrupted live checks",
+    "Read-only SQLite import retains ledger/order IDs, is repeatable, and preserves source file hash",
+    "Configured PostgreSQL failure stops startup without SQLite failover"
+  ],
+  "durationMs": 12422,
+  "completedAt": "2026-10-13T06:50:39.867Z"
+}

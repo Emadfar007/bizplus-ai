@@ -1,0 +1,38 @@
+{
+  "id": "a51f7ef9-f75e-4dba-9522-548e96d9f137",
+  "targetId": "bizplus-public-api",
+  "url": "https://bizplus-ai-api.onrender.com/health",
+  "status": "failed",
+  "httpStatus": 503,
+  "durationMs": 412,
+  "startedAt": "2026-10-13T06:25:32.402Z",
+  "completedAt": "2026-10-13T06:25:32.815Z",
+  "error": null,
+  "message": "Website response failed a configured assertion. Inspect the measured evidence.",
+  "assertions": [
+    {
+      "code": "HTTP_STATUS",
+      "expected": "HTTP 200",
+      "actual": "HTTP 503",
+      "passed": false
+    },
+    {
+      "code": "EXPECTED_CONTENT",
+      "expected": "\"status\":\"ok\"",
+      "actual": "Expected content missing",
+      "passed": false
+    },
+    {
+      "code": "RESPONSE_PRESENT",
+      "expected": "Non-empty response body",
+      "actual": "258535 bytes",
+      "passed": true
+    }
+  ],
+  "evidence": {
+    "responseBytes": 258535,
+    "title": "Render - Application loading",
+    "excerpt": "Render - Application loading Start building on Render today Application loading"
+  },
+  "fingerprint": "c3b092e8af781cdd"
+}

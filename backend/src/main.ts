@@ -1,4 +1,9 @@
 import { startServer } from './app.js';
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+const localIntegrations = fileURLToPath(new URL('../../.local/integrations.env',import.meta.url));
+if (existsSync(localIntegrations)) process.loadEnvFile(localIntegrations);
 
 const port = Number(process.env.PORT ?? '3001');
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('PORT must be an integer from 1 to 65535.');

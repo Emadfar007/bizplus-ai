@@ -1,0 +1,31 @@
+{
+  "verifiedAt": "2026-10-13T06:33:40.148Z",
+  "scope": "Real Razorpay Test Mode browser purchase with local SQLite",
+  "mode": "test",
+  "order": {
+    "id": "e66a819b-9a3c-4c84-9cdc-9cba9fa8502d",
+    "checkoutKey": "86099a11-52b7-48fd-91dc-bf5c76d2d1ee",
+    "status": "paid",
+    "items": [
+      {
+        "productId": "bp-speaker",
+        "name": "Orbit Mini Speaker",
+        "quantity": 1,
+        "unitAmountMinor": 59900,
+        "lineAmountMinor": 59900
+      }
+    ],
+    "amountMinor": 59900,
+    "currency": "INR",
+    "razorpayOrderId": "order_TnIEqaG2jY2uoI",
+    "razorpayPaymentId": "pay_TnIHtZFkrnW5SK",
+    "createdAt": "2026-10-13T06:26:40.678Z",
+    "updatedAt": "2026-10-13T06:29:56.745Z",
+    "paidAt": "2026-10-13T06:29:56.745Z"
+  },
+  "checks": {
+    "paidByServer": true,
+    "amountMinor": 59900,
+    "providerPaymentPresent": true
+  }
+}

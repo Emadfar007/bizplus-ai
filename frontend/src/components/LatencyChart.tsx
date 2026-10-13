@@ -2,7 +2,7 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 import type { Metrics } from '@bizplus/shared';
 export default function LatencyChart({ points }: { points: Metrics['chart'] }) {
   const data = points.map((point, index) => ({ ...point, index: index + 1, duration: point.durationMs, time: new Date(point.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }));
-  return <div className="chart-canvas" aria-label="Measured end-to-end duration for completed workflow runs">
+  return <div className="chart-canvas" aria-label="Measured durations for completed checks">
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart data={data} margin={{ top: 12, right: 8, bottom: 0, left: -28 }}>
         <defs><linearGradient id="latencyFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#55ddcc" stopOpacity={0.24}/><stop offset="100%" stopColor="#55ddcc" stopOpacity={0}/></linearGradient></defs>

@@ -4,7 +4,7 @@
   "engines": { "node": "24.x" },
   "scripts": {
     "build:shared": "npm run build -w @bizplus/shared",
-    "build:backend": "npm run build:shared && npm run build -w @bizplus/backend",
+    "build:backend": "npm run build:shared && npm run build -w @bizplus/backend && node scripts/build-host-ui.mjs",
     "build:frontend": "npm run build:shared && npm run build -w @bizplus/frontend",
     "build": "npm run build:backend && npm run build:frontend",
     "start": "npm run start -w @bizplus/backend",
