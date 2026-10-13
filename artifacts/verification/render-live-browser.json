@@ -1,0 +1,20 @@
+{
+  "verifiedAt": "2026-10-13T07:13:46.840Z",
+  "scope": "Public Render frontend browser-triggered HTTPS check to owned Render endpoint",
+  "frontendUrl": "https://bizplus-ai-api.onrender.com/live-tests",
+  "targetUrl": "https://bizplus-ai-api.onrender.com/health",
+  "observed": {
+    "status": "passed",
+    "httpStatus": 200,
+    "durationMs": 79,
+    "responseBytes": 181,
+    "assertions": {
+      "expectedHttpStatus": true,
+      "expectedContent": true,
+      "responsePresent": true
+    },
+    "completedChecks": 1
+  },
+  "screenshot": "artifacts/screenshots/render-live-tests.jpg",
+  "note": "One observed sample; charts and metrics reflect actual requests. History currently uses temporary SQLite."
+}

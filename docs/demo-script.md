@@ -10,7 +10,15 @@ Rehearse with a fresh browser session, auto-run off, the backend ready, and the 
 | 0:50–1:15 | Open the incident and expand evidence | “The incident shows the expected order, actual response, timestamps, and the worker log. Our rules explain the evidence and suggest a supported recovery. Related failures share a stable fingerprint.” |
 | 1:15–1:40 | Approve recovery and show verification | “I approve resuming this order’s worker. We fetch the original confirmation again. We do not run checkout again. The same order is now confirmed, and the payment count stays at one.” |
 | 1:40–1:50 | Show the comparison and incident state | “The incident resolves only when verification passes. The original failed run remains in history, alongside the recovery result.” |
-| 1:50–2:00 | Show roadmap or return to Overview | “The MVP makes this recovery easy to understand and audit. Next we would add durable hosting and authenticated operators, then evaluate AI summaries against the captured evidence.” |
+| 1:50–2:00 | Show Storefront and Live tests navigation | “The same public Render app also has real Razorpay test checkout and live checks against our owned HTTPS endpoint. Our strength is verified outcomes: a successful status code alone is not enough.” |
+
+## Optional one-minute commerce extension
+
+Open [the public storefront](https://bizplus-ai-api.onrender.com/shop), add Orbit Mini Speaker, and choose **Pay with Razorpay**. Show the Test Mode badge, use Razorpay's mock netbanking flow, then return to the server-verified ₹599 receipt and empty cart. Refresh once to show the saved receipt. Explain that no real money moves and products are demonstration items.
+
+Open [Live tests](https://bizplus-ai-api.onrender.com/live-tests), select the owned Render health endpoint, and run a check. Show actual HTTP status, expected content assertion, latency, and timestamp. Keep auto-run off during the pitch. A slow or failing request is evidence too; the tool does not claim the site is healthy when a response fails.
+
+The frontend and API are hosted on Render. Hosted history currently uses temporary SQLite; Supabase support and migration are implemented but require a valid PostgreSQL connection before cloud persistence can be demonstrated.
 
 ## If the host is waking
 

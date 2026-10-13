@@ -8,6 +8,7 @@
     "build:frontend": "npm run build:shared && npm run build -w @bizplus/frontend",
     "build": "npm run build:backend && npm run build:frontend",
     "start": "npm run start -w @bizplus/backend",
+    "start:local": "npm run start:local -w @bizplus/backend",
     "dev": "npm run build:shared && concurrently -k -n api,web -c cyan,magenta \"npm run dev -w @bizplus/backend\" \"npm run dev -w @bizplus/frontend\"",
     "test": "npm run build:shared && npm run test -w @bizplus/backend",
     "typecheck": "npm run build:shared && npm run typecheck -w @bizplus/backend && npm run typecheck -w @bizplus/frontend",

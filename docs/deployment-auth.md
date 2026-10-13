@@ -1,8 +1,14 @@
-# Local deployment access and resume
+# Render hosting and optional deployment helper
 
-The project targets a public Netlify frontend and a **free** Render backend, with source kept in the existing private [GitHub repository](https://github.com/Emadfar007/bizplus-ai).
+The current complete frontend and API run on the existing **free Render** service at [bizplus-ai-api.onrender.com](https://bizplus-ai-api.onrender.com). Source remains in the private [GitHub repository](https://github.com/Emadfar007/bizplus-ai). The confirmed workspace is **BizPlus AI**.
 
-Signing into a provider website does not authenticate its API. The backend is already deployed through the connected Render integration in the confirmed **BizPlus AI** workspace. Its nonsensitive service identity is saved locally in `.local/render-native.json`. To finish this deployment, create a Netlify personal access token using the [Netlify API guide](https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/) and store its value only in the ignored `.local/deployment.env` file:
+Render uses repository-root `npm ci && npm run build:backend`, then `npm start`, with Node 24.19.0. Set `SERVE_FRONTEND=true`, and use the exact public Render origin for `VITE_API_BASE_URL` and `CORS_ORIGIN`. The service automatically deploys pushes to `main`; do not trigger a second deployment for the same push. Razorpay Test Mode keys stay in backend environment variables. Supabase is pending a valid PostgreSQL connection string; current hosted history is temporary SQLite.
+
+## Optional Netlify helper
+
+The following helper supports the original separate Netlify frontend design. It is **not needed for the deployed Render frontend**.
+
+Signing into a provider website does not authenticate its API. The Render service identity is saved locally in `.local/render-native.json`. To use the optional Netlify helper, create a Netlify personal access token using the [Netlify API guide](https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/) and store its value only in the ignored `.local/deployment.env` file:
 
 ```dotenv
 NETLIFY_AUTH_TOKEN=

@@ -6,9 +6,9 @@ BizPlus AI tests a small shop through login, inventory, cart, simulated checkout
 
 Source repository: [Emadfar007/bizplus-ai](https://github.com/Emadfar007/bizplus-ai) (private).
 
-Backend deployed: [Render readiness endpoint](https://bizplus-ai-api.onrender.com/health). The public Netlify dashboard is awaiting deployment access; the local dashboard remains available. See [verification results](docs/verification-results.md) for the current release status.
+The complete frontend and API are live on **Render**: [dashboard](https://bizplus-ai-api.onrender.com), [storefront](https://bizplus-ai-api.onrender.com/shop), and [live tests](https://bizplus-ai-api.onrender.com/live-tests). See [verification results](docs/verification-results.md) for the tested scope and current database limitation.
 
-All payments and customers are synthetic. Diagnosis is visibly labelled **Rules-based diagnosis**. No LLM account or API key is required.
+Workflow payments and customers are synthetic. The storefront uses real Razorpay **Test Mode** checkout without moving money or shipping products. Diagnosis is visibly labelled **Rules-based diagnosis**. No LLM account or API key is required.
 
 Sandbox requests include a deliberate 220 ms delay so judges can follow the step progression. Measured timings include this delay and are demonstration results, not production benchmarks. Live website checks have no injected delay.
 
@@ -16,7 +16,7 @@ Sandbox requests include a deliberate 220 ms delay so judges can follow the step
 
 The **Storefront** at `/shop` has six demo products, quantity controls, a session cart, Razorpay Standard Checkout in Test Mode, saved orders, and verified receipts. The server calculates prices, creates the provider order, checks the callback signature, and confirms the captured payment and matching provider totals before marking an order paid. Unchanged-cart retries reuse the original checkout. A delayed capture can be reconciled by reading the same order; checkout is never repeated for verification.
 
-An actual ₹599 Razorpay Test Mode purchase was completed through the browser and its paid receipt survived refresh. No real funds moved and demo products are not shipped. See [payment evidence](artifacts/verification/razorpay-test-purchase.json) and [integration setup](docs/commerce-and-live-tests.md).
+An actual ₹599 Razorpay Test Mode purchase was completed through the **public Render storefront**, and its paid receipt survived refresh. Provider read-back confirmed capture and the original paid order. No real funds moved and demo products are not shipped. See [public payment evidence](artifacts/verification/razorpay-render-purchase.json) and [integration setup](docs/commerce-and-live-tests.md).
 
 **Live tests** at `/live-tests` send bounded HTTPS GET requests to configured owned websites. The default target is the deployed BizPlus Render `/health` URL. Results retain measured latency, status/content assertions, a short text excerpt, and failure fingerprints. A 30-second toggle runs only while the page is visible. It checks HTTP responses; it does not automate browser logins or payments on third-party stores.
 
@@ -40,7 +40,7 @@ npm.cmd test
 npm.cmd run build
 ```
 
-For the presentation fallback, install and build ahead of time. Start the API with `npm.cmd start`. In another PowerShell terminal run `npm.cmd run preview -w @bizplus/frontend -- --host 0.0.0.0`. Use the printed preview URL. If its port differs from the configured local CORS origin, set `CORS_ORIGIN` to that exact URL before starting the API. After installation, the sandbox demo needs no internet connection.
+For the presentation fallback, install and build ahead of time. Start the API with `npm.cmd run start:local`, which explicitly uses `backend/data/bizplus.sqlite` even when a cloud connection is configured. In another PowerShell terminal run `npm.cmd run preview -w @bizplus/frontend -- --host 0.0.0.0`. Use the printed preview URL. If its port differs from the configured local CORS origin, set `CORS_ORIGIN` to that exact URL before starting the API. After installation, the sandbox demo needs no internet connection. Razorpay and public website checks still require internet access.
 
 ## Judge demonstration
 
@@ -56,13 +56,13 @@ See [the two-minute script](docs/demo-script.md), [architecture](docs/architectu
 
 ## Presentation package
 
-- [Requirements document](<artifacts/deliverables/BizPlus AI Requirements.docx>)
-- [Requirements PDF](<artifacts/deliverables/BizPlus AI Requirements.pdf>)
-- [Editable seven-slide pitch](<artifacts/deliverables/BizPlus AI Pitch Final.pptx>)
+- [Current requirements document](<artifacts/deliverables/BizPlus AI Commerce Requirements.docx>)
+- [Current requirements PDF](<artifacts/deliverables/BizPlus AI Commerce Requirements.pdf>)
+- [Editable seven-slide pitch](<artifacts/deliverables/BizPlus AI Commerce Pitch.pptx>)
 
-The measured results come from the actual local replay, and the deck uses actual dashboard screenshots. The release status in these files distinguishes local verification from public deployment.
+The measured results come from actual local and public replays, and the deck uses captured application screenshots. The earlier MVP documents remain in `artifacts/deliverables` as historical releases. The current package clearly marks Supabase setup as pending.
 
-## Deploy the API to Render
+## Deploy the complete app to Render
 
 Use one private GitHub repository containing all three workspaces. Import `render.yaml` as a Blueprint, or create a Node Web Service with the following settings. The build must use the repository root rather than `backend/` so it can compile shared contracts.
 
@@ -75,15 +75,20 @@ Use one private GitHub repository containing all three workspaces. Import `rende
 | `NODE_ENV` | `production` |
 | `HISTORY_POLICY` | `temporary` |
 | `DATABASE_PATH` | `.local/bizplus.sqlite` within the backend working directory |
-| `CORS_ORIGIN` | Exact Netlify production origin, for example `https://your-site.netlify.app` |
+| `SERVE_FRONTEND` | `true` |
+| `VITE_API_BASE_URL` | `https://bizplus-ai-api.onrender.com` |
+| `CORS_ORIGIN` | `https://bizplus-ai-api.onrender.com` |
+| `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` | Backend-only Test Mode keys |
 
-The API listens on `0.0.0.0` and uses Render's `PORT`. SQLite initializes its schema on startup. Free Render storage is temporary, so hosted history can reset after sleep, restart, or deployment. The UI displays this policy and instance changes. Local SQLite provides the offline fallback; use a persistent disk or managed PostgreSQL for durable hosting.
+The API listens on `0.0.0.0` and uses Render's `PORT`. `SERVE_FRONTEND=true` makes the repository-root backend build compile the shared contracts, backend, and frontend, then serves frontend assets and known SPA routes from the same public origin. Direct `/shop`, `/live-tests`, and investigation-route refreshes work. API, sandbox, private-file, and unknown paths keep their own responses.
+
+SQLite initializes its schema on startup. Free Render storage is temporary, so hosted history can reset after sleep, restart, or deployment. The UI displays this policy and instance changes. Supabase PostgreSQL is supported but is not connected to this deployment yet. Add a verified PostgreSQL `DATABASE_URL` through Render's environment settings before migrating; the HTTPS Supabase API URL does not work as a database connection. Local SQLite provides the offline sandbox fallback.
 
 The committed `.npmrc` includes development dependencies during installation so TypeScript can compile even when the host sets `NODE_ENV=production`. The current connector-created service uses Render's default TCP health check; configure its Health Check Path as `/health` in the [service settings](https://dashboard.render.com/web/srv-db6sad0m7kps73b684jg/settings). The Blueprint already specifies this path.
 
-## Deploy the frontend to Netlify
+## Optional separate Netlify frontend
 
-Import the same repository into Netlify. Keep the base directory at the repository root. `netlify.toml` sets these build defaults:
+The current release serves its frontend on Render and needs no Netlify token. If a separate frontend is desired later, import the same repository into Netlify with the base directory at the repository root. `netlify.toml` retains these optional defaults:
 
 | Setting | Value |
 | --- | --- |
@@ -96,7 +101,7 @@ Set `VITE_API_BASE_URL` before the build, then redeploy after changing it. `VITE
 
 The frontend waits for backend readiness before enabling tests. Test the actual cold start before presenting, and open the demo ahead of the judging slot. See [Render Free limits](https://render.com/docs/free), [Render monorepos](https://render.com/docs/monorepo-support), and [Netlify Vite setup](https://docs.netlify.com/build/frameworks/framework-setup-guides/vite/).
 
-For the resumable API deployment helper, see [hosting authentication and deployment](docs/deployment-auth.md). `npm.cmd run deploy:check` checks access without creating resources. `npm.cmd run deploy` reuses the registered native Render backend and deploys only the Netlify frontend; it requires clean, pushed source and the local Netlify token. Provider credentials remain in the ignored `.local/deployment.env` file. A fresh clone can use the manual provider configuration above or register its own deployed backend before using this helper.
+The current Render service automatically deploys pushed changes to `main`. See [hosting authentication and deployment](docs/deployment-auth.md). The legacy `deploy:check` / `deploy` helper targets the optional separate Netlify frontend and is not required for the current Render release. Provider credentials remain in ignored local files or Render environment variables.
 
 ## API contract
 

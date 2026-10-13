@@ -1,0 +1,41 @@
+{
+  "documentPages": 4,
+  "allDocumentPagesVisuallyInspected": true,
+  "documentRenderer": "Microsoft Word COM export and bundled Poppler",
+  "pitchSlides": 7,
+  "allFinalSlidesVisuallyInspected": true,
+  "pitchRenderer": "Bundled Artifact Tool with final PPTX reimport",
+  "packageIntegrity": "pass",
+  "geometryFontPolicy": "pass",
+  "nativeTables": 3,
+  "nativeEditableArchitecture": true,
+  "architectureRecoveryBranch": "Render Express outgoing edge to Rules and approved worker, then owned sandbox",
+  "originalsPreservedAndUnchanged": true,
+  "renamedPitchBytesUnchanged": true,
+  "localAutomatedChecks": "33/33",
+  "hostedSyntheticHttpChecks": "18/18",
+  "publicTestPurchase": "INR 599 captured and server verified, refreshed receipt retained",
+  "publicLiveSample": "HTTP 200,79ms,181B,three passed assertions",
+  "activeStorage": "temporary SQLite",
+  "optionalPostgres": "actual local PostgreSQL tested; Supabase hosted activation pending",
+  "files": [
+    {
+      "path": "artifacts/deliverables/BizPlus AI Commerce Requirements.docx",
+      "bytes": 42291,
+      "sha256": "aadf96ef4347ae4c983f062c026a63fc6a7f979301dc4c432e25db9f7ca0e243"
+    },
+    {
+      "path": "artifacts/deliverables/BizPlus AI Commerce Requirements.pdf",
+      "bytes": 300195,
+      "sha256": "9569a2b6ebdcb582c13fac385559858d5ed02c710229cdf560a0fb456e8611d8"
+    },
+    {
+      "path": "artifacts/deliverables/BizPlus AI Commerce Pitch.pptx",
+      "bytes": 604619,
+      "sha256": "756c6e6cab0ec103281709be2104f3f08bbc388a93578f0297f3d6e7fd017b2c"
+    }
+  ],
+  "publicDashboardHyperlinksVerified": true,
+  "reviewedAt": "2026-10-13T07:29:42.528Z",
+  "rootVisualReview": true
+}

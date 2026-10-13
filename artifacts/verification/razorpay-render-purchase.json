@@ -1,0 +1,42 @@
+{
+  "verifiedAt": "2026-10-13T07:12:07.982Z",
+  "scope": "Public Render storefront browser purchase with Razorpay Test Mode; provider read-back and refreshed server-verified receipt",
+  "url": "https://bizplus-ai-api.onrender.com/shop",
+  "mode": "test",
+  "database": "temporary SQLite on Render; Supabase not connected",
+  "internalOrderId": "bf67a9d1-708b-419d-8d15-422c4decf02f",
+  "product": {
+    "id": "bp-speaker",
+    "name": "Orbit Mini Speaker",
+    "quantity": 1
+  },
+  "providerPayment": {
+    "id": "pay_TnIwtBllfsGG1T",
+    "orderId": "order_TnIr8XWVpXK7JG",
+    "status": "captured",
+    "captured": true,
+    "amountMinor": 59900,
+    "currency": "INR",
+    "method": "netbanking"
+  },
+  "providerOrder": {
+    "id": "order_TnIr8XWVpXK7JG",
+    "status": "paid",
+    "amountMinor": 59900,
+    "amountPaidMinor": 59900,
+    "amountDueMinor": 0,
+    "currency": "INR"
+  },
+  "checks": {
+    "browserServerVerifiedReceipt": true,
+    "browserReceiptSurvivedRefresh": true,
+    "browserCartEmpty": true,
+    "providerPaymentCaptured": true,
+    "providerOrderPaid": true,
+    "sameOriginalOrder": true,
+    "amountMatches": true,
+    "currencyMatches": true
+  },
+  "screenshot": "artifacts/screenshots/render-shop-paid.jpg",
+  "note": "No real funds moved. Temporary hosted records may reset on restart or deployment."
+}

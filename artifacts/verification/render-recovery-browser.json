@@ -1,0 +1,25 @@
+{
+  "verifiedAt": "2026-10-13T07:18:42.643Z",
+  "scope": "Public Render frontend Run Test → Investigate → Approve Recovery → Verified Result, with direct route refresh",
+  "url": "https://bizplus-ai-api.onrender.com/recovery/5f191e15-a064-4bf7-8deb-9b1733a31e09",
+  "scenario": "receipt_order_missing",
+  "runId": "c72534f9-6801-42db-8015-92f70ceb39f9",
+  "incidentId": "5f191e15-a064-4bf7-8deb-9b1733a31e09",
+  "originalOrderId": "d9c34c82-fc29-4c32-8479-639e2cc7f1af",
+  "observed": {
+    "failureHttpStatus": 200,
+    "failureDurationMs": 228,
+    "orderMissing": true,
+    "diagnosis": "Rules-based diagnosis",
+    "approvedAction": "resume_receipt_worker",
+    "incidentStatus": "resolved",
+    "verificationPassed": true,
+    "verificationDurationMs": 227,
+    "paymentsBefore": 1,
+    "paymentsAfter": 1,
+    "originalOrderRetained": true,
+    "receiptRouteSurvivedRefresh": true
+  },
+  "screenshot": "artifacts/screenshots/render-recovery-verified.jpg",
+  "note": "Synthetic sandbox recovery. Razorpay purchases are separate and are never remediated by this action."
+}
