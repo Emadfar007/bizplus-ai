@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: bizplus-ai-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build:backend
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      - key: NODE_ENV
+        value: production
+      - key: HISTORY_POLICY
+        value: temporary
+      - key: DATABASE_PATH
+        value: .local/bizplus.sqlite
+      - key: CORS_ORIGIN
+        sync: false

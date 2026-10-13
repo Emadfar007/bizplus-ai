@@ -1,0 +1,16 @@
+{
+  "name": "bizplus-ai", "version": "1.0.0", "private": true,
+  "workspaces": ["shared", "backend", "frontend"],
+  "engines": { "node": "24.x" },
+  "scripts": {
+    "build:shared": "npm run build -w @bizplus/shared",
+    "build:backend": "npm run build:shared && npm run build -w @bizplus/backend",
+    "build:frontend": "npm run build:shared && npm run build -w @bizplus/frontend",
+    "build": "npm run build:backend && npm run build:frontend",
+    "start": "npm run start -w @bizplus/backend",
+    "dev": "npm run build:shared && concurrently -k -n api,web -c cyan,magenta \"npm run dev -w @bizplus/backend\" \"npm run dev -w @bizplus/frontend\"",
+    "test": "npm run build:shared && npm run test -w @bizplus/backend",
+    "typecheck": "npm run build:shared && npm run typecheck -w @bizplus/backend && npm run typecheck -w @bizplus/frontend"
+  },
+  "devDependencies": { "concurrently": "^9.2.1", "typescript": "^5.9.3" }
+}
