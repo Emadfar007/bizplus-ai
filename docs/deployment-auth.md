@@ -2,34 +2,34 @@
 
 The project targets a public Netlify frontend and a **free** Render backend, with source kept in the existing private [GitHub repository](https://github.com/Emadfar007/bizplus-ai).
 
-Signing into a provider website does not authenticate its API. For the local deployment helper, create a Netlify personal access token and a Render API key using the providers' [Netlify API guide](https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/) and [Render API guide](https://render.com/docs/api). Store their values only in the ignored `.local/deployment.env` file:
+Signing into a provider website does not authenticate its API. The backend is already deployed through the connected Render integration in the confirmed **BizPlus AI** workspace. Its nonsensitive service identity is saved locally in `.local/render-native.json`. To finish this deployment, create a Netlify personal access token using the [Netlify API guide](https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/) and store its value only in the ignored `.local/deployment.env` file:
 
 ```dotenv
 NETLIFY_AUTH_TOKEN=
-RENDER_API_KEY=
 ```
 
-Do not paste tokens into chat, commit them, or put them in frontend `VITE_` variables. The local `scripts/deploy-hosts.mjs` convenience helper is intentionally ignored and is available in the original project workspace; normal provider setup remains documented in the README.
+Do not paste tokens into chat, commit them, or put them in frontend `VITE_` variables. The helper source `scripts/deploy-hosts.mjs` is committed; credentials and deployment state under `.local` are ignored.
 
 From the project root, using the tested Node 24 installation:
 
 ```powershell
-& 'C:\Program Files\nodejs\node.exe' scripts/deploy-hosts.mjs --check
-& 'C:\Program Files\nodejs\node.exe' scripts/deploy-hosts.mjs --plan
-& 'C:\Program Files\nodejs\node.exe' scripts/deploy-hosts.mjs --deploy
+& 'C:\Program Files\nodejs\node.exe' scripts/deploy-hosts.mjs --check --netlify-only
+& 'C:\Program Files\nodejs\node.exe' scripts/deploy-hosts.mjs --plan --netlify-only
+& 'C:\Program Files\nodejs\node.exe' scripts/deploy-hosts.mjs --deploy --netlify-only
 ```
 
-`--check` and `--plan` are read-only. They report credential-presence booleans and safe account/workspace names. The helper requires one verified personal Netlify Free/Starter account and one Render workspace before creating anything. If selection is ambiguous, add the intended selector from the reported choices to the same ignored file:
+`--check` and `--plan` are read-only. They report credential-presence booleans and safe account/workspace names. Netlify-only mode requires one verified personal Netlify Free/Starter account and reuses the existing native Render service. It never queries or changes Render resources. If Netlify selection is ambiguous, add the intended account selector from the reported choices to the same ignored file:
 
 ```dotenv
 # Optional account selectors, not credentials:
 NETLIFY_ACCOUNT_SLUG=
-RENDER_OWNER_ID=
 ```
 
 Before deployment, local `main` must be clean and match the remote `main` commit. Render must have GitHub-app access to `Emadfar007/bizplus-ai`. If Render rejects repository access, grant access to this private repository; keep the source private.
 
-`--deploy` creates at most one unique Netlify site and one free Render service for this saved deployment. It uses repository-root builds, Node 24.19.0, `/health`, temporary SQLite history, and the exact frontend CORS origin. It builds the frontend with the actual Render URL and uploads only `frontend/dist`, including SPA redirects and response headers. Automatic backend deploys are disabled; use `--redeploy` after committing and pushing later changes when a fresh deployment is intended.
+`--deploy --netlify-only` creates at most one unique Netlify site for this saved deployment. It prints the assigned exact frontend `CORS_ORIGIN`; apply that value through the Render connector, then rerun the same command. It verifies backend health, temporary history, and CORS before building with the actual Render URL and uploading only `frontend/dist`, including SPA redirects and response headers. Use `--redeploy --netlify-only` for a new frontend release. The existing native Render backend automatically deploys when its `main` branch changes.
+
+For a fresh deployment without a Render connector, the helper's original dual-provider mode remains available. Supply `RENDER_API_KEY` locally, optionally `RENDER_OWNER_ID` when account selection is ambiguous, and omit `--netlify-only`. This mode provisions its own free Render service with `/health`, temporary history, and automatic deploys disabled. Do not use it to create a second backend for the current native deployment.
 
 Nonsensitive site, service, and deployment IDs are saved immediately in `.local/deployment-state.json`. Rerun `--deploy` to resume a slow or interrupted operation. Unknown API outcomes are reconciled against saved names and IDs; the helper stops rather than creating another resource. Keep the state file. A leftover `.local/deployment.lock` should only be removed after confirming that the corresponding helper process has ended.
 

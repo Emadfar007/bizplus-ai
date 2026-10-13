@@ -1,9 +1,11 @@
 /**
- * Local-only deployment orchestration for the approved BizPlus AI demo.
- * Node 24; no extra dependencies. Never commit this directory or credentials.
+ * Deployment orchestration for the approved BizPlus AI demo.
+ * Node 24; no extra dependencies. Credentials and state stay in ignored .local/.
  *
- * Read-only: node .local/deploy-hosts.mjs --check | --plan
- * Mutating:  node .local/deploy-hosts.mjs --deploy | --redeploy
+ * Read-only: node scripts/deploy-hosts.mjs --check | --plan
+ * Mutating:  node scripts/deploy-hosts.mjs --deploy | --redeploy
+ * Add --netlify-only to use .local/render-native.json instead of a Render API key.
+ * Netlify-only mode never creates, updates, deploys, or queries Render resources.
  * --deploy resumes interrupted operations; --redeploy explicitly makes new deploys.
  *
  * Official schemas checked 2026-10-13:
@@ -25,12 +27,20 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const LOCAL = resolve(ROOT, '.local');
 const STATE_PATH = resolve(LOCAL, 'deployment-state.json');
 const ENV_PATH = resolve(LOCAL, 'deployment.env');
+const NATIVE_RENDER_PATH = resolve(LOCAL, 'render-native.json');
 const LOCK_PATH = resolve(LOCAL, 'deployment.lock');
 const REPO = 'https://github.com/Emadfar007/bizplus-ai';
 const BRANCH = 'main';
 const API = { render: 'https://api.render.com/v1', netlify: 'https://api.netlify.com/api/v1' };
 let credentials = {};
 let state = {};
+let netlifyOnly = false;
+
+export function parseArgs(args) {
+  const modes = args.filter(arg => ['--check', '--plan', '--deploy', '--redeploy'].includes(arg));
+  if (modes.length > 1 || args.some(arg => !['--check', '--plan', '--deploy', '--redeploy', '--netlify-only'].includes(arg)) || args.filter(arg => arg === '--netlify-only').length > 1) fail('Usage: node scripts/deploy-hosts.mjs [--check|--plan|--deploy|--redeploy] [--netlify-only]');
+  return { mode: modes[0] || '--check', netlifyOnly: args.includes('--netlify-only') };
+}
 
 export function parseEnv(text) {
   const result = {};
@@ -68,6 +78,19 @@ async function loadState() {
   catch (error) { if (error.code !== 'ENOENT') throw error; state = {}; }
   if (state.repository && state.repository !== REPO) fail('The local deployment state belongs to a different repository. Refusing to reuse it.');
 }
+export function parseNativeRenderMetadata(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || typeof value.serviceId !== 'string' || !/^srv-[a-z0-9]{20}$/.test(value.serviceId) || typeof value.workspaceId !== 'string' || !/^(tea|usr)-[a-z0-9]{20}$/.test(value.workspaceId)) fail('Native Render metadata requires a valid serviceId, workspaceId, and HTTPS onrender.com URL.');
+  return { serviceId: value.serviceId, workspaceId: value.workspaceId, url: approvedPublicUrl(value.url, '.onrender.com') };
+}
+async function loadNativeRender() {
+  let text;
+  try { text = await readFile(NATIVE_RENDER_PATH, 'utf8'); }
+  catch (error) { if (error.code === 'ENOENT') fail('Netlify-only mode requires .local/render-native.json from the existing native Render service.'); throw error; }
+  let value;
+  try { value = JSON.parse(text); } catch { fail('Native Render metadata is not valid JSON.'); }
+  return parseNativeRenderMetadata(value);
+}
+function backendTarget() { return netlifyOnly ? state.nativeRender : state.render; }
 async function saveState() {
   state.repository = REPO;
   state.branch = BRANCH;
@@ -79,6 +102,7 @@ async function saveState() {
 }
 
 async function request(provider, path, { method = 'GET', body, binary = false } = {}) {
+  if (netlifyOnly && provider === 'render') fail('Netlify-only mode forbids Render API operations. Manage the existing backend through the native Render connector.');
   const token = credentials[provider === 'render' ? 'RENDER_API_KEY' : 'NETLIFY_AUTH_TOKEN'];
   if (!token) fail(`Missing ${provider === 'render' ? 'RENDER_API_KEY' : 'NETLIFY_AUTH_TOKEN'} in the ignored deployment.env file.`);
   let response;
@@ -125,13 +149,13 @@ async function renderOwners() {
   }
   fail('Render workspace pagination exceeded its safe bound. Select the workspace manually.');
 }
-async function identities(requireAll = true) {
+async function identities(requireAll = true, useRenderApi = true) {
   const jobs = [
     credentials.NETLIFY_AUTH_TOKEN ? Promise.all([request('netlify', '/user'), request('netlify', '/accounts')]) : Promise.resolve(null),
-    credentials.RENDER_API_KEY ? renderOwners() : Promise.resolve(null),
+    useRenderApi && credentials.RENDER_API_KEY ? renderOwners() : Promise.resolve(null),
   ];
   const results = await Promise.allSettled(jobs);
-  const output = { netlifyTokenPresent: Boolean(credentials.NETLIFY_AUTH_TOKEN), renderKeyPresent: Boolean(credentials.RENDER_API_KEY) };
+  const output = { netlifyTokenPresent: Boolean(credentials.NETLIFY_AUTH_TOKEN), renderKeyPresent: Boolean(credentials.RENDER_API_KEY), ...(useRenderApi ? {} : { renderManagement: 'native-connector', renderApiOperations: false }) };
   if (results[0].status === 'fulfilled' && results[0].value) {
     const [user, accounts] = results[0].value;
     if (!user?.id || !Array.isArray(accounts)) fail('Netlify returned an unexpected user/account response.');
@@ -143,21 +167,25 @@ async function identities(requireAll = true) {
     output.renderRaw = results[1].value;
   } else if (results[1].status === 'rejected') output.renderError = safe(results[1].reason.message);
   log(JSON.stringify({ ...output, netlifyRaw: undefined, renderRaw: undefined }, null, 2));
-  if (requireAll && (!output.netlifyRaw || !output.renderRaw)) fail('Both provider credentials must be available and authenticated before any hosting mutation.');
+  if (requireAll && (!output.netlifyRaw || (useRenderApi && !output.renderRaw))) fail(useRenderApi ? 'Both provider credentials must be available and authenticated before any hosting mutation.' : 'NETLIFY_AUTH_TOKEN must be available and authenticated before any Netlify mutation; no Render API key is needed in Netlify-only mode.');
   return output;
 }
-function selectTargets(identity) {
+function selectNetlifyAccount(identity) {
   const { user, accounts } = identity.netlifyRaw;
   let eligible = accounts.filter(account => isFreeNetlifyAccount(account) && account.owner_ids?.includes(user.id));
   const selectedSlug = state.netlify?.accountSlug || credentials.NETLIFY_ACCOUNT_SLUG;
   if (selectedSlug) eligible = eligible.filter(account => account.slug === selectedSlug);
   else eligible = eligible.filter(account => account.owner_ids.length === 1);
   if (eligible.length !== 1) fail('Netlify needs exactly one verified personal Free/Starter account. Review the account names above and set NETLIFY_ACCOUNT_SLUG to the intended verified free account; no site was created.');
+  return eligible[0];
+}
+function selectTargets(identity) {
+  const account = selectNetlifyAccount(identity);
   let owners = identity.renderRaw;
   const selectedOwner = state.render?.ownerId || credentials.RENDER_OWNER_ID;
   if (selectedOwner) owners = owners.filter(owner => owner.id === selectedOwner);
   if (owners.length !== 1) fail('Render needs exactly one verified workspace. Review the workspace names above and set RENDER_OWNER_ID to the intended workspace; no service or site was created.');
-  return { account: eligible[0], owner: owners[0] };
+  return { account, owner: owners[0] };
 }
 
 function git(args) {
@@ -330,16 +358,17 @@ async function waitRender(commit) {
   fail('Render is still deploying after the 15-minute wait. Rerun --deploy to resume the same deployment.');
 }
 async function verifyBackend() {
+  const backend = backendTarget();
   const deadline = Date.now() + 120000;
   while (Date.now() < deadline) {
     try {
-      const response = await fetch(`${state.render.url}/health`, { headers: { Origin: state.netlify.url }, signal: AbortSignal.timeout(15000) });
+      const response = await fetch(`${backend.url}/health`, { headers: { Origin: state.netlify.url }, signal: AbortSignal.timeout(15000) });
       const health = await response.json();
       if (response.status === 403) fail('The live API rejected the exact frontend origin. Fix CORS_ORIGIN before publishing.');
       if (response.ok && health.status === 'ok') {
         if (response.headers.get('access-control-allow-origin') !== state.netlify.url) fail('The live API does not allow the exact frontend origin. Fix the saved service CORS_ORIGIN before publishing.');
         if (health.historyPolicy !== 'temporary') fail('The hosted backend does not report temporary history. Verify HISTORY_POLICY before publishing.');
-        state.render.healthVerifiedAt = new Date().toISOString();
+        backend.healthVerifiedAt = new Date().toISOString();
         await saveState();
         log('Live backend health, temporary-history policy, and exact CORS origin verified.');
         return;
@@ -354,9 +383,10 @@ async function verifyBackend() {
 async function buildFrontend() {
   const npmCli = resolve(dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js');
   if (!existsSync(npmCli)) fail('The Node installation does not contain npm-cli.js; use the tested Node 24 installation.');
-  const env = { ...process.env, VITE_API_BASE_URL: state.render.url };
+  const backendUrl = backendTarget().url;
+  const env = { ...process.env, VITE_API_BASE_URL: backendUrl };
   for (const name of ['NETLIFY_AUTH_TOKEN', 'RENDER_API_KEY', 'GITHUB_TOKEN', 'GH_TOKEN', 'RENDER_OWNER_ID', 'NETLIFY_ACCOUNT_SLUG']) delete env[name];
-  log(`Building frontend with API ${state.render.url}.`);
+  log(`Building frontend with API ${backendUrl}.`);
   await new Promise((resolvePromise, reject) => {
     const child = spawn(process.execPath, [npmCli, 'run', 'build:frontend'], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
     child.stdout.on('data', value => process.stdout.write(safe(value)));
@@ -458,24 +488,35 @@ async function verifyFrontend() {
   state.verifiedAt = new Date().toISOString();
   await saveState();
   log(`Deployment hosts verified. Public app: ${state.netlify.url}`);
-  log(`API: ${state.render.url}`);
+  log(`API: ${backendTarget().url}`);
   log('Next: verify the full public browser journey, a second browser session, mobile layout, and cold start. These host checks do not claim those tests are complete.');
 }
 
 async function main() {
-  const mode = process.argv[2] || '--check';
-  if (!['--check', '--plan', '--deploy', '--redeploy'].includes(mode) || process.argv.length > 3) fail('Usage: node .local/deploy-hosts.mjs [--check|--plan|--deploy|--redeploy]');
+  const options = parseArgs(process.argv.slice(2));
+  const mode = options.mode;
+  netlifyOnly = options.netlifyOnly;
   await loadCredentials();
   await loadState();
-  const identity = await identities(mode !== '--check');
+  if (!netlifyOnly && mode !== '--check' && existsSync(NATIVE_RENDER_PATH) && !state.render) fail('A native Render backend is already registered in this workspace. Add --netlify-only to reuse it; a second backend will not be created.');
+  let nativeRender;
+  let nativeRenderError;
+  if (netlifyOnly) {
+    try { nativeRender = await loadNativeRender(); }
+    catch (error) { if (mode !== '--check') throw error; nativeRenderError = safe(error.message); }
+    log(JSON.stringify({ nativeRenderMetadataPresent: Boolean(nativeRender), nativeRender, nativeRenderError }, null, 2));
+  }
+  const identity = await identities(mode !== '--check', !netlifyOnly);
   if (mode === '--check') {
-    if (state.netlify?.siteId || state.render?.serviceId) log(JSON.stringify({ saved: { frontend: state.netlify?.url, backend: state.render?.url, siteId: state.netlify?.siteId, serviceId: state.render?.serviceId } }, null, 2));
+    if (state.netlify?.siteId || backendTarget()?.serviceId) log(JSON.stringify({ saved: { frontend: state.netlify?.url, backend: backendTarget()?.url, siteId: state.netlify?.siteId, serviceId: backendTarget()?.serviceId } }, null, 2));
     return;
   }
-  const targets = selectTargets(identity);
+  if (!netlifyOnly && state.nativeRender && !state.render) fail('The saved deployment uses a native Render backend. Add --netlify-only to resume it; a second backend will not be created.');
+  if (netlifyOnly && state.nativeRender && (state.nativeRender.serviceId !== nativeRender.serviceId || state.nativeRender.workspaceId !== nativeRender.workspaceId)) fail('Native Render metadata differs from the saved backend identity. Inspect the state before changing deployment targets.');
+  const targets = netlifyOnly ? { account: selectNetlifyAccount(identity) } : selectTargets(identity);
   const commit = verifiedSource();
   if (mode === '--plan') {
-    log(JSON.stringify({ repository: REPO, branch: BRANCH, commit, netlifyAccount: accountSummary(targets.account), renderWorkspace: ownerSummary(targets.owner), service: renderPayload(targets.owner.id, state.netlify?.url || '<created Netlify HTTPS origin>', state.render?.name || '<one unique bizplus-ai-api name>'), frontend: 'Build using actual Render URL; digest-upload only frontend/dist, including _redirects and _headers.', sourceControl: 'Existing private repository stays private; no account upgrades, disks, or billing changes.' }, null, 2));
+    log(JSON.stringify({ repository: REPO, branch: BRANCH, commit, netlifyAccount: accountSummary(targets.account), ...(netlifyOnly ? { nativeRender, renderApiOperations: false, requiredRenderEnvironment: { CORS_ORIGIN: state.netlify?.url || '<actual Netlify origin printed after site creation>' }, renderVerification: 'Verify the native backend commit and free configuration through the Render connector.' } : { renderWorkspace: ownerSummary(targets.owner), service: renderPayload(targets.owner.id, state.netlify?.url || '<created Netlify HTTPS origin>', state.render?.name || '<one unique bizplus-ai-api name>') }), frontend: 'Build using actual Render URL; digest-upload only frontend/dist, including _redirects and _headers.', sourceControl: 'Existing private repository stays private; no account upgrades, disks, or billing changes.' }, null, 2));
     return;
   }
   let lock;
@@ -486,13 +527,18 @@ async function main() {
     const suffix = state.suffix || randomBytes(3).toString('hex');
     state.suffix = suffix;
     state.netlify ??= { name: `bizplus-ai-emadfar007-${suffix}`, accountId: targets.account.id, accountSlug: targets.account.slug };
-    state.render ??= { name: `bizplus-ai-api-${suffix}`, ownerId: targets.owner.id };
-    if (state.netlify.accountId !== targets.account.id || state.render.ownerId !== targets.owner.id) fail('Selected accounts differ from the saved deployment targets.');
+    if (netlifyOnly) state.nativeRender = { ...state.nativeRender, ...nativeRender, management: 'native-connector' };
+    else state.render ??= { name: `bizplus-ai-api-${suffix}`, ownerId: targets.owner.id };
+    if (state.netlify.accountId !== targets.account.id || (!netlifyOnly && state.render.ownerId !== targets.owner.id)) fail('Selected accounts differ from the saved deployment targets.');
     await saveState();
     await ensureNetlifySite(targets.account);
-    await ensureRenderService(targets.owner);
-    await ensureRenderDeploy(commit, mode === '--redeploy');
-    await waitRender(commit);
+    if (netlifyOnly) {
+      log(JSON.stringify({ requiredRenderEnvironment: { serviceId: nativeRender.serviceId, workspaceId: nativeRender.workspaceId, CORS_ORIGIN: state.netlify.url }, applyVia: 'Native Render connector. This helper will not update or redeploy Render; rerun the same Netlify-only command after applying the exact origin.' }, null, 2));
+    } else {
+      await ensureRenderService(targets.owner);
+      await ensureRenderDeploy(commit, mode === '--redeploy');
+      await waitRender(commit);
+    }
     await verifyBackend();
     const bundle = await buildFrontend();
     const deployId = await ensureNetlifyDeploy(bundle, commit, mode === '--redeploy');

@@ -6,6 +6,8 @@ BizPlus AI tests a small shop through login, inventory, cart, simulated checkout
 
 Source repository: [Emadfar007/bizplus-ai](https://github.com/Emadfar007/bizplus-ai) (private).
 
+Backend deployed: [Render readiness endpoint](https://bizplus-ai-api.onrender.com/health). The public Netlify dashboard is awaiting deployment access; the local dashboard remains available. See [verification results](docs/verification-results.md) for the current release status.
+
 All payments and customers are synthetic. Diagnosis is visibly labelled **Rules-based diagnosis**. No LLM account or API key is required.
 
 Sandbox requests include a deliberate 220 ms delay so judges can follow the step progression. Measured timings include this delay and are demonstration results, not production benchmarks.
@@ -67,6 +69,8 @@ Use one private GitHub repository containing all three workspaces. Import `rende
 
 The API listens on `0.0.0.0` and uses Render's `PORT`. SQLite initializes its schema on startup. Free Render storage is temporary, so hosted history can reset after sleep, restart, or deployment. The UI displays this policy and instance changes. Local SQLite provides the offline fallback; use a persistent disk or managed PostgreSQL for durable hosting.
 
+The committed `.npmrc` includes development dependencies during installation so TypeScript can compile even when the host sets `NODE_ENV=production`. The current connector-created service uses Render's default TCP health check; configure its Health Check Path as `/health` in the [service settings](https://dashboard.render.com/web/srv-db6sad0m7kps73b684jg/settings). The Blueprint already specifies this path.
+
 ## Deploy the frontend to Netlify
 
 Import the same repository into Netlify. Keep the base directory at the repository root. `netlify.toml` sets these build defaults:
@@ -82,7 +86,7 @@ Set `VITE_API_BASE_URL` before the build, then redeploy after changing it. `VITE
 
 The frontend waits for backend readiness before enabling tests. Test the actual cold start before presenting, and open the demo ahead of the judging slot. See [Render Free limits](https://render.com/docs/free), [Render monorepos](https://render.com/docs/monorepo-support), and [Netlify Vite setup](https://docs.netlify.com/build/frameworks/framework-setup-guides/vite/).
 
-For the resumable API deployment helper, see [hosting authentication and deployment](docs/deployment-auth.md). `npm.cmd run deploy:check` checks access without creating resources. `npm.cmd run deploy` uses the locally provided credentials to create this project's free hosts and upload the frontend; it requires clean, pushed source. Provider credentials remain in the ignored `.local/deployment.env` file.
+For the resumable API deployment helper, see [hosting authentication and deployment](docs/deployment-auth.md). `npm.cmd run deploy:check` checks access without creating resources. `npm.cmd run deploy` reuses the registered native Render backend and deploys only the Netlify frontend; it requires clean, pushed source and the local Netlify token. Provider credentials remain in the ignored `.local/deployment.env` file. A fresh clone can use the manual provider configuration above or register its own deployed backend before using this helper.
 
 ## API contract
 

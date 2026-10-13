@@ -31,4 +31,20 @@ Responsive checks passed at 1440 by 900 and 390 by 844 pixels. The mobile page h
 
 Stopping the owned local API produced the backend-offline message and disabled Run Test. Restarting the API restored backend readiness and usable test controls. Physical-phone, incognito-hosted, and mobile-network checks have not been performed.
 
-Public deployment, the hosted cold-start experience, and a second-device check remain pending. Deployment configuration and exact hosting steps are included in the README.
+## Hosted backend verification
+
+The free Render backend is deployed at [bizplus-ai-api.onrender.com](https://bizplus-ai-api.onrender.com/health). On **13 October 2026, 11:18 IST**, a separate public HTTP smoke replay passed **18 of 18 checks**. Its actual responses are saved in [hosted-api-replay.json](../artifacts/verification/hosted-api-replay.json). The eleven-case integration suite above ran locally; it was not rerun on Render.
+
+| Hosted check | Observed result |
+| --- | --- |
+| Healthy execution | Passed, 1556 ms |
+| Checkout HTTP 500 | 951 ms; zero payments; confirmation skipped |
+| Missing confirmation | 1239 ms; HTTP 200 failed its business assertion |
+| Recovery verification | 238 ms; same original order; payments 1 to 1 |
+| Fingerprint grouping | Two recurring missing-confirmation incidents grouped |
+| Approval and isolation | Unapproved action rejected; unrelated session reads returned 404 |
+| Repeated recovery | Same recovery ID returned |
+
+These are one hosted sandbox sample, including the deliberate 220 ms delay per request. Execution timings exclude browser/network round trips. Recovery's measured public round trip was 305 ms.
+
+The Netlify frontend still awaits deployment access. Public browser acceptance, hosted incognito and cold-start behavior, and a physical second-device/mobile-network check remain pending. The connector-created backend uses Render's default TCP health check; the intended `/health` path can be set in service settings and is already specified in the Blueprint. Deployment configuration and exact hosting steps are included in the README.
