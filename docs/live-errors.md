@@ -13,7 +13,7 @@ Faults affect only `/test-site/<session UUID>` and its synthetic APIs. They expi
 | Timeout | Real response delayed beyond the 12-second request deadline | Request completes within its deadline |
 | JavaScript initialization error | Browser page error and failed user actions | Page loads and browser journey completes |
 | Broken button | Actual browser click produces no expected state change | Sign-in, cart and confirmation assertions pass |
-| Login rejection | Synthetic login returns HTTP 401 | Test account signs in |
+| Login rejection | Human submits username and password; wrong credentials return HTTP 401 and create an Investigation incident | Human retries with correct credentials; the server verifies success before resolving |
 | Confirmation unavailable | Synthetic confirmation API returns HTTP 503 | Original synthetic journey gets confirmation |
 | Catalog dependency unavailable | Synthetic catalog returns HTTP 503 | Product is added to the cart |
 

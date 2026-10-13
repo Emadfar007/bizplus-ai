@@ -1,4 +1,5 @@
-export type Scenario = 'healthy' | 'checkout_500' | 'receipt_order_missing';
+import type { LoginIncidentContext, LoginRecoveryResult } from './login.js';
+export type Scenario = 'healthy' | 'checkout_500' | 'receipt_order_missing' | 'manual_login';
 export type StepStatus = 'pending' | 'running' | 'passed' | 'failed' | 'skipped';
 export type RunStatus = 'queued' | 'running' | 'passed' | 'failed';
 export type IncidentStatus = 'open' | 'recovering' | 'resolved';
@@ -14,7 +15,7 @@ export interface Workflow { id: string; name: string; description: string; steps
 export interface Run { id: string; workflowId: string; scenario: Scenario; status: RunStatus; createdAt: string; completedAt: string | null; durationMs: number; steps: StepResult[]; incidentId: string | null; orderId: string | null; transactionId: string | null; amountMinor: number; paymentCount: number }
 export interface Diagnosis { source: 'rules'; summary: string; observedFacts: string[]; possibleCauses: string[]; evidenceIds: string[]; recommendedAction: 'resume_receipt_worker' | null; guidance: string }
 export interface RecoveryResult { id: string; action: 'resume_receipt_worker'; status: 'verified' | 'failed'; approvedAt: string; completedAt: string; durationMs: number; originalOrderId: string | null; paymentCountBefore: number; paymentCountAfter: number; verification: StepResult; evidence: Evidence[] }
-export interface Incident { id: string; runId: string; workflowId: string; title: string; status: IncidentStatus; createdAt: string; resolvedAt: string | null; failedStepId: string; fingerprint: string; diagnosis: Diagnosis; evidence: Evidence[]; recovery: RecoveryResult | null; relatedIncidentIds: string[] }
+export interface Incident { id: string; runId: string; workflowId: string; title: string; status: IncidentStatus; createdAt: string; resolvedAt: string | null; failedStepId: string; fingerprint: string; diagnosis: Diagnosis; evidence: Evidence[]; recovery: RecoveryResult | null; relatedIncidentIds: string[]; login?: LoginIncidentContext; manualRecovery?: LoginRecoveryResult }
 export interface FingerprintGroup { fingerprint: string; title: string; count: number; incidentIds: string[] }
 export interface IncidentList { incidents: Incident[]; groups: FingerprintGroup[] }
 export interface Metrics { totalRuns: number; passedRuns: number; failedRuns: number; successRate: number; averageDurationMs: number; openIncidents: number; verifiedRecoveries: number; averageRecoveryMs: number; recentRuns: Run[]; chart: { runId: string; timestamp: string; durationMs: number; passed: boolean }[]; instanceId: string; instanceStartedAt: string; historyPolicy: 'temporary' | 'local' | 'cloud' }
@@ -22,3 +23,4 @@ export interface Health { status: 'ok'; app: 'BizPlus AI'; instanceId: string; i
 export interface ApiError { error: string; code: string }
 export type { Product, CommerceOrderLine, CommerceOrderStatus, CommerceOrder, CommerceConfig, CommerceCheckout, CommercePaymentVerification } from './commerce.js';
 export * from './live.js';
+export * from './login.js';

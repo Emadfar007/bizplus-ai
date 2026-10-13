@@ -65,8 +65,8 @@ export class PostgresStore implements DataStore {
       COUNT(*) FILTER(WHERE status='failed')::int AS "failedRuns", COALESCE(AVG((data->>'durationMs')::numeric) FILTER(WHERE status IN ('passed','failed')),0)::float8 AS "averageDurationMs"
       FROM bizplus.runs WHERE session_id=$1`,[session])).rows[0];
     const incidents = (await this.pool.query(`SELECT COUNT(*) FILTER(WHERE status<>'resolved')::int AS "openIncidents",
-      COUNT(*) FILTER(WHERE data->'recovery'->>'status'='verified')::int AS "verifiedRecoveries",
-      COALESCE(AVG((data->'recovery'->>'durationMs')::numeric) FILTER(WHERE data->'recovery'->>'status'='verified'),0)::float8 AS "averageRecoveryMs"
+      COUNT(*) FILTER(WHERE data->'recovery'->>'status'='verified' OR data->'manualRecovery'->>'status'='verified')::int AS "verifiedRecoveries",
+      COALESCE(AVG(CASE WHEN data->'recovery'->>'status'='verified' THEN (data->'recovery'->>'durationMs')::numeric WHEN data->'manualRecovery'->>'status'='verified' THEN (data->'manualRecovery'->>'durationMs')::numeric END),0)::float8 AS "averageRecoveryMs"
       FROM bizplus.incidents WHERE session_id=$1`,[session])).rows[0];
     return { ...runs,...incidents,averageDurationMs: Math.round(runs.averageDurationMs),averageRecoveryMs: Math.round(incidents.averageRecoveryMs) } as MetricsAggregate;
   }

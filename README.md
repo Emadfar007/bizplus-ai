@@ -48,6 +48,8 @@ For the presentation fallback, install and build ahead of time. Start the API wi
 
 ## Judge demonstration
 
+The **Login** page now provides a human-controlled credential test. Wrong credentials create an Investigation incident; recovery requires the person to enter the correct credentials and pass server verification. **Live tests → Login rejected** exposes the same two-field test and a simple successful-login dashboard. The observer never fills or submits credential forms. See [manual login and recovery](docs/manual-login.md) for the public synthetic account, demonstration steps and local preview.
+
 1. Run **Healthy transaction** and inspect the completed journey.
 2. Run **Missing confirmation**. Checkout succeeds, but confirmation fails its business assertion despite HTTP 200.
 3. Open the incident. Compare expected and actual results, logs, and the explanation.

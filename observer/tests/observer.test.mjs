@@ -203,3 +203,24 @@ test('actual Chromium detects JavaScript, button, login, database, and confirmat
     assert.equal(restored.assertions.every(item => item.passed), true);
   } finally { await close(target); }
 });
+
+test('observer inspects human login controls without entering credentials or submitting login', async () => {
+  let loginRequests = 0;
+  const target = createServer((req, res) => {
+    if (req.url.includes('/api/login')) { loginRequests++; res.setHeader('Content-Type', 'application/json'); return res.end(JSON.stringify({ status:'successful',message:'Login successful' })); }
+    res.setHeader('Content-Type', 'text/html');
+    res.end(`<form data-testid="manual-login-form"><label for="username">Username</label><input id="username" name="username"><label for="password">Password</label><input id="password" name="password" type="password"><button type="submit">Login</button></form><script>
+      document.querySelector('form').addEventListener('submit',event=>{event.preventDefault();fetch('/api/login',{method:'POST',body:JSON.stringify({username:username.value,password:password.value})})});
+      document.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>fetch('/api/login?unexpected-input')));
+    </script>`);
+  });
+  const origin = await listen(target); const probes = new BrowserProbes(origin);
+  try {
+    const result = await probes.probe(randomUUID());
+    assert.equal(result.manualVerificationRequired, true);
+    assert.equal(result.assertions.find(item => item.code === 'BROWSER_LOGIN_FORM').passed, true);
+    assert.equal(result.assertions.some(item => item.code === 'BROWSER_LOGIN'), false, 'Form presence must never be recorded as successful authentication.');
+    assert.match(result.evidence.join(' '), /Manual verification required/);
+    assert.equal(loginRequests, 0, 'Observer must neither fill nor submit the human login form.');
+  } finally { await close(target); }
+});

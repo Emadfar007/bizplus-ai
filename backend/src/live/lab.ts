@@ -101,7 +101,7 @@ export class FaultLab {
       if (fault === 'http_500' || fault === 'http_503') { res.status(fault === 'http_500' ? 500 : 503).type('text').send(`Controlled ${fault} in isolated BizPlus test site`); return; }
       if (fault === 'not_found') { res.status(404).type('text').send('Controlled missing test route'); return; }
       if (fault === 'empty_body') { res.status(200).end(); return; }
-      res.type('html').send(this.html(session, fault));
+      res.type('html').send(this.html(session, fault, entry.revision));
     });
     const reply = (session: string, endpoint: string, fault: LiveFault, expectedFault: LiveFault, res: Response, success: Record<string, unknown>) => {
       const entry = this.publicEntry(session); const failed = fault === expectedFault;
@@ -110,11 +110,21 @@ export class FaultLab {
       res.setHeader('Cache-Control', 'no-store');
       res.status(httpStatus).json(failed ? { error: `Controlled ${expectedFault}`, synthetic: true } : success);
     };
-    app.get('/test-site/:session/api/login', (req, res) => { const session = String(req.params.session).toLowerCase(); reply(session, 'login', this.publicEntry(session).fault, 'login_401', res, { authenticated: true, synthetic: true }); });
+    app.get('/test-site/:session/api/login', (req, res) => {
+      const session = String(req.params.session).toLowerCase(); const fault = this.publicEntry(session).fault;
+      if (fault === 'login_401') {
+        // Selecting this exercise prepares a human login form; a GET cannot test credentials.
+        res.setHeader('Cache-Control', 'no-store');
+        res.status(405).json({ code: 'MANUAL_LOGIN_REQUIRED', error: 'Enter the username and password in the login form. Login is submitted manually.', synthetic: true });
+        return;
+      }
+      reply(session, 'login', fault, 'login_401', res, { authenticated: true, synthetic: true });
+    });
     app.get('/test-site/:session/api/catalog', (req, res) => { const session = String(req.params.session).toLowerCase(); reply(session, 'catalog', this.publicEntry(session).fault, 'database_unavailable', res, { items: [{ id: 'demo-item', name: 'Demo item' }], synthetic: true }); });
     app.get('/test-site/:session/api/confirmation', (req, res) => { const session = String(req.params.session).toLowerCase(); reply(session, 'confirmation', this.publicEntry(session).fault, 'payment_unavailable', res, { confirmed: true, synthetic: true, paymentCount: 0 }); });
   }
-  private html(session: string, fault: LiveFault): string {
+  private html(session: string, fault: LiveFault, revision: string): string {
+    if (fault === 'login_401') return this.loginHtml(session, revision);
     const marker = fault === 'missing_content' ? 'Controlled content unavailable' : LAB_EXPECTED_CONTENT;
     return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BizPlus isolated test website</title><style>body{font:18px system-ui;max-width:760px;margin:48px auto;padding:24px;color:#182038;background:#f4f7fb}button{padding:12px 18px;margin:8px;border:0;border-radius:8px;background:#215fce;color:white}section{padding:20px;background:white;border-radius:12px;margin:20px 0}</style></head><body><h1>${marker}</h1><p>This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes.</p><section><h2>Test storefront</h2><button data-testid="login">Sign in to test account</button><span data-testid="login-status">Signed out</span><p>Demo item</p><button data-testid="add-product">Add demo item</button><span>Cart: <span data-testid="cart-count">0</span></span><p><button data-testid="checkout">Simulate order confirmation</button><span data-testid="confirmation">No confirmation</span></p></section><script>
 const root='/test-site/${session}/api/';
@@ -123,6 +133,24 @@ ${fault === 'javascript_error' ? "throw Error('Controlled JavaScript initializat
 ${fault === 'button_broken' ? '' : `document.querySelector('[data-testid="login"]').onclick=async()=>{try{const data=await read('login');document.querySelector('[data-testid="login-status"]').textContent=data.authenticated?'Signed in':'Sign-in failed';}catch(error){document.querySelector('[data-testid="login-status"]').textContent=error.message;}};
 document.querySelector('[data-testid="add-product"]').onclick=async()=>{try{const data=await read('catalog');document.querySelector('[data-testid="cart-count"]').textContent=data.items.length?'1':'0';}catch(error){document.querySelector('[data-testid="cart-count"]').textContent=error.message;}};
 document.querySelector('[data-testid="checkout"]').onclick=async()=>{try{const data=await read('confirmation');document.querySelector('[data-testid="confirmation"]').textContent=data.confirmed?'Order confirmed':'No confirmation';}catch(error){document.querySelector('[data-testid="confirmation"]').textContent=error.message;}};`}
+</script></body></html>`;
+  }
+  private loginHtml(session: string, revision: string): string {
+    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BizPlus login test</title><style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;font:16px system-ui;color:#17223c;background:#eef3fb}main{width:100%;max-width:400px;padding:32px;border:1px solid #dfe7f2;border-radius:20px;background:#fff;box-shadow:0 18px 48px #17223c0d}h1{font-size:28px;margin:0 0 24px}label{display:block;font-size:14px;font-weight:600;margin:18px 0 8px}input{width:100%;padding:13px;border:1px solid #ccd8eb;border-radius:9px;font:inherit}input:focus{outline:3px solid #215fce22;border-color:#215fce}button{width:100%;padding:13px;margin-top:24px;border:0;border-radius:9px;background:#215fce;color:#fff;font:600 16px system-ui;cursor:pointer}button:disabled{opacity:.65;cursor:wait}.message{margin:20px 0 0;font-weight:600}.error{color:#b42336}.success{color:#087a56}a{display:inline-block;margin-top:16px;color:#215fce;font-size:14px}.dashboard-card{padding:18px;border-radius:12px;background:#f4f7fc}.dashboard-card p{margin:0} [hidden]{display:none!important}
+</style></head><body><main><p hidden aria-hidden="true">${LAB_EXPECTED_CONTENT}</p><h1 id="page-title">Login</h1><form data-testid="manual-login-form"><label for="username">Username</label><input id="username" name="username" autocomplete="username" required maxlength="128"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="256"><button type="submit">Login</button></form><p id="login-message" data-testid="login-message" class="message" role="status" aria-live="polite" hidden></p><a id="investigate" hidden>Investigate this error</a><section id="dashboard" class="dashboard-card" aria-label="Business dashboard" hidden><p>Welcome to your BizPlus dashboard.</p></section></main><script>
+localStorage.setItem('bizplus.demo-session.v1','${session}');
+const form=document.querySelector('[data-testid="manual-login-form"]');
+const message=document.querySelector('#login-message');const investigate=document.querySelector('#investigate');let incidentId;
+form.addEventListener('submit',async event=>{
+event.preventDefault();const button=form.querySelector('button');button.disabled=true;message.hidden=true;investigate.hidden=true;
+try{const response=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json','X-Demo-Session':'${session}'},body:JSON.stringify({username:form.elements.username.value,password:form.elements.password.value,source:'live_test',labRevision:'${revision}',...(incidentId?{incidentId}:{})})});const data=await response.json();
+if(response.status===401&&data.status==='rejected'){incidentId=data.incidentId;message.textContent='Invalid username or password';message.className='message error';message.setAttribute('role','alert');if(incidentId){investigate.href='/incidents/'+encodeURIComponent(incidentId);investigate.hidden=false;}}
+else if(response.ok&&data.status==='successful'){message.textContent='Login successful';message.className='message success';message.setAttribute('role','status');form.hidden=true;document.querySelector('#page-title').textContent='Business dashboard';document.querySelector('#dashboard').hidden=false;}
+else{message.textContent=data.error||'Login is temporarily unavailable. Please try again.';message.className='message error';message.setAttribute('role','alert');}
+}catch{message.textContent='Unable to reach the login service. Please try again.';message.className='message error';message.setAttribute('role','alert');}
+finally{form.elements.password.value='';message.hidden=false;button.disabled=false;}
+});
 </script></body></html>`;
   }
 }

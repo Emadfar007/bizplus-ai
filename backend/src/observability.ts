@@ -44,7 +44,7 @@ export function observerConnection(options: ObserverOptions = {}) {
       const assertions = result.assertions as Assertion[];
       if (assertions.length > 30 || assertions.some(a => typeof a.code !== 'string' || typeof a.passed !== 'boolean' || typeof a.expected !== 'string' || typeof a.actual !== 'string')) throw new Error('Independent observer returned invalid browser assertions.');
       if (!assertions.length) throw new Error('Independent observer returned no browser assertions.');
-      return { assertions, evidence: result.evidence.slice(0,30).filter((value): value is string => typeof value === 'string').map(message => ({ id: randomUUID(), kind: 'log' as const, timestamp: new Date().toISOString(), message: message.slice(0,1200) })) };
+      return { assertions, ...(result.manualVerificationRequired === true ? { manualVerificationRequired: true } : {}), evidence: result.evidence.slice(0,30).filter((value): value is string => typeof value === 'string').map(message => ({ id: randomUUID(), kind: 'log' as const, timestamp: new Date().toISOString(), message: message.slice(0,1200) })) };
     },
   };
 }

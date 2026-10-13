@@ -84,7 +84,7 @@ test('hosting stays disabled by default and an explicit opt-out preserves API-on
 
 test('known frontend routes and direct detail URLs receive fresh HTML with response headers', async () => {
   await withFixture(async directory => withServer(directory, async base => {
-    for (const path of ['/', '/shop', '/shop/', '/live-tests', '/workflows', '/incidents', '/incidents/5c1a810e-261f-4f16-b7f7-d9bef3b1c3db', '/recovery', '/recovery/demo-incident']) {
+    for (const path of ['/', '/login', '/shop', '/shop/', '/live-tests', '/workflows', '/incidents', '/incidents/5c1a810e-261f-4f16-b7f7-d9bef3b1c3db', '/recovery', '/recovery/demo-incident']) {
       const response = await fetch(`${base}${path}`);
       assert.equal(response.status, 200, path);
       assert.match(response.headers.get('content-type') ?? '', /text\/html/);

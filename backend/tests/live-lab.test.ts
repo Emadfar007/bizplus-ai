@@ -94,7 +94,7 @@ test('Changing faults, starting another run and concurrent recovery are blocked 
 test('Browser monitor absence never passes an interaction fault or claims its cause was observed', async () => {
   const h = await harness();
   try {
-    for (const fault of ['javascript_error','button_broken','login_401','database_unavailable','payment_unavailable'] as const) {
+    for (const fault of ['javascript_error','button_broken','database_unavailable','payment_unavailable'] as const) {
       await h.inject(fault); const run = await h.run(); assert.equal(run.status,'failed'); assert.equal(run.diagnosis?.category,'browser_monitor_unavailable'); assert.equal(run.diagnosis?.confirmedCause,null);
       assert.equal(run.assertions.find(item=>item.code==='BROWSER_JOURNEY_AVAILABLE')?.passed,false);
     }
@@ -119,7 +119,7 @@ test('Browser assertion contracts and correlated dependency responses explain ea
   } } }); baseUrl = h.runtime.baseUrl;
   try {
     assert.equal((await h.run()).status,'passed');
-    for (const fault of ['javascript_error','button_broken','login_401','database_unavailable','payment_unavailable'] as const) {
+    for (const fault of ['javascript_error','button_broken','database_unavailable','payment_unavailable'] as const) {
       await h.inject(fault); const run = await h.run(); assert.equal(run.status,'failed'); assert.ok(run.diagnosis?.confirmedCause,fault);
       const recovery = await h.call(`/api/live/runs/${run.id}/recover`,{approved:true}); assert.equal(recovery.data.status,'verified');
     }
@@ -128,6 +128,44 @@ test('Browser assertion contracts and correlated dependency responses explain ea
     const original = (await h.call(`/api/live/runs/${failed.id}`)).data as LiveRun; assert.equal(original.incidentStatus,'open');
     const verification = (await h.call(`/api/live/runs/${recovery.data.verificationRunId}`)).data as LiveRun; assert.equal(verification.diagnosis?.confirmedCause,null);
     observerUnavailable = false; const verified = await h.call(`/api/live/runs/${failed.id}/verify`,{approved:true}); assert.equal(verified.data.status,'verified');
+  } finally { await h.runtime.close(); }
+});
+
+test('Login rejection exercise presents a human credential form rather than an automatic rejected request', async () => {
+  const h = await harness();
+  try {
+    const state = await h.inject('login_401');
+    const response = await fetch(`${h.runtime.baseUrl}/test-site/${h.session}`);
+    assert.equal(response.status, 200);
+    const body = await response.text();
+    assert.match(body, /data-testid="manual-login-form"/);
+    assert.match(body, /<label for="username">Username<\/label>/);
+    assert.match(body, /name="password" type="password"/);
+    assert.match(body, /fetch\('\/api\/login'/);
+    assert.match(body, /source:'live_test'/);
+    assert.ok(body.includes(`labRevision:'${state.revision}'`));
+    assert.match(body, /Invalid username or password/);
+    assert.match(body, /Login successful/);
+    assert.equal(body.includes('data-testid="add-product"'), false);
+    assert.equal(body.includes('data-testid="checkout"'), false);
+    assert.equal(body.includes('BizPlus@123'), false, 'The password must not be embedded into HTML or observer evidence.');
+    const legacy = await fetch(`${h.runtime.baseUrl}/test-site/${h.session}/api/login`);
+    assert.equal(legacy.status, 405);
+    assert.equal((await legacy.json()).code, 'MANUAL_LOGIN_REQUIRED');
+    assert.deepEqual((await h.call('/api/incidents')).data.incidents, [], 'Viewing the form or old GET must never fabricate a credential incident.');
+  } finally { await h.runtime.close(); }
+});
+
+test('A reachable manual login form cannot resolve an earlier failed browser interaction', async () => {
+  const h = await harness({ live: { targets: [], browserProbe: async () => ({ assertions: [{ code:'BROWSER_JAVASCRIPT', expected:'No browser errors', actual:'Controlled JavaScript initialization error', passed:false }], evidence:[] }) } });
+  try {
+    await h.inject('javascript_error');
+    const original = await h.run(); assert.equal(original.status,'failed');
+    await h.inject('login_401');
+    const result = await h.call(`/api/live/runs/${original.id}/verify`,{approved:true});
+    assert.equal(result.data.status,'failed');
+    assert.equal((await h.call(`/api/live/runs/${original.id}`)).data.incidentStatus,'open');
+    assert.deepEqual((await h.call('/api/incidents')).data.incidents,[],'No credential attempt should be fabricated by this check');
   } finally { await h.runtime.close(); }
 });
 

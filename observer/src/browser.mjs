@@ -50,6 +50,17 @@ export class BrowserProbes {
         result.assertions.push(assertion(stage, 'HTTP 200 document', response?.status() ?? 'No document', response?.status() === 200));
         if (response?.status() !== 200) return;
         if (kind === 'lab') {
+          // Human credential forms are observed only. The observer never enters
+          // a username/password, submits login, or claims successful authentication.
+          const manualLogin = await page.getByTestId('manual-login-form').count() > 0 || await page.locator('input[type="password"]').count() > 0;
+          if (manualLogin) {
+            stage = 'BROWSER_LOGIN_FORM';
+            const fieldsPresent = await page.getByLabel('Username', { exact: true }).count() === 1 && await page.getByLabel('Password', { exact: true }).count() === 1 && await page.getByRole('button', { name: 'Login', exact: true }).count() === 1;
+            result.manualVerificationRequired = true;
+            result.assertions.push(assertion(stage, 'Username, password and Login controls are present for the human operator', fieldsPresent ? 'Login form is present. Authentication was not attempted.' : 'The expected manual login controls are missing.', fieldsPresent));
+            result.evidence.push('Manual verification required. No username or password was entered and login was not submitted. A human must submit credentials to verify login or recovery.');
+            return;
+          }
           stage = 'BROWSER_LOGIN';
           await page.getByTestId('login').click();
           await page.getByTestId('login-status').filter({ hasText: 'Signed in' }).waitFor();

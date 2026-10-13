@@ -99,7 +99,10 @@ export class LiveMonitor {
       const responseEvent: LiveEvidence = { id: randomUUID(), kind: 'response', timestamp: new Date().toISOString(), message: `Real GET ${target.url} returned HTTP ${response.httpStatus}.`, data: { url: target.url, httpStatus: response.httpStatus, responseBytes: response.responseBytes } };
       run.evidence = { responseBytes: response.responseBytes, ...(title ? { title: title.trim() } : {}), excerpt: excerpt(response.body), events: [responseEvent] };
       if (isLab && run.assertions.every(item => item.passed)) {
-        if (this.options.browserProbe) {
+        if (labState?.fault === 'login_401') {
+          run.assertions.push(assertion('MANUAL_LOGIN_FORM', 'Username and password form available for a human', response.body.includes('data-testid="manual-login-form"') ? 'Login form available; no credentials submitted' : 'Login form missing', response.body.includes('data-testid="manual-login-form"')));
+          if (requireBrowser) run.assertions.push(assertion('BROWSER_JOURNEY_AVAILABLE', 'The original failed interaction is verified', 'Opening a manual login form cannot verify the original browser failure. Enter credentials yourself for login; restore the matching site behavior for other incidents.', false));
+        } else if (this.options.browserProbe) {
           try {
             const browser = await this.options.browserProbe(session);
             if (!browser.assertions.length) throw new Error('The independent browser monitor returned no journey assertions.');
@@ -109,7 +112,7 @@ export class LiveMonitor {
         } else if (requireBrowser || (labState && ['javascript_error','button_broken','login_401','payment_unavailable','database_unavailable'].includes(labState.fault))) run.assertions.push(assertion('BROWSER_JOURNEY_AVAILABLE', 'Independent browser monitor configured', 'Browser journey is unavailable; HTTP alone cannot verify the required interaction behavior.', false));
       }
       run.status = run.assertions.every(item => item.passed) ? 'passed' : 'failed';
-      run.message = run.status === 'passed' ? (isLab && this.options.browserProbe ? 'Website response and the actual synthetic browser journey passed.' : isLab ? 'HTTP baseline passed. Connect the independent browser monitor to verify sign-in, cart and confirmation.' : 'Website returned its expected status and content.') : 'Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.';
+      run.message = run.status === 'passed' ? (labState?.fault === 'login_401' ? 'Login page is reachable. Enter credentials yourself to verify login; this check did not attempt authentication.' : isLab && this.options.browserProbe ? 'Website response and the actual synthetic browser journey passed.' : isLab ? 'HTTP baseline passed. Connect the independent browser monitor to verify sign-in, cart and confirmation.' : 'Website returned its expected status and content.') : 'Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.';
     } catch (error) {
       run.status = 'failed'; run.error = error instanceof Error ? error.message : 'Website request failed.';
       run.message = run.error; run.assertions.push(assertion('REQUEST_COMPLETED', 'HTTPS response within 12 seconds', run.error, false));
@@ -131,6 +134,7 @@ export class LiveMonitor {
       if (!original) throw new WorkflowError(404, 'NOT_FOUND', 'Live test was not found in this session.');
       if (original.status !== 'failed') throw new WorkflowError(409, 'NO_LIVE_INCIDENT', 'Only a failed live test can be recovered or verified.');
       if (original.recovery?.status === 'verified') return { runId, verificationRunId: original.recovery.verificationRunId, status: 'verified' };
+      if (original.diagnosis?.category === 'authentication') throw new WorkflowError(409, 'MANUAL_LOGIN_REQUIRED', 'Login recovery requires the human to enter correct credentials. Open the manual login test; an automatic site restore cannot verify login.');
       if (restore) {
         if (original.targetId !== LAB_TARGET_ID || !original.labRevision) throw new WorkflowError(400, 'MANUAL_REPAIR_REQUIRED', 'Only isolated lab faults can be restored automatically. Apply the recommended repair to your owned site, then verify.');
         this.lab.restore(session, original.labRevision);

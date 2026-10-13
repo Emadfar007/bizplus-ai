@@ -13,6 +13,7 @@ import { registerCommerce, registerCommerceWebhook, type CommerceOptions } from 
 import { registerLiveMonitor, type LiveMonitorOptions } from './live/monitor.js';
 import { registerHostedFrontend } from './hosting/frontend.js';
 import { observerConnection, registerObservability, type ObserverOptions } from './observability.js';
+import { registerLogin, type LoginOptions } from './login/routes.js';
 
 export interface AppOptions {
   databasePath?: string;
@@ -23,6 +24,7 @@ export interface AppOptions {
   commerce?: CommerceOptions;
   observer?: ObserverOptions;
   live?: LiveMonitorOptions;
+  login?: LoginOptions;
   corsOrigins?: string[];
   stepTimeoutMs?: number;
   sandboxLatencyMs?: number;
@@ -107,6 +109,7 @@ export async function createApp(options: AppOptions = {}) {
   });
   app.get('/api/metrics', async (_req, res) => res.json(await engine.metrics(res.locals.session as string)));
   registerCommerce(app,store,commerceOptions);
+  const login = registerLogin(app,store,options.login);
   registerObserverProxy();
   const liveMonitor = registerLiveMonitor(app,store,{
     ...options.live,
@@ -122,7 +125,7 @@ export async function createApp(options: AppOptions = {}) {
     console.error('Backend request failed:', error instanceof Error ? error.message : error);
     jsonError(res, 500, 'INTERNAL_ERROR', 'The demo could not complete this request. Try again shortly.');
   });
-  return { app, store, engine, sandbox, liveMonitor };
+  return { app, store, engine, sandbox, liveMonitor, login };
 }
 
 export async function startServer(options: AppOptions & { port?: number; host?: string } = {}) {
@@ -136,7 +139,7 @@ export async function startServer(options: AppOptions & { port?: number; host?: 
   let closed = false;
   return { ...runtime, server, baseUrl, close: async () => {
     if (closed) return; closed = true;
-    await runtime.engine.drain(); await runtime.sandbox.drain(); await runtime.liveMonitor.drain();
+    await runtime.engine.drain(); await runtime.sandbox.drain(); await runtime.liveMonitor.drain(); await runtime.login.drain();
     await new Promise<void>((resolveClose, reject) => { server.close(error => error ? reject(error) : resolveClose()); server.closeIdleConnections(); });
     await runtime.store.close();
   } };

@@ -27,6 +27,34 @@ for (const fault of faults) {
   const session=randomUUID();
   const state=await api('/api/live/lab',session,{fault,approved:true});
   assert.equal(state.fault,fault); assert.equal(state.safety.isolated,true);
+  if (fault==='login_401') {
+    // These synthetic HTTP fixtures verify the human form's contract. The product
+    // observer must never fill or submit its credential fields.
+    const formCheck=await run(session); assert.equal(formCheck.status,'passed');
+    assert.match(formCheck.message,/Enter credentials yourself/);
+    const config=await api('/api/login/config',session);
+    const username=process.env.VERIFY_LOGIN_USERNAME ?? config.username;
+    const password=process.env.VERIFY_LOGIN_PASSWORD ?? config.password;
+    assert.ok(username && password,'Manual login QA needs the public demo account or explicitly configured test credentials.');
+    const submit=async body=>{
+      const response=await fetch(`${origin}/api/login`,{method:'POST',headers:{'X-Demo-Session':session,'Content-Type':'application/json'},body:JSON.stringify(body)});
+      return {status:response.status,data:await response.json()};
+    };
+    const rejection=await submit({username,password:'deliberately-incorrect-test-password',source:'live_test',labRevision:state.revision});
+    assert.equal(rejection.status,401); assert.ok(rejection.data.incidentId);
+    const failure=await api(`/api/incidents/${rejection.data.incidentId}`,session);
+    assert.equal(failure.status,'open'); assert.equal(failure.login.manualOnly,true);
+    const recovery=await submit({username,password,source:'live_test',incidentId:failure.id});
+    assert.equal(recovery.status,200); assert.equal(recovery.data.message,'Login successful');
+    const retained=await api(`/api/incidents/${failure.id}`,session);
+    assert.equal(retained.status,'resolved'); assert.equal(retained.manualRecovery.status,'verified');
+    assert.equal((await api(`/api/runs/${retained.runId}`,session)).status,'failed');
+    const evidence=JSON.stringify(retained);
+    assert.equal(evidence.includes(password),false); assert.equal(evidence.includes('deliberately-incorrect-test-password'),false);
+    report.faults.push({fault,state,formCheck,failure,recovery:recovery.data,verification:retained.manualRecovery.verification});
+    console.log(`${fault}: manual rejection -> investigated -> correct credential retry -> verified`);
+    continue;
+  }
   const failure=await run(session);
   assert.equal(failure.status,'failed',fault);
   assert.equal(failure.incidentStatus,'open',fault);

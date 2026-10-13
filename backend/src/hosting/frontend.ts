@@ -10,7 +10,7 @@ export interface HostedFrontendOptions {
   directory?: string;
 }
 
-const SPA_VIEWS = new Set(['/', '/shop', '/live-tests', '/workflows', '/incidents', '/recovery']);
+const SPA_VIEWS = new Set(['/', '/login', '/shop', '/live-tests', '/workflows', '/incidents', '/recovery']);
 const DETAIL_VIEW = /^\/(?:incidents|recovery)\/[A-Za-z0-9_-]{1,128}$/;
 const FRONTEND_DIRECTORY = fileURLToPath(new URL('../../../frontend/dist/', import.meta.url));
 

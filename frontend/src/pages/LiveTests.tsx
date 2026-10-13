@@ -5,6 +5,7 @@ import type { Workspace } from '../hooks/useWorkspace';
 import { Badge, duration, EmptyState, SectionLabel, shortId, time } from '../components/UI';
 import { LiveInvestigation, LiveLabControl, LiveTracePanel } from '../components/LiveWorkflow';
 import LiveObserver from '../components/LiveObserver';
+import { LoginForm } from '../components/LoginForm';
 import { liveApi, type ObserverSnapshot } from '../services/live';
 import '../live-workflow.css';
 
@@ -132,6 +133,11 @@ export default function LiveTests({ workspace }: { workspace: Workspace }) {
       const state = await liveApi.introduce(session, fault);
       if (!current()) return;
       setLab(state); setSelectedTarget(state.targetId);
+      if (fault === 'login_401') {
+        setAuto(false);
+        setNotice('Login test ready. Enter the username and password yourself. Rejected credentials will appear in Investigation.');
+        return;
+      }
       await beginRun(state.targetId);
       if (current()) setNotice(fault === 'healthy' ? 'Healthy baseline started. Inspect the completed checks below.' : 'Test fault introduced. The live check is capturing its response and customer journey evidence.');
     } catch (cause) { if (current()) setError(message(cause, 'The test fault could not be introduced.')); }
@@ -180,6 +186,7 @@ export default function LiveTests({ workspace }: { workspace: Workspace }) {
     {notice ? <div className="feedback notice" role="status"><CheckCircle2 size={18}/><span>{notice}</span><button className="icon-button" aria-label="Dismiss live test notice" onClick={() => setNotice(null)}><X size={16}/></button></div> : null}
     <div className="metric-row live-metrics"><div className="metric"><div className="metric-title"><span>Live success rate</span><ShieldCheck size={16} className="cyan"/></div><strong>{completed.length ? `${Math.round(passed / completed.length * 100)}%` : '—'}</strong><span className="metric-foot">{completed.length ? `${passed} of ${completed.length} completed checks` : 'Awaiting the first live check'}</span></div><div className="metric"><div className="metric-title"><span>Average check duration</span><Timer size={16} className="blue"/></div><strong>{completed.length ? duration(average) : '—'}</strong><span className="metric-foot">Measured website and journey checks</span></div><div className="metric"><div className="metric-title"><span>Failed checks</span><TriangleAlert size={16} className="amber"/></div><strong>{completed.length ? completed.length - passed : '0'}</strong><span className="metric-foot">HTTP, content or business outcome failures</span></div><div className="metric"><div className="metric-title"><span>Approved targets</span><Globe2 size={16} className="cyan"/></div><strong>{loading ? '—' : targets.length}</strong><span className="metric-foot">Includes the isolated fault lab</span></div></div>
     <LiveLabControl lab={lab} fault={fault} busy={active} connected={connected} onFault={setFault} onIntroduce={() => void introduce()} onRestore={() => void restore()}/>
+    {fault === 'login_401' ? <section className="panel login-live-panel"><div className="panel-header"><div><SectionLabel>MANUAL LOGIN TEST</SectionLabel><h2>Try the login yourself</h2></div><ShieldCheck size={20}/></div><LoginForm key={`${session}:live-login`} session={session} source="live_test" labRevision={lab?.fault === 'login_401' ? lab.revision : undefined} connected={connected} onCompleted={() => workspace.refresh()}/></section> : null}
     <div className="live-main-grid"><section className="panel live-target-panel"><div className="panel-header"><div><img src="/assets/figma/live-globe.svg" width={20} height={20} alt="" aria-hidden="true"/><h2>Choose an approved website</h2></div></div>
       {loading && !targets.length ? <EmptyState icon={Loader2} title="Loading approved targets">The server decides which websites can be tested.</EmptyState> : targets.length ? <div className="live-target-list">{targets.map(item => <button key={item.id} disabled={active} aria-pressed={item.id === selectedTarget} className={`live-target ${item.id === selectedTarget ? 'selected' : ''}`} onClick={() => setSelectedTarget(item.id)}><span className="live-target-icon"><Globe2 size={19}/></span><span><strong>{item.name}</strong><small>{hostname(item.url)}</small><code>{item.url}</code></span><span className="radio-dot"/></button>)}</div> : <EmptyState icon={Globe2} title="No live targets available">Reconnect to the backend to load the controlled test website and approved targets.</EmptyState>}
       {target ? <div className="live-target-assertions"><span><Check size={13}/> Expected HTTP {target.expectedStatus}</span>{target.containsText ? <span><FileSearch size={13}/> Content includes <code>{target.containsText}</code></span> : <span><FileSearch size={13}/> Status and timing check</span>}</div> : null}
