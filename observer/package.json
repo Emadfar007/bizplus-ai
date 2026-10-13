@@ -1,0 +1,13 @@
+{
+  "name": "bizplus-independent-observer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "24.x" },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "install:browser": "playwright install chromium"
+  },
+  "dependencies": { "playwright": "1.64.0" }
+}

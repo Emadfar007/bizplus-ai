@@ -4,6 +4,7 @@ import { dirname } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import type { CommerceOrder, Incident, IncidentList, LiveRun, Run } from '@bizplus/shared';
 import type { DataStore, PaymentRow } from './types.js';
+import { diagnoseLiveRun } from '../live/diagnosis.js';
 
 type JsonRow = { data: string };
 export const AMOUNT_MINOR = 129900;
@@ -73,8 +74,17 @@ export class Store implements DataStore {
       run.status = 'failed'; run.error = 'The backend restarted before this website test completed.'; run.message = run.error;
       run.completedAt = new Date().toISOString();
       run.assertions.push({ code: 'REQUEST_COMPLETED', expected: 'Completed website response', actual: 'Interrupted by backend restart', passed: false });
+      run.evidence.events ??= [];
+      run.evidence.events.push({ id:randomUUID(), kind:'log', timestamp:run.completedAt, message:'The monitoring backend restarted before this preserved check completed.', data:{monitorRestarted:true} });
+      run.diagnosis = diagnoseLiveRun(run); run.incidentStatus = 'open';
       this.saveLiveRun(row.session_id,run);
     }
+  }
+
+  checkReadiness(): void {
+    // Exercise the actual connection and the tables used by customer orders.
+    this.db.prepare('SELECT id FROM commerce_orders LIMIT 1').all();
+    this.db.prepare('SELECT id FROM live_runs LIMIT 1').all();
   }
 
   transaction<T>(operation: () => T): T {

@@ -42,6 +42,7 @@ const stepFailed = (step: StepResult): boolean => step.status === 'failed';
 export class Engine {
   private baseUrl = '';
   private activeRuns = new Map<string, Promise<void>>();
+  private activeRunIds = new Map<string, string>();
   private activeRecoveries = new Map<string, Promise<RecoveryResult>>();
   readonly health: Health;
   constructor(readonly store: DataStore, readonly nonce: string, private options: EngineOptions, historyPolicy: Health['historyPolicy']) {
@@ -65,15 +66,27 @@ export class Engine {
   setBaseUrl(url: string): void { this.baseUrl = url; }
 
   async enqueue(session: string, scenario: Scenario): Promise<Run> {
+    await this.waitForFinalizingRun(session);
     if (this.activeRuns.has(session)) throw new WorkflowError(409, 'RUN_ACTIVE', 'A workflow is already running for this demo session.');
     if (this.activeRuns.size >= 20) throw new WorkflowError(429, 'RUNNER_BUSY', 'The demo runner is busy. Try again shortly.');
     const run: Run = { id: randomUUID(), workflowId: WORKFLOW.id, scenario, status: 'queued', createdAt: new Date().toISOString(), completedAt: null, durationMs: 0,
       steps: specs.map(blankStep), incidentId: null, orderId: null, transactionId: null, amountMinor: AMOUNT_MINOR, paymentCount: 0 };
     const saved = Promise.resolve(this.store.saveRun(session, run));
-    const pending = saved.then(() => this.execute(session, run)).catch(error => console.error('Workflow execution could not persist:', error instanceof Error ? error.message : 'Database operation failed')).finally(() => this.activeRuns.delete(session));
+    const pending = saved.then(() => this.execute(session, run)).catch(error => console.error('Workflow execution could not persist:', error instanceof Error ? error.message : 'Database operation failed')).finally(() => { this.activeRuns.delete(session); this.activeRunIds.delete(session); });
+    this.activeRunIds.set(session,run.id);
     this.activeRuns.set(session, pending);
     await saved;
     return run;
+  }
+
+  private async waitForFinalizingRun(session: string): Promise<void> {
+    const completion = this.activeRuns.get(session), id = this.activeRunIds.get(session);
+    if (!completion || !id) return;
+    const persisted = await this.store.getRun(id,session);
+    // PostgreSQL can expose its committed final result before the runner's write
+    // acknowledgement arrives. Wait for that acknowledgement, rather than reject
+    // a new action after the user has already observed a completed run.
+    if (persisted?.completedAt && ['passed','failed'].includes(persisted.status)) await completion;
   }
 
   private async execute(session: string, run: Run): Promise<void> {
@@ -93,7 +106,7 @@ export class Engine {
           for (const remaining of run.steps) if (remaining.status === 'pending') { remaining.status = 'skipped'; remaining.actual = `Skipped because ${step.name} failed`; }
           run.status = 'failed';
           const incident = createIncident(run, step); run.incidentId = incident.id;
-          await this.store.saveRun(session, run); await this.store.saveIncident(session, incident);
+          await this.store.saveIncident(session, incident);
           break;
         }
       }
@@ -160,6 +173,7 @@ export class Engine {
   }
 
   async recover(session: string, incidentId: string): Promise<RecoveryResult> {
+    await this.waitForFinalizingRun(session);
     const incident = await this.store.getIncident(incidentId, session);
     if (!incident) throw new WorkflowError(404, 'NOT_FOUND', 'Incident was not found in this demo session.');
     if (incident.status === 'resolved' && incident.recovery?.status === 'verified') return incident.recovery;

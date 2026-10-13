@@ -1,0 +1,1063 @@
+{
+  "startedAt": "2026-10-13T08:17:13.307Z",
+  "target": "http://127.0.0.1:3014",
+  "observer": "http://127.0.0.1:3015",
+  "before": {
+    "status": "ok",
+    "instanceId": "f04e5a72-84ff-4173-84ce-e206870df0fb",
+    "instanceStartedAt": "2026-10-13T08:17:14.445Z",
+    "origin": "http://127.0.0.1:3014",
+    "intervalMs": 1000,
+    "journeyIntervalMs": 86400000,
+    "historyPolicy": "local",
+    "browser": {
+      "available": null,
+      "lastError": null
+    },
+    "lastCompletedAt": "2026-10-13T08:17:14.541Z",
+    "checks": [
+      {
+        "id": "d93ea4fe-86fa-4eaf-b18b-b4e7e1a696e4",
+        "key": "availability",
+        "label": "Independent availability",
+        "completedAt": "2026-10-13T08:17:14.517Z",
+        "durationMs": 55,
+        "status": "passed",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "177 bytes",
+            "passed": true
+          },
+          {
+            "code": "APPLICATION_HEALTH",
+            "expected": "JSON status ok and app BizPlus AI",
+            "actual": "BizPlus AI reports status ok",
+            "passed": true
+          }
+        ],
+        "evidence": [
+          "Observed /health: HTTP 200, 177 response bytes."
+        ],
+        "diagnosis": {
+          "summary": "The independently observed contract passed.",
+          "certainty": "unconfirmed",
+          "causes": [],
+          "solutions": []
+        }
+      },
+      {
+        "id": "8d3aedc9-2e4c-4681-877c-c3c9487cdc0a",
+        "key": "readiness",
+        "label": "Database readiness",
+        "completedAt": "2026-10-13T08:17:14.531Z",
+        "durationMs": 50,
+        "status": "passed",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "489 bytes",
+            "passed": true
+          },
+          {
+            "code": "DEPENDENCY_READINESS",
+            "expected": "Readiness status ready after database probe",
+            "actual": "ready",
+            "passed": true
+          },
+          {
+            "code": "READINESS_DATABASE",
+            "expected": "Dependency probe passed",
+            "actual": "passed (DATABASE_READABLE): The primary order and monitoring tables are readable.",
+            "passed": true
+          },
+          {
+            "code": "READINESS_TEST_PAYMENT_PROVIDER",
+            "expected": "Dependency probe passed",
+            "actual": "passed (PROVIDER_READABLE): Razorpay Test Mode authenticated a read-only request. No order or payment was created.",
+            "passed": true
+          }
+        ],
+        "evidence": [
+          "Observed /ready: HTTP 200, 489 response bytes."
+        ],
+        "diagnosis": {
+          "summary": "The independently observed contract passed.",
+          "certainty": "unconfirmed",
+          "causes": [],
+          "solutions": []
+        }
+      },
+      {
+        "id": "d21c5bdc-7e93-4fd1-b463-0842308a7da7",
+        "key": "storefront",
+        "label": "Storefront document",
+        "completedAt": "2026-10-13T08:17:14.533Z",
+        "durationMs": 51,
+        "status": "passed",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "718 bytes",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus storefront HTML shell",
+            "actual": "Expected HTML shell present",
+            "passed": true
+          }
+        ],
+        "evidence": [
+          "Observed /shop: HTTP 200, 718 response bytes."
+        ],
+        "diagnosis": {
+          "summary": "The independently observed contract passed.",
+          "certainty": "unconfirmed",
+          "causes": [],
+          "solutions": []
+        }
+      },
+      {
+        "id": "ae85ded7-b108-4bdc-8343-de11b691f57e",
+        "key": "storefront_browser",
+        "label": "Storefront browser journey",
+        "completedAt": "2026-10-13T08:16:03.103Z",
+        "durationMs": 1768,
+        "status": "failed",
+        "assertions": [
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "Browser action completes and visible business outcome changes",
+            "actual": "Browser did not satisfy BROWSER_PAGE_LOAD within its deadline.",
+            "passed": false
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": [
+          "Browser request failed: /shop.",
+          "An actual Chromium page action or navigation failed; inspect observed browser and network evidence."
+        ],
+        "diagnosis": {
+          "summary": "The actual browser journey failed a visible user outcome.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Failed browser assertions: BROWSER_PAGE_LOAD. Browser/network evidence may identify a failing request; server logs are needed to confirm its underlying cause."
+          ],
+          "solutions": [
+            "Inspect uncaught JavaScript errors and failed endpoint evidence.",
+            "Restore button handlers, authentication, catalog/dependency access, or confirmation behavior as indicated, then rerun the same journey."
+          ]
+        }
+      },
+      {
+        "id": "7e7138ef-6e1d-4ea6-a180-e12ea6759d4f",
+        "key": "synthetic_workflow",
+        "label": "Synthetic login to order journey",
+        "completedAt": "2026-10-13T08:16:03.114Z",
+        "durationMs": 9,
+        "status": "failed",
+        "assertions": [
+          {
+            "code": "SYNTHETIC_JOURNEY",
+            "expected": "Completed healthy synthetic journey",
+            "actual": "The synthetic workflow did not complete successfully within its deadline",
+            "passed": false
+          }
+        ],
+        "evidence": [
+          "The synthetic API journey failed to schedule or finish. Inspect application workflow and database evidence."
+        ],
+        "diagnosis": {
+          "summary": "The synthetic business workflow failed even though transport may still be available.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Authentication, catalog data, checkout, confirmation, or database storage may have failed. These assertions narrow the failing stage; underlying causes require application evidence."
+          ],
+          "solutions": [
+            "Inspect the failed synthetic step and related database logs.",
+            "Restore the dependency or workflow stage, then verify all five steps and the original synthetic payment count."
+          ]
+        }
+      }
+    ],
+    "incidents": [
+      {
+        "id": "32ea3432-3c62-43f1-866f-9c7a43956fe4",
+        "key": "storefront",
+        "label": "Storefront document",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:16:03.279Z",
+        "resolvedAt": "2026-10-13T08:17:14.533Z",
+        "lastSeenAt": "2026-10-13T08:17:14.533Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "b7eedab9-3989-4236-ae48-21f3b0ee629b",
+        "key": "readiness",
+        "label": "Database readiness",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:16:03.278Z",
+        "resolvedAt": "2026-10-13T08:17:14.531Z",
+        "lastSeenAt": "2026-10-13T08:17:14.531Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "4158aa9c-35dc-40a6-9001-b82f352b7634",
+        "key": "availability",
+        "label": "Independent availability",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:16:03.277Z",
+        "resolvedAt": "2026-10-13T08:17:14.517Z",
+        "lastSeenAt": "2026-10-13T08:17:14.517Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "1d5f4888-62ce-4edd-a040-936ea1219036",
+        "key": "synthetic_workflow",
+        "label": "Synthetic login to order journey",
+        "status": "open",
+        "openedAt": "2026-10-13T08:16:03.114Z",
+        "resolvedAt": null,
+        "lastSeenAt": "2026-10-13T08:16:03.114Z",
+        "diagnosis": {
+          "summary": "The synthetic business workflow failed even though transport may still be available.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Authentication, catalog data, checkout, confirmation, or database storage may have failed. These assertions narrow the failing stage; underlying causes require application evidence."
+          ],
+          "solutions": [
+            "Inspect the failed synthetic step and related database logs.",
+            "Restore the dependency or workflow stage, then verify all five steps and the original synthetic payment count."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "d3c8f9a3-d1c1-4196-9445-5733c45d147f",
+        "key": "storefront_browser",
+        "label": "Storefront browser journey",
+        "status": "open",
+        "openedAt": "2026-10-13T08:16:03.103Z",
+        "resolvedAt": null,
+        "lastSeenAt": "2026-10-13T08:16:03.103Z",
+        "diagnosis": {
+          "summary": "The actual browser journey failed a visible user outcome.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Failed browser assertions: BROWSER_PAGE_LOAD. Browser/network evidence may identify a failing request; server logs are needed to confirm its underlying cause."
+          ],
+          "solutions": [
+            "Inspect uncaught JavaScript errors and failed endpoint evidence.",
+            "Restore button handlers, authentication, catalog/dependency access, or confirmation behavior as indicated, then rerun the same journey."
+          ]
+        },
+        "failureKind": "failed"
+      }
+    ],
+    "limitations": [
+      "The observer runs separately from BizPlus and continues checking while the monitored app is unavailable.",
+      "HTTP checks run every 1 seconds while this observer instance is running; brief faults between checks can be missed.",
+      "Storefront browser and synthetic business journeys run every 86400 seconds; provider payments are never created.",
+      "SQLite history is local to this observer instance and retained for up to seven days or 1,000 checks.",
+      "Free hosting may sleep when idle; independent hosting separates outages but does not guarantee uninterrupted 24/7 scheduling.",
+      "External status, timeout, and browser failures identify observed symptoms; server logs or dependency evidence are required to confirm production root causes."
+    ]
+  },
+  "during": {
+    "status": "ok",
+    "instanceId": "f04e5a72-84ff-4173-84ce-e206870df0fb",
+    "instanceStartedAt": "2026-10-13T08:17:14.445Z",
+    "origin": "http://127.0.0.1:3014",
+    "intervalMs": 1000,
+    "journeyIntervalMs": 86400000,
+    "historyPolicy": "local",
+    "browser": {
+      "available": true,
+      "lastError": null
+    },
+    "lastCompletedAt": "2026-10-13T08:17:15.496Z",
+    "checks": [
+      {
+        "id": "41877d04-4108-4a5a-9b53-ebb5b55b9123",
+        "key": "availability",
+        "label": "Independent availability",
+        "completedAt": "2026-10-13T08:17:15.490Z",
+        "durationMs": 6,
+        "status": "failed",
+        "assertions": [
+          {
+            "code": "REQUEST_COMPLETED",
+            "expected": "Response within 12 seconds",
+            "actual": "Request did not complete",
+            "passed": false
+          }
+        ],
+        "evidence": [
+          "/health: Connection or fixed-route inspection failed."
+        ],
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        }
+      },
+      {
+        "id": "55350794-183c-4591-b656-fc116e4374bd",
+        "key": "readiness",
+        "label": "Database readiness",
+        "completedAt": "2026-10-13T08:17:15.490Z",
+        "durationMs": 4,
+        "status": "failed",
+        "assertions": [
+          {
+            "code": "REQUEST_COMPLETED",
+            "expected": "Response within 12 seconds",
+            "actual": "Request did not complete",
+            "passed": false
+          }
+        ],
+        "evidence": [
+          "/ready: Connection or fixed-route inspection failed."
+        ],
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        }
+      },
+      {
+        "id": "02382655-f71a-4f7d-8a4c-ae06f31216fc",
+        "key": "storefront",
+        "label": "Storefront document",
+        "completedAt": "2026-10-13T08:17:15.491Z",
+        "durationMs": 4,
+        "status": "failed",
+        "assertions": [
+          {
+            "code": "REQUEST_COMPLETED",
+            "expected": "Response within 12 seconds",
+            "actual": "Request did not complete",
+            "passed": false
+          }
+        ],
+        "evidence": [
+          "/shop: Connection or fixed-route inspection failed."
+        ],
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        }
+      },
+      {
+        "id": "5492ca2e-ccca-4593-9f44-400e306067ea",
+        "key": "storefront_browser",
+        "label": "Storefront browser journey",
+        "completedAt": "2026-10-13T08:17:15.118Z",
+        "durationMs": 577,
+        "status": "failed",
+        "assertions": [
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "Browser action completes and visible business outcome changes",
+            "actual": "Browser did not satisfy BROWSER_PAGE_LOAD within its deadline.",
+            "passed": false
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": [
+          "Browser request failed: /shop.",
+          "An actual Chromium page action or navigation failed; inspect observed browser and network evidence."
+        ],
+        "diagnosis": {
+          "summary": "The actual browser journey failed a visible user outcome.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Failed browser assertions: BROWSER_PAGE_LOAD. Browser/network evidence may identify a failing request; server logs are needed to confirm its underlying cause."
+          ],
+          "solutions": [
+            "Inspect uncaught JavaScript errors and failed endpoint evidence.",
+            "Restore button handlers, authentication, catalog/dependency access, or confirmation behavior as indicated, then rerun the same journey."
+          ]
+        }
+      },
+      {
+        "id": "46996210-fe1d-402e-95d5-518a35a55419",
+        "key": "synthetic_workflow",
+        "label": "Synthetic login to order journey",
+        "completedAt": "2026-10-13T08:17:15.127Z",
+        "durationMs": 6,
+        "status": "failed",
+        "assertions": [
+          {
+            "code": "SYNTHETIC_JOURNEY",
+            "expected": "Completed healthy synthetic journey",
+            "actual": "The synthetic workflow did not complete successfully within its deadline",
+            "passed": false
+          }
+        ],
+        "evidence": [
+          "The synthetic API journey failed to schedule or finish. Inspect application workflow and database evidence."
+        ],
+        "diagnosis": {
+          "summary": "The synthetic business workflow failed even though transport may still be available.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Authentication, catalog data, checkout, confirmation, or database storage may have failed. These assertions narrow the failing stage; underlying causes require application evidence."
+          ],
+          "solutions": [
+            "Inspect the failed synthetic step and related database logs.",
+            "Restore the dependency or workflow stage, then verify all five steps and the original synthetic payment count."
+          ]
+        }
+      }
+    ],
+    "incidents": [
+      {
+        "id": "4e7beaf4-9b28-4f10-95be-15842042db80",
+        "key": "storefront",
+        "label": "Storefront document",
+        "status": "open",
+        "openedAt": "2026-10-13T08:17:15.491Z",
+        "resolvedAt": null,
+        "lastSeenAt": "2026-10-13T08:17:15.491Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "f79a3075-2467-4439-b092-0163ac8410fd",
+        "key": "availability",
+        "label": "Independent availability",
+        "status": "open",
+        "openedAt": "2026-10-13T08:17:15.490Z",
+        "resolvedAt": null,
+        "lastSeenAt": "2026-10-13T08:17:15.490Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "f936ec74-16b5-4c0a-98e5-3af5a05a0ccc",
+        "key": "readiness",
+        "label": "Database readiness",
+        "status": "open",
+        "openedAt": "2026-10-13T08:17:15.490Z",
+        "resolvedAt": null,
+        "lastSeenAt": "2026-10-13T08:17:15.490Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "32ea3432-3c62-43f1-866f-9c7a43956fe4",
+        "key": "storefront",
+        "label": "Storefront document",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:16:03.279Z",
+        "resolvedAt": "2026-10-13T08:17:14.533Z",
+        "lastSeenAt": "2026-10-13T08:17:14.533Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "b7eedab9-3989-4236-ae48-21f3b0ee629b",
+        "key": "readiness",
+        "label": "Database readiness",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:16:03.278Z",
+        "resolvedAt": "2026-10-13T08:17:14.531Z",
+        "lastSeenAt": "2026-10-13T08:17:14.531Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "4158aa9c-35dc-40a6-9001-b82f352b7634",
+        "key": "availability",
+        "label": "Independent availability",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:16:03.277Z",
+        "resolvedAt": "2026-10-13T08:17:14.517Z",
+        "lastSeenAt": "2026-10-13T08:17:14.517Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "1d5f4888-62ce-4edd-a040-936ea1219036",
+        "key": "synthetic_workflow",
+        "label": "Synthetic login to order journey",
+        "status": "open",
+        "openedAt": "2026-10-13T08:16:03.114Z",
+        "resolvedAt": null,
+        "lastSeenAt": "2026-10-13T08:17:15.127Z",
+        "diagnosis": {
+          "summary": "The synthetic business workflow failed even though transport may still be available.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Authentication, catalog data, checkout, confirmation, or database storage may have failed. These assertions narrow the failing stage; underlying causes require application evidence."
+          ],
+          "solutions": [
+            "Inspect the failed synthetic step and related database logs.",
+            "Restore the dependency or workflow stage, then verify all five steps and the original synthetic payment count."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "d3c8f9a3-d1c1-4196-9445-5733c45d147f",
+        "key": "storefront_browser",
+        "label": "Storefront browser journey",
+        "status": "open",
+        "openedAt": "2026-10-13T08:16:03.103Z",
+        "resolvedAt": null,
+        "lastSeenAt": "2026-10-13T08:17:15.118Z",
+        "diagnosis": {
+          "summary": "The actual browser journey failed a visible user outcome.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Failed browser assertions: BROWSER_PAGE_LOAD. Browser/network evidence may identify a failing request; server logs are needed to confirm its underlying cause."
+          ],
+          "solutions": [
+            "Inspect uncaught JavaScript errors and failed endpoint evidence.",
+            "Restore button handlers, authentication, catalog/dependency access, or confirmation behavior as indicated, then rerun the same journey."
+          ]
+        },
+        "failureKind": "failed"
+      }
+    ],
+    "limitations": [
+      "The observer runs separately from BizPlus and continues checking while the monitored app is unavailable.",
+      "HTTP checks run every 1 seconds while this observer instance is running; brief faults between checks can be missed.",
+      "Storefront browser and synthetic business journeys run every 86400 seconds; provider payments are never created.",
+      "SQLite history is local to this observer instance and retained for up to seven days or 1,000 checks.",
+      "Free hosting may sleep when idle; independent hosting separates outages but does not guarantee uninterrupted 24/7 scheduling.",
+      "External status, timeout, and browser failures identify observed symptoms; server logs or dependency evidence are required to confirm production root causes."
+    ]
+  },
+  "after": {
+    "status": "ok",
+    "instanceId": "f04e5a72-84ff-4173-84ce-e206870df0fb",
+    "instanceStartedAt": "2026-10-13T08:17:14.445Z",
+    "origin": "http://127.0.0.1:3014",
+    "intervalMs": 1000,
+    "journeyIntervalMs": 86400000,
+    "historyPolicy": "local",
+    "browser": {
+      "available": true,
+      "lastError": null
+    },
+    "lastCompletedAt": "2026-10-13T08:17:16.524Z",
+    "checks": [
+      {
+        "id": "c115889b-bb50-4539-9453-98030bb1d995",
+        "key": "availability",
+        "label": "Independent availability",
+        "completedAt": "2026-10-13T08:17:16.503Z",
+        "durationMs": 19,
+        "status": "passed",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "177 bytes",
+            "passed": true
+          },
+          {
+            "code": "APPLICATION_HEALTH",
+            "expected": "JSON status ok and app BizPlus AI",
+            "actual": "BizPlus AI reports status ok",
+            "passed": true
+          }
+        ],
+        "evidence": [
+          "Observed /health: HTTP 200, 177 response bytes."
+        ],
+        "diagnosis": {
+          "summary": "The independently observed contract passed.",
+          "certainty": "unconfirmed",
+          "causes": [],
+          "solutions": []
+        }
+      },
+      {
+        "id": "963ef0f1-3881-48ce-889b-f334438d305a",
+        "key": "readiness",
+        "label": "Database readiness",
+        "completedAt": "2026-10-13T08:17:16.509Z",
+        "durationMs": 23,
+        "status": "passed",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "489 bytes",
+            "passed": true
+          },
+          {
+            "code": "DEPENDENCY_READINESS",
+            "expected": "Readiness status ready after database probe",
+            "actual": "ready",
+            "passed": true
+          },
+          {
+            "code": "READINESS_DATABASE",
+            "expected": "Dependency probe passed",
+            "actual": "passed (DATABASE_READABLE): The primary order and monitoring tables are readable.",
+            "passed": true
+          },
+          {
+            "code": "READINESS_TEST_PAYMENT_PROVIDER",
+            "expected": "Dependency probe passed",
+            "actual": "passed (PROVIDER_READABLE): Razorpay Test Mode authenticated a read-only request. No order or payment was created.",
+            "passed": true
+          }
+        ],
+        "evidence": [
+          "Observed /ready: HTTP 200, 489 response bytes."
+        ],
+        "diagnosis": {
+          "summary": "The independently observed contract passed.",
+          "certainty": "unconfirmed",
+          "causes": [],
+          "solutions": []
+        }
+      },
+      {
+        "id": "17d8d167-b1ec-49de-a4f8-588e45d75ea3",
+        "key": "storefront",
+        "label": "Storefront document",
+        "completedAt": "2026-10-13T08:17:16.517Z",
+        "durationMs": 31,
+        "status": "passed",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "718 bytes",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus storefront HTML shell",
+            "actual": "Expected HTML shell present",
+            "passed": true
+          }
+        ],
+        "evidence": [
+          "Observed /shop: HTTP 200, 718 response bytes."
+        ],
+        "diagnosis": {
+          "summary": "The independently observed contract passed.",
+          "certainty": "unconfirmed",
+          "causes": [],
+          "solutions": []
+        }
+      },
+      {
+        "id": "5492ca2e-ccca-4593-9f44-400e306067ea",
+        "key": "storefront_browser",
+        "label": "Storefront browser journey",
+        "completedAt": "2026-10-13T08:17:15.118Z",
+        "durationMs": 577,
+        "status": "failed",
+        "assertions": [
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "Browser action completes and visible business outcome changes",
+            "actual": "Browser did not satisfy BROWSER_PAGE_LOAD within its deadline.",
+            "passed": false
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": [
+          "Browser request failed: /shop.",
+          "An actual Chromium page action or navigation failed; inspect observed browser and network evidence."
+        ],
+        "diagnosis": {
+          "summary": "The actual browser journey failed a visible user outcome.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Failed browser assertions: BROWSER_PAGE_LOAD. Browser/network evidence may identify a failing request; server logs are needed to confirm its underlying cause."
+          ],
+          "solutions": [
+            "Inspect uncaught JavaScript errors and failed endpoint evidence.",
+            "Restore button handlers, authentication, catalog/dependency access, or confirmation behavior as indicated, then rerun the same journey."
+          ]
+        }
+      },
+      {
+        "id": "46996210-fe1d-402e-95d5-518a35a55419",
+        "key": "synthetic_workflow",
+        "label": "Synthetic login to order journey",
+        "completedAt": "2026-10-13T08:17:15.127Z",
+        "durationMs": 6,
+        "status": "failed",
+        "assertions": [
+          {
+            "code": "SYNTHETIC_JOURNEY",
+            "expected": "Completed healthy synthetic journey",
+            "actual": "The synthetic workflow did not complete successfully within its deadline",
+            "passed": false
+          }
+        ],
+        "evidence": [
+          "The synthetic API journey failed to schedule or finish. Inspect application workflow and database evidence."
+        ],
+        "diagnosis": {
+          "summary": "The synthetic business workflow failed even though transport may still be available.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Authentication, catalog data, checkout, confirmation, or database storage may have failed. These assertions narrow the failing stage; underlying causes require application evidence."
+          ],
+          "solutions": [
+            "Inspect the failed synthetic step and related database logs.",
+            "Restore the dependency or workflow stage, then verify all five steps and the original synthetic payment count."
+          ]
+        }
+      }
+    ],
+    "incidents": [
+      {
+        "id": "4e7beaf4-9b28-4f10-95be-15842042db80",
+        "key": "storefront",
+        "label": "Storefront document",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:17:15.491Z",
+        "resolvedAt": "2026-10-13T08:17:16.517Z",
+        "lastSeenAt": "2026-10-13T08:17:16.517Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "f79a3075-2467-4439-b092-0163ac8410fd",
+        "key": "availability",
+        "label": "Independent availability",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:17:15.490Z",
+        "resolvedAt": "2026-10-13T08:17:16.503Z",
+        "lastSeenAt": "2026-10-13T08:17:16.503Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "f936ec74-16b5-4c0a-98e5-3af5a05a0ccc",
+        "key": "readiness",
+        "label": "Database readiness",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:17:15.490Z",
+        "resolvedAt": "2026-10-13T08:17:16.509Z",
+        "lastSeenAt": "2026-10-13T08:17:16.509Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "32ea3432-3c62-43f1-866f-9c7a43956fe4",
+        "key": "storefront",
+        "label": "Storefront document",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:16:03.279Z",
+        "resolvedAt": "2026-10-13T08:17:14.533Z",
+        "lastSeenAt": "2026-10-13T08:17:14.533Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "b7eedab9-3989-4236-ae48-21f3b0ee629b",
+        "key": "readiness",
+        "label": "Database readiness",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:16:03.278Z",
+        "resolvedAt": "2026-10-13T08:17:14.531Z",
+        "lastSeenAt": "2026-10-13T08:17:14.531Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "4158aa9c-35dc-40a6-9001-b82f352b7634",
+        "key": "availability",
+        "label": "Independent availability",
+        "status": "resolved",
+        "openedAt": "2026-10-13T08:16:03.277Z",
+        "resolvedAt": "2026-10-13T08:17:14.517Z",
+        "lastSeenAt": "2026-10-13T08:17:14.517Z",
+        "diagnosis": {
+          "summary": "The independent observer could not complete the website request.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "The target did not accept a connection from this observer. Observed network code: ECONNREFUSED. This external check cannot prove the underlying production cause."
+          ],
+          "solutions": [
+            "Check hosting service state, DNS/TLS, recent deploys, and dependency latency.",
+            "Restore service availability, then verify this check and the business journey pass."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "1d5f4888-62ce-4edd-a040-936ea1219036",
+        "key": "synthetic_workflow",
+        "label": "Synthetic login to order journey",
+        "status": "open",
+        "openedAt": "2026-10-13T08:16:03.114Z",
+        "resolvedAt": null,
+        "lastSeenAt": "2026-10-13T08:17:15.127Z",
+        "diagnosis": {
+          "summary": "The synthetic business workflow failed even though transport may still be available.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Authentication, catalog data, checkout, confirmation, or database storage may have failed. These assertions narrow the failing stage; underlying causes require application evidence."
+          ],
+          "solutions": [
+            "Inspect the failed synthetic step and related database logs.",
+            "Restore the dependency or workflow stage, then verify all five steps and the original synthetic payment count."
+          ]
+        },
+        "failureKind": "failed"
+      },
+      {
+        "id": "d3c8f9a3-d1c1-4196-9445-5733c45d147f",
+        "key": "storefront_browser",
+        "label": "Storefront browser journey",
+        "status": "open",
+        "openedAt": "2026-10-13T08:16:03.103Z",
+        "resolvedAt": null,
+        "lastSeenAt": "2026-10-13T08:17:15.118Z",
+        "diagnosis": {
+          "summary": "The actual browser journey failed a visible user outcome.",
+          "certainty": "unconfirmed",
+          "causes": [
+            "Failed browser assertions: BROWSER_PAGE_LOAD. Browser/network evidence may identify a failing request; server logs are needed to confirm its underlying cause."
+          ],
+          "solutions": [
+            "Inspect uncaught JavaScript errors and failed endpoint evidence.",
+            "Restore button handlers, authentication, catalog/dependency access, or confirmation behavior as indicated, then rerun the same journey."
+          ]
+        },
+        "failureKind": "failed"
+      }
+    ],
+    "limitations": [
+      "The observer runs separately from BizPlus and continues checking while the monitored app is unavailable.",
+      "HTTP checks run every 1 seconds while this observer instance is running; brief faults between checks can be missed.",
+      "Storefront browser and synthetic business journeys run every 86400 seconds; provider payments are never created.",
+      "SQLite history is local to this observer instance and retained for up to seven days or 1,000 checks.",
+      "Free hosting may sleep when idle; independent hosting separates outages but does not guarantee uninterrupted 24/7 scheduling.",
+      "External status, timeout, and browser failures identify observed symptoms; server logs or dependency evidence are required to confirm production root causes."
+    ]
+  },
+  "completedAt": "2026-10-13T08:17:16.732Z",
+  "passed": true
+}

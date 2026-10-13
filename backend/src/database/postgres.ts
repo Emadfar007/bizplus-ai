@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import type { CommerceOrder, Incident, IncidentList, LiveRun, Run } from '@bizplus/shared';
 import { AMOUNT_MINOR } from './store.js';
 import type { DataStore, MetricsAggregate, PaymentRow, SandboxOrder, StoredLog } from './types.js';
+import { diagnoseLiveRun } from '../live/diagnosis.js';
 
 export interface PostgresOptions { caCert?: string; ssl?: boolean; poolSize?: number }
 export class PostgresStore implements DataStore {
@@ -32,8 +33,15 @@ export class PostgresStore implements DataStore {
       run.status = 'failed'; run.error = 'The backend restarted before this website test completed.'; run.message = run.error;
       run.completedAt = new Date().toISOString();
       run.assertions.push({ code: 'REQUEST_COMPLETED', expected: 'Completed website response', actual: 'Interrupted by backend restart', passed: false });
+      run.evidence.events ??= [];
+      run.evidence.events.push({ id:randomUUID(), kind:'log', timestamp:run.completedAt, message:'The monitoring backend restarted before this preserved check completed.', data:{monitorRestarted:true} });
+      run.diagnosis = diagnoseLiveRun(run); run.incidentStatus = 'open';
       await this.saveLiveRun(row.session_id,run);
     }
+  }
+  async checkReadiness(): Promise<void> {
+    await this.pool.query('SELECT id FROM bizplus.commerce_orders LIMIT 1');
+    await this.pool.query('SELECT id FROM bizplus.live_runs LIMIT 1');
   }
   private async transaction<T>(operation: (client: PoolClient) => Promise<T>): Promise<T> {
     const client = await this.pool.connect();

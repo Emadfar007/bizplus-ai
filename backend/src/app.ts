@@ -10,9 +10,9 @@ import type { DataStore } from './database/types.js';
 import { Engine, WORKFLOW, WorkflowError, type EngineOptions } from './engine/workflow.js';
 import { createSandbox } from './sandbox/routes.js';
 import { registerCommerce, registerCommerceWebhook, type CommerceOptions } from './commerce/routes.js';
-import { registerLiveMonitor } from './live/monitor.js';
-import type { PublicFetcher } from './live/network.js';
+import { registerLiveMonitor, type LiveMonitorOptions } from './live/monitor.js';
 import { registerHostedFrontend } from './hosting/frontend.js';
+import { observerConnection, registerObservability, type ObserverOptions } from './observability.js';
 
 export interface AppOptions {
   databasePath?: string;
@@ -21,7 +21,8 @@ export interface AppOptions {
   store?: DataStore;
   historyPolicy?: Health['historyPolicy'];
   commerce?: CommerceOptions;
-  live?: { targets?: LiveTarget[]; fetcher?: PublicFetcher };
+  observer?: ObserverOptions;
+  live?: LiveMonitorOptions;
   corsOrigins?: string[];
   stepTimeoutMs?: number;
   sandboxLatencyMs?: number;
@@ -48,6 +49,8 @@ export async function createApp(options: AppOptions = {}) {
   const origins = options.corsOrigins ?? [process.env.CORS_ORIGIN, ...localOrigins].filter((origin): origin is string => Boolean(origin));
   app.use(cors({ origin: (origin, callback) => { if (!origin || origins.includes(origin)) callback(null, true); else callback(new WorkflowError(403, 'ORIGIN_NOT_ALLOWED', 'This origin is not allowed to access the demo API.')); }, methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Content-Type', 'X-Demo-Session'] }));
   const commerceOptions: CommerceOptions = { ...options.commerce,database: store.driver };
+  const observer = observerConnection(options.observer);
+  const registerObserverProxy = registerObservability(app,store,commerceOptions,observer);
   registerCommerceWebhook(app,store,commerceOptions);
   app.use(express.json({ limit: '8kb' }));
   app.get('/health', (_req, res) => res.json(engine.health));
@@ -104,7 +107,12 @@ export async function createApp(options: AppOptions = {}) {
   });
   app.get('/api/metrics', async (_req, res) => res.json(await engine.metrics(res.locals.session as string)));
   registerCommerce(app,store,commerceOptions);
-  const liveMonitor = registerLiveMonitor(app,store,options.live);
+  registerObserverProxy();
+  const liveMonitor = registerLiveMonitor(app,store,{
+    ...options.live,
+    browserProbe: options.live?.browserProbe ?? (observer ? session => observer.probe(session) : undefined),
+    monitoring: options.live?.monitoring ?? { enabled:!!observer, intervalSeconds:30, scope:'independent-owned-targets', independentObserver:!!observer },
+  });
   registerHostedFrontend(app);
   app.use((_req, res) => jsonError(res, 404, 'NOT_FOUND', 'Endpoint not found.'));
   app.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
@@ -124,6 +132,7 @@ export async function startServer(options: AppOptions & { port?: number; host?: 
   });
   const address = server.address(); if (!address || typeof address === 'string') throw new Error('Expected TCP listener');
   const baseUrl = `http://127.0.0.1:${address.port}`; runtime.engine.setBaseUrl(baseUrl);
+  runtime.liveMonitor.setBaseUrl(baseUrl, process.env.PUBLIC_APP_URL ?? (process.env.SERVE_FRONTEND === 'true' && process.env.NODE_ENV === 'production' ? 'https://bizplus-ai-api.onrender.com' : undefined));
   let closed = false;
   return { ...runtime, server, baseUrl, close: async () => {
     if (closed) return; closed = true;

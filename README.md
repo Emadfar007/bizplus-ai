@@ -10,6 +10,8 @@ The complete frontend and API are live on **Render**: [dashboard](https://bizplu
 
 Workflow payments and customers are synthetic. The storefront uses real Razorpay **Test Mode** checkout without moving money or shipping products. Diagnosis is visibly labelled **Rules-based diagnosis**. No LLM account or API key is required.
 
+Live website failures now include evidence-linked explanations and solutions. The isolated website fault lab supports HTTP errors, missing content, empty responses, real timeouts and browser journey failures, with approved restoration and a passing verification required for resolution. A separate observer checks the app and dependencies without relying on the dashboard tab. See [live errors and controlled recovery](docs/live-errors.md) for the workflow, independent observer, verified scope and hosting limits.
+
 Sandbox requests include a deliberate 220 ms delay so judges can follow the step progression. Measured timings include this delay and are demonstration results, not production benchmarks. Live website checks have no injected delay.
 
 ## Storefront, Razorpay and live websites

@@ -9,6 +9,7 @@ export type StoredLog = { id: string; timestamp: string; message: string };
 export interface DataStore {
   readonly driver: 'sqlite' | 'postgres';
   initialize(): Awaitable<void>;
+  checkReadiness(): Awaitable<void>;
   saveRun(session: string, run: Run): Awaitable<void>;
   getRun(id: string, session?: string): Awaitable<Run | null>;
   sessionForRun(id: string): Awaitable<string | null>;

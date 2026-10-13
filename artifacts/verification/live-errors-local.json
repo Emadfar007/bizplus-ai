@@ -1,0 +1,3450 @@
+{
+  "origin": "http://127.0.0.1:3012",
+  "startedAt": "2026-10-13T08:12:38.903Z",
+  "baseline": {
+    "id": "3e3784bc-b781-43c1-829b-8f0c8a71d107",
+    "targetId": "bizplus-fault-lab",
+    "url": "http://127.0.0.1:3012/test-site/1f516a1c-7536-4a59-8db1-b09f1641eee0",
+    "status": "passed",
+    "httpStatus": 200,
+    "durationMs": 3563,
+    "startedAt": "2026-10-13T08:12:38.992Z",
+    "completedAt": "2026-10-13T08:12:42.557Z",
+    "error": null,
+    "message": "Website response and the actual synthetic browser journey passed.",
+    "assertions": [
+      {
+        "code": "HTTP_STATUS",
+        "expected": "HTTP 200",
+        "actual": "HTTP 200",
+        "passed": true
+      },
+      {
+        "code": "EXPECTED_CONTENT",
+        "expected": "BizPlus test site ready",
+        "actual": "Expected content found",
+        "passed": true
+      },
+      {
+        "code": "RESPONSE_PRESENT",
+        "expected": "Non-empty response body",
+        "actual": "2318 bytes",
+        "passed": true
+      },
+      {
+        "code": "BROWSER_PAGE_LOAD",
+        "expected": "HTTP 200 document",
+        "actual": "200",
+        "passed": true
+      },
+      {
+        "code": "BROWSER_LOGIN",
+        "expected": "Signed in after pressing login",
+        "actual": "Signed in",
+        "passed": true
+      },
+      {
+        "code": "BROWSER_CART",
+        "expected": "Cart count 1 after pressing add product",
+        "actual": "1",
+        "passed": true
+      },
+      {
+        "code": "BROWSER_CONFIRMATION",
+        "expected": "Synthetic order confirmed after pressing checkout",
+        "actual": "Order confirmed",
+        "passed": true
+      },
+      {
+        "code": "BROWSER_JAVASCRIPT",
+        "expected": "No uncaught browser JavaScript errors",
+        "actual": "No uncaught errors",
+        "passed": true
+      }
+    ],
+    "evidence": {
+      "responseBytes": 2318,
+      "title": "BizPlus isolated test website",
+      "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+      "events": [
+        {
+          "id": "a8aa3ab9-d2c6-4712-9683-df405976d4c0",
+          "kind": "response",
+          "timestamp": "2026-10-13T08:12:39.009Z",
+          "message": "Real GET http://127.0.0.1:3012/test-site/1f516a1c-7536-4a59-8db1-b09f1641eee0 returned HTTP 200.",
+          "data": {
+            "url": "http://127.0.0.1:3012/test-site/1f516a1c-7536-4a59-8db1-b09f1641eee0",
+            "httpStatus": 200,
+            "responseBytes": 2318
+          }
+        },
+        {
+          "id": "e5131d92-e6d7-457e-9a6e-f43da22d87b3",
+          "kind": "log",
+          "timestamp": "2026-10-13T08:12:39.004Z",
+          "message": "The isolated test page received a real GET request with controlled fault healthy.",
+          "data": {
+            "fault": "healthy",
+            "revision": "f881036f-e3df-4cda-ae67-4d46973e8c76",
+            "requestPath": "/test-site/1f516a1c-7536-4a59-8db1-b09f1641eee0",
+            "requestId": "84587599-a8e7-4363-8535-55f5b659cd62",
+            "observed": true
+          }
+        },
+        {
+          "id": "60e50aa7-6e1b-4069-9255-376bf1277eea",
+          "kind": "log",
+          "timestamp": "2026-10-13T08:12:39.542Z",
+          "message": "The isolated test page received a real GET request with controlled fault healthy.",
+          "data": {
+            "fault": "healthy",
+            "revision": "f881036f-e3df-4cda-ae67-4d46973e8c76",
+            "requestPath": "/test-site/1f516a1c-7536-4a59-8db1-b09f1641eee0",
+            "requestId": "d0f1b000-5012-4313-a673-adfcf7f0c114",
+            "observed": true
+          }
+        },
+        {
+          "id": "3bb94a30-e06c-4840-bb1d-d05af983b570",
+          "kind": "log",
+          "timestamp": "2026-10-13T08:12:41.158Z",
+          "message": "Synthetic login request returned HTTP 200.",
+          "data": {
+            "fault": "healthy",
+            "revision": "f881036f-e3df-4cda-ae67-4d46973e8c76",
+            "endpoint": "login",
+            "httpStatus": 200,
+            "observed": true,
+            "synthetic": true,
+            "realPayments": 0
+          }
+        },
+        {
+          "id": "f578db02-9531-4807-81d2-b8037499b55e",
+          "kind": "log",
+          "timestamp": "2026-10-13T08:12:41.298Z",
+          "message": "Synthetic catalog request returned HTTP 200.",
+          "data": {
+            "fault": "healthy",
+            "revision": "f881036f-e3df-4cda-ae67-4d46973e8c76",
+            "endpoint": "catalog",
+            "httpStatus": 200,
+            "observed": true,
+            "synthetic": true,
+            "realPayments": 0
+          }
+        },
+        {
+          "id": "e432dfda-6aaa-49c1-9791-68902b5f612f",
+          "kind": "log",
+          "timestamp": "2026-10-13T08:12:41.384Z",
+          "message": "Synthetic confirmation request returned HTTP 200.",
+          "data": {
+            "fault": "healthy",
+            "revision": "f881036f-e3df-4cda-ae67-4d46973e8c76",
+            "endpoint": "confirmation",
+            "httpStatus": 200,
+            "observed": true,
+            "synthetic": true,
+            "realPayments": 0
+          }
+        }
+      ]
+    },
+    "fingerprint": null,
+    "labRevision": "f881036f-e3df-4cda-ae67-4d46973e8c76"
+  },
+  "faults": [
+    {
+      "fault": "http_500",
+      "state": {
+        "sessionId": "507f8d5b-b82d-45f4-b432-9f6a7366881c",
+        "fault": "http_500",
+        "expiresAt": "2026-10-13T08:14:42.647Z",
+        "revision": "0dbb9945-c7d2-4cd7-9260-06306a9d4b8b",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/507f8d5b-b82d-45f4-b432-9f6a7366881c",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "ab68b9c0-22ed-48ff-a482-07011a4b4a74",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/507f8d5b-b82d-45f4-b432-9f6a7366881c",
+        "status": "failed",
+        "httpStatus": 500,
+        "durationMs": 5,
+        "startedAt": "2026-10-13T08:12:42.656Z",
+        "completedAt": "2026-10-13T08:12:42.663Z",
+        "error": null,
+        "message": "Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 500",
+            "passed": false
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content missing",
+            "passed": false
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "49 bytes",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 49,
+          "excerpt": "Controlled http_500 in isolated BizPlus test site",
+          "events": [
+            {
+              "id": "70de235e-490b-4472-85f2-010d884ed678",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:12:42.663Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/507f8d5b-b82d-45f4-b432-9f6a7366881c returned HTTP 500.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/507f8d5b-b82d-45f4-b432-9f6a7366881c",
+                "httpStatus": 500,
+                "responseBytes": 49
+              }
+            },
+            {
+              "id": "6bdbcb99-6cca-45f1-af9c-d65992adf8a0",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:42.661Z",
+              "message": "The isolated test page received a real GET request with controlled fault http_500.",
+              "data": {
+                "fault": "http_500",
+                "revision": "0dbb9945-c7d2-4cd7-9260-06306a9d4b8b",
+                "requestPath": "/test-site/507f8d5b-b82d-45f4-b432-9f6a7366881c",
+                "requestId": "bda7e025-0723-48c7-b975-8816120b2879",
+                "observed": true
+              }
+            }
+          ]
+        },
+        "fingerprint": "97bbdc0bb7fd0476",
+        "labRevision": "0dbb9945-c7d2-4cd7-9260-06306a9d4b8b",
+        "diagnosis": {
+          "source": "rules",
+          "category": "server_error",
+          "summary": "Controlled website failure detected: server error.",
+          "observedFacts": [
+            "A real website request returned HTTP 500 with 49 response bytes.",
+            "HTTP_STATUS: expected HTTP 200; observed HTTP 500.",
+            "EXPECTED_CONTENT: expected BizPlus test site ready; observed Expected content missing."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated response handler deliberately returned HTTP 500.",
+          "solutions": [
+            "Remove the controlled HTTP 500 response and verify the same URL again.",
+            "For a real server error, inspect the application exception and correlated request logs; correct the failing code or dependency before deploying."
+          ],
+          "evidenceIds": [
+            "70de235e-490b-4472-85f2-010d884ed678",
+            "6bdbcb99-6cca-45f1-af9c-d65992adf8a0"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "ab68b9c0-22ed-48ff-a482-07011a4b4a74",
+        "verificationRunId": "e9c66c5d-a5dc-4fec-b416-5769ac89f8aa",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "e9c66c5d-a5dc-4fec-b416-5769ac89f8aa",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/507f8d5b-b82d-45f4-b432-9f6a7366881c",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 1991,
+        "startedAt": "2026-10-13T08:12:42.689Z",
+        "completedAt": "2026-10-13T08:12:44.682Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "dd521d17-8d2f-4688-97f5-fada0d909346",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:12:42.694Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/507f8d5b-b82d-45f4-b432-9f6a7366881c returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/507f8d5b-b82d-45f4-b432-9f6a7366881c",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "38d05f63-4de6-4721-b134-9efda97a659d",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:42.689Z",
+              "message": "The matching controlled fault was removed for recovery verification.",
+              "data": {
+                "fault": "http_500",
+                "revision": "0dbb9945-c7d2-4cd7-9260-06306a9d4b8b",
+                "restored": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "a3c97c4a-4045-4b15-ac07-6f32977b045a",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:42.693Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "0dbb9945-c7d2-4cd7-9260-06306a9d4b8b",
+                "requestPath": "/test-site/507f8d5b-b82d-45f4-b432-9f6a7366881c",
+                "requestId": "6d4d2f27-124f-4589-91ff-1600ee7c2740",
+                "observed": true
+              }
+            },
+            {
+              "id": "8a58d1b6-32b7-4497-aaea-abf1476d1f99",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:43.188Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "0dbb9945-c7d2-4cd7-9260-06306a9d4b8b",
+                "requestPath": "/test-site/507f8d5b-b82d-45f4-b432-9f6a7366881c",
+                "requestId": "3eb299a4-02f2-4706-95bf-a6a6973e4ec2",
+                "observed": true
+              }
+            },
+            {
+              "id": "77937de1-8661-4141-b1d5-8791976a3fef",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:44.160Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "0dbb9945-c7d2-4cd7-9260-06306a9d4b8b",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "db9cf008-18da-4b9d-a83d-783bf4936308",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:44.229Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "0dbb9945-c7d2-4cd7-9260-06306a9d4b8b",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "07aa6ecf-f215-410c-9cad-28cd43d967a1",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:44.296Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "0dbb9945-c7d2-4cd7-9260-06306a9d4b8b",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "0dbb9945-c7d2-4cd7-9260-06306a9d4b8b"
+      }
+    },
+    {
+      "fault": "http_503",
+      "state": {
+        "sessionId": "e6f0c97b-20db-48fc-9ff2-2421e186d5e8",
+        "fault": "http_503",
+        "expiresAt": "2026-10-13T08:14:44.714Z",
+        "revision": "53ed2707-1d14-422e-a9d6-a45236c88c64",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/e6f0c97b-20db-48fc-9ff2-2421e186d5e8",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "d3ff3490-cfd7-4c3a-a8e1-0b6243cdabee",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/e6f0c97b-20db-48fc-9ff2-2421e186d5e8",
+        "status": "failed",
+        "httpStatus": 503,
+        "durationMs": 4,
+        "startedAt": "2026-10-13T08:12:44.719Z",
+        "completedAt": "2026-10-13T08:12:44.725Z",
+        "error": null,
+        "message": "Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 503",
+            "passed": false
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content missing",
+            "passed": false
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "49 bytes",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 49,
+          "excerpt": "Controlled http_503 in isolated BizPlus test site",
+          "events": [
+            {
+              "id": "137848de-cce2-43da-a647-70de3f8eda2e",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:12:44.725Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/e6f0c97b-20db-48fc-9ff2-2421e186d5e8 returned HTTP 503.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/e6f0c97b-20db-48fc-9ff2-2421e186d5e8",
+                "httpStatus": 503,
+                "responseBytes": 49
+              }
+            },
+            {
+              "id": "ee6ec735-d678-477d-9d17-dd2b522bc57e",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:44.723Z",
+              "message": "The isolated test page received a real GET request with controlled fault http_503.",
+              "data": {
+                "fault": "http_503",
+                "revision": "53ed2707-1d14-422e-a9d6-a45236c88c64",
+                "requestPath": "/test-site/e6f0c97b-20db-48fc-9ff2-2421e186d5e8",
+                "requestId": "a06c4cb8-3064-4cda-aba2-0c6fe75d687a",
+                "observed": true
+              }
+            }
+          ]
+        },
+        "fingerprint": "8a416dd84dd91b81",
+        "labRevision": "53ed2707-1d14-422e-a9d6-a45236c88c64",
+        "diagnosis": {
+          "source": "rules",
+          "category": "service_unavailable",
+          "summary": "Controlled website failure detected: service unavailable.",
+          "observedFacts": [
+            "A real website request returned HTTP 503 with 49 response bytes.",
+            "HTTP_STATUS: expected HTTP 200; observed HTTP 503.",
+            "EXPECTED_CONTENT: expected BizPlus test site ready; observed Expected content missing."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated response handler deliberately returned HTTP 503.",
+          "solutions": [
+            "Remove the controlled HTTP 503 response and verify the same URL again.",
+            "For a real outage, inspect service readiness, capacity, maintenance and upstream dependency logs; restore readiness before routing traffic."
+          ],
+          "evidenceIds": [
+            "137848de-cce2-43da-a647-70de3f8eda2e",
+            "ee6ec735-d678-477d-9d17-dd2b522bc57e"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "d3ff3490-cfd7-4c3a-a8e1-0b6243cdabee",
+        "verificationRunId": "f35eb39f-75c8-4ca8-b9e0-ef44f8fcc509",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "f35eb39f-75c8-4ca8-b9e0-ef44f8fcc509",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/e6f0c97b-20db-48fc-9ff2-2421e186d5e8",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 1917,
+        "startedAt": "2026-10-13T08:12:44.741Z",
+        "completedAt": "2026-10-13T08:12:46.659Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "f62a88c0-28f7-4961-a2fc-23feb0685258",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:12:44.745Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/e6f0c97b-20db-48fc-9ff2-2421e186d5e8 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/e6f0c97b-20db-48fc-9ff2-2421e186d5e8",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "52f84049-68a6-472b-9aab-a40184fc09f4",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:44.741Z",
+              "message": "The matching controlled fault was removed for recovery verification.",
+              "data": {
+                "fault": "http_503",
+                "revision": "53ed2707-1d14-422e-a9d6-a45236c88c64",
+                "restored": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "62db88bc-6a7f-4996-ab6e-2a08cc6ccc2f",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:44.744Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "53ed2707-1d14-422e-a9d6-a45236c88c64",
+                "requestPath": "/test-site/e6f0c97b-20db-48fc-9ff2-2421e186d5e8",
+                "requestId": "1e2347c3-1dc1-4015-9309-dbde0b3f6faa",
+                "observed": true
+              }
+            },
+            {
+              "id": "3045ddf1-dca7-4e45-9626-68d9d82a890b",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:45.143Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "53ed2707-1d14-422e-a9d6-a45236c88c64",
+                "requestPath": "/test-site/e6f0c97b-20db-48fc-9ff2-2421e186d5e8",
+                "requestId": "a66bc938-7b2e-4738-9e74-8b5203277f84",
+                "observed": true
+              }
+            },
+            {
+              "id": "ccde6688-6b1d-4914-b3f0-48a0d181df04",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:46.169Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "53ed2707-1d14-422e-a9d6-a45236c88c64",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "29bcc2b5-3750-4309-8047-42197db090aa",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:46.228Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "53ed2707-1d14-422e-a9d6-a45236c88c64",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "89025c2e-2279-4334-85b1-345f9da36a78",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:46.294Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "53ed2707-1d14-422e-a9d6-a45236c88c64",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "53ed2707-1d14-422e-a9d6-a45236c88c64"
+      }
+    },
+    {
+      "fault": "not_found",
+      "state": {
+        "sessionId": "bde5f645-dd66-4f60-b37a-1163a3b0f39e",
+        "fault": "not_found",
+        "expiresAt": "2026-10-13T08:14:46.683Z",
+        "revision": "50057c38-b6f6-4219-af6c-627d81f54dd0",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/bde5f645-dd66-4f60-b37a-1163a3b0f39e",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "1f63d15e-cb8f-45f7-8d1d-a5a95f988925",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/bde5f645-dd66-4f60-b37a-1163a3b0f39e",
+        "status": "failed",
+        "httpStatus": 404,
+        "durationMs": 4,
+        "startedAt": "2026-10-13T08:12:46.699Z",
+        "completedAt": "2026-10-13T08:12:46.704Z",
+        "error": null,
+        "message": "Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 404",
+            "passed": false
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content missing",
+            "passed": false
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "29 bytes",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 29,
+          "excerpt": "Controlled missing test route",
+          "events": [
+            {
+              "id": "6cdd42ca-587d-420a-980f-a8377d3e9ede",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:12:46.704Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/bde5f645-dd66-4f60-b37a-1163a3b0f39e returned HTTP 404.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/bde5f645-dd66-4f60-b37a-1163a3b0f39e",
+                "httpStatus": 404,
+                "responseBytes": 29
+              }
+            },
+            {
+              "id": "6d389357-b18d-4de2-8bb1-91ade52c59ad",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:46.703Z",
+              "message": "The isolated test page received a real GET request with controlled fault not_found.",
+              "data": {
+                "fault": "not_found",
+                "revision": "50057c38-b6f6-4219-af6c-627d81f54dd0",
+                "requestPath": "/test-site/bde5f645-dd66-4f60-b37a-1163a3b0f39e",
+                "requestId": "be3089da-997b-44a3-a24c-380302e7223c",
+                "observed": true
+              }
+            }
+          ]
+        },
+        "fingerprint": "5705a6a9739f3cb5",
+        "labRevision": "50057c38-b6f6-4219-af6c-627d81f54dd0",
+        "diagnosis": {
+          "source": "rules",
+          "category": "missing_route",
+          "summary": "Controlled website failure detected: missing route.",
+          "observedFacts": [
+            "A real website request returned HTTP 404 with 29 response bytes.",
+            "HTTP_STATUS: expected HTTP 200; observed HTTP 404.",
+            "EXPECTED_CONTENT: expected BizPlus test site ready; observed Expected content missing."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated response handler deliberately replaced the test route with HTTP 404.",
+          "solutions": [
+            "Restore the controlled test route and verify the same URL again.",
+            "For a real missing route, check its configured URL, deployment routing and reverse proxy rules."
+          ],
+          "evidenceIds": [
+            "6cdd42ca-587d-420a-980f-a8377d3e9ede",
+            "6d389357-b18d-4de2-8bb1-91ade52c59ad"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "1f63d15e-cb8f-45f7-8d1d-a5a95f988925",
+        "verificationRunId": "40ab3ceb-965c-45a7-80a0-c7d86fb0d632",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "40ab3ceb-965c-45a7-80a0-c7d86fb0d632",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/bde5f645-dd66-4f60-b37a-1163a3b0f39e",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 2003,
+        "startedAt": "2026-10-13T08:12:46.715Z",
+        "completedAt": "2026-10-13T08:12:48.719Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "9a087a6e-d0a8-4dff-9993-812b50981846",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:12:46.718Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/bde5f645-dd66-4f60-b37a-1163a3b0f39e returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/bde5f645-dd66-4f60-b37a-1163a3b0f39e",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "2588c733-638b-4740-a5d5-ebcddaf3c9fe",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:46.717Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "50057c38-b6f6-4219-af6c-627d81f54dd0",
+                "requestPath": "/test-site/bde5f645-dd66-4f60-b37a-1163a3b0f39e",
+                "requestId": "a2bce683-e560-4f2d-8834-f9ac994976a3",
+                "observed": true
+              }
+            },
+            {
+              "id": "1d2822c8-d177-4129-bb22-803ba230bc16",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:47.124Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "50057c38-b6f6-4219-af6c-627d81f54dd0",
+                "requestPath": "/test-site/bde5f645-dd66-4f60-b37a-1163a3b0f39e",
+                "requestId": "adb7b5a8-4480-4563-a154-2b4f27595c75",
+                "observed": true
+              }
+            },
+            {
+              "id": "d70c0006-41e7-4499-b9bf-e87216d3d40c",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:48.161Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "50057c38-b6f6-4219-af6c-627d81f54dd0",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "f7e7204f-5e16-472a-adcc-f51ca7234d99",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:48.248Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "50057c38-b6f6-4219-af6c-627d81f54dd0",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "649fccff-384c-4490-bf17-3203339bb957",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:48.312Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "50057c38-b6f6-4219-af6c-627d81f54dd0",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "50057c38-b6f6-4219-af6c-627d81f54dd0"
+      }
+    },
+    {
+      "fault": "missing_content",
+      "state": {
+        "sessionId": "350d5812-f0d5-441d-b238-3b4056d9cef9",
+        "fault": "missing_content",
+        "expiresAt": "2026-10-13T08:14:48.749Z",
+        "revision": "46856aa5-8f32-49c0-a115-86fe74191372",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/350d5812-f0d5-441d-b238-3b4056d9cef9",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "b15689d5-74e0-4bcc-8c3b-b2e8597e258f",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/350d5812-f0d5-441d-b238-3b4056d9cef9",
+        "status": "failed",
+        "httpStatus": 200,
+        "durationMs": 3,
+        "startedAt": "2026-10-13T08:12:48.763Z",
+        "completedAt": "2026-10-13T08:12:48.768Z",
+        "error": null,
+        "message": "Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content missing",
+            "passed": false
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2325 bytes",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2325,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website Controlled content unavailable This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate orde",
+          "events": [
+            {
+              "id": "313fe70c-8b07-4411-bd99-5b8c1a7c3057",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:12:48.768Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/350d5812-f0d5-441d-b238-3b4056d9cef9 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/350d5812-f0d5-441d-b238-3b4056d9cef9",
+                "httpStatus": 200,
+                "responseBytes": 2325
+              }
+            },
+            {
+              "id": "c3aa04dd-6249-444d-8cf3-8abd04daf98a",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:48.767Z",
+              "message": "The isolated test page received a real GET request with controlled fault missing_content.",
+              "data": {
+                "fault": "missing_content",
+                "revision": "46856aa5-8f32-49c0-a115-86fe74191372",
+                "requestPath": "/test-site/350d5812-f0d5-441d-b238-3b4056d9cef9",
+                "requestId": "6bf76f2c-11e1-4e50-be31-a97afed3f248",
+                "observed": true
+              }
+            }
+          ]
+        },
+        "fingerprint": "d88a1e789d7c4820",
+        "labRevision": "46856aa5-8f32-49c0-a115-86fe74191372",
+        "diagnosis": {
+          "source": "rules",
+          "category": "missing_content",
+          "summary": "Controlled website failure detected: missing content.",
+          "observedFacts": [
+            "A real website request returned HTTP 200 with 2325 response bytes.",
+            "EXPECTED_CONTENT: expected BizPlus test site ready; observed Expected content missing."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated test page deliberately omitted the required content marker.",
+          "solutions": [
+            "Restore the expected content marker and verify it is present in a new response.",
+            "For a real page, inspect template rendering, data-loading errors and unintended redirects; update the assertion only if the product requirement changed."
+          ],
+          "evidenceIds": [
+            "313fe70c-8b07-4411-bd99-5b8c1a7c3057",
+            "c3aa04dd-6249-444d-8cf3-8abd04daf98a"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "b15689d5-74e0-4bcc-8c3b-b2e8597e258f",
+        "verificationRunId": "d3cb2a6c-b48f-4fda-9c18-953da027e01c",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "d3cb2a6c-b48f-4fda-9c18-953da027e01c",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/350d5812-f0d5-441d-b238-3b4056d9cef9",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 2289,
+        "startedAt": "2026-10-13T08:12:48.773Z",
+        "completedAt": "2026-10-13T08:12:51.063Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "0fa187d7-5f4e-4625-b4f2-95821c5c74a0",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:12:48.778Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/350d5812-f0d5-441d-b238-3b4056d9cef9 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/350d5812-f0d5-441d-b238-3b4056d9cef9",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "35c84ef5-93e2-4f1b-8708-d9f1317d436e",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:48.773Z",
+              "message": "The matching controlled fault was removed for recovery verification.",
+              "data": {
+                "fault": "missing_content",
+                "revision": "46856aa5-8f32-49c0-a115-86fe74191372",
+                "restored": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "cbcf9754-b794-444e-a4fe-9e0c3b82c975",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:48.777Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "46856aa5-8f32-49c0-a115-86fe74191372",
+                "requestPath": "/test-site/350d5812-f0d5-441d-b238-3b4056d9cef9",
+                "requestId": "63ad8edc-e95a-4670-8ab5-73692caba722",
+                "observed": true
+              }
+            },
+            {
+              "id": "bbe8add2-28d5-4770-891f-81f4d90444b7",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:49.260Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "46856aa5-8f32-49c0-a115-86fe74191372",
+                "requestPath": "/test-site/350d5812-f0d5-441d-b238-3b4056d9cef9",
+                "requestId": "c6e4617a-10c4-489a-8407-f27d565e1c33",
+                "observed": true
+              }
+            },
+            {
+              "id": "ee70a06a-fc98-4f17-8758-36098c8154db",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:50.491Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "46856aa5-8f32-49c0-a115-86fe74191372",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "78a6b944-2d47-409e-bc65-de71a054c857",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:50.580Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "46856aa5-8f32-49c0-a115-86fe74191372",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "07c866b2-4ba2-4f13-9260-cc85a2c34f7b",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:50.646Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "46856aa5-8f32-49c0-a115-86fe74191372",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "46856aa5-8f32-49c0-a115-86fe74191372"
+      }
+    },
+    {
+      "fault": "empty_body",
+      "state": {
+        "sessionId": "9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7",
+        "fault": "empty_body",
+        "expiresAt": "2026-10-13T08:14:51.117Z",
+        "revision": "7427ba78-9094-4f76-903a-ee3d5b8fd218",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "a432c2f1-fdc9-432a-9d25-61d56b740fef",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7",
+        "status": "failed",
+        "httpStatus": 200,
+        "durationMs": 4,
+        "startedAt": "2026-10-13T08:12:51.134Z",
+        "completedAt": "2026-10-13T08:12:51.139Z",
+        "error": null,
+        "message": "Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content missing",
+            "passed": false
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "0 bytes",
+            "passed": false
+          }
+        ],
+        "evidence": {
+          "responseBytes": 0,
+          "excerpt": "",
+          "events": [
+            {
+              "id": "738bd301-2300-4ad2-b4e0-b017da30dd3a",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:12:51.139Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7",
+                "httpStatus": 200,
+                "responseBytes": 0
+              }
+            },
+            {
+              "id": "a62eac50-aac6-4504-b5c5-309383c213d4",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:51.138Z",
+              "message": "The isolated test page received a real GET request with controlled fault empty_body.",
+              "data": {
+                "fault": "empty_body",
+                "revision": "7427ba78-9094-4f76-903a-ee3d5b8fd218",
+                "requestPath": "/test-site/9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7",
+                "requestId": "14dcd1df-935e-4227-87ee-09207380c53f",
+                "observed": true
+              }
+            }
+          ]
+        },
+        "fingerprint": "65a7e412654b3a25",
+        "labRevision": "7427ba78-9094-4f76-903a-ee3d5b8fd218",
+        "diagnosis": {
+          "source": "rules",
+          "category": "empty_response",
+          "summary": "Controlled website failure detected: empty response.",
+          "observedFacts": [
+            "A real website request returned HTTP 200 with 0 response bytes.",
+            "EXPECTED_CONTENT: expected BizPlus test site ready; observed Expected content missing.",
+            "RESPONSE_PRESENT: expected Non-empty response body; observed 0 bytes."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated response handler deliberately sent HTTP 200 with an empty body.",
+          "solutions": [
+            "Restore the response body and verify its status, content and byte count.",
+            "For a real page, inspect early response termination, template rendering and proxy/cache behavior."
+          ],
+          "evidenceIds": [
+            "738bd301-2300-4ad2-b4e0-b017da30dd3a",
+            "a62eac50-aac6-4504-b5c5-309383c213d4"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "a432c2f1-fdc9-432a-9d25-61d56b740fef",
+        "verificationRunId": "46f4191d-f372-42ab-9339-d219d0164de5",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "46f4191d-f372-42ab-9339-d219d0164de5",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 2303,
+        "startedAt": "2026-10-13T08:12:51.154Z",
+        "completedAt": "2026-10-13T08:12:53.459Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "5fed1233-9fcd-4d9d-ae30-00f3ef14ec28",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:12:51.158Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "44b8a077-d1d7-4c46-93f2-d8d23720bfd4",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:51.154Z",
+              "message": "The matching controlled fault was removed for recovery verification.",
+              "data": {
+                "fault": "empty_body",
+                "revision": "7427ba78-9094-4f76-903a-ee3d5b8fd218",
+                "restored": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "1d7fc0fb-837e-4c35-9eb6-1cce345ced43",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:51.157Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "7427ba78-9094-4f76-903a-ee3d5b8fd218",
+                "requestPath": "/test-site/9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7",
+                "requestId": "8a8e794c-ea31-4041-aad2-9770f356ffa7",
+                "observed": true
+              }
+            },
+            {
+              "id": "55534d3c-8edf-4fe7-bdf9-4fcc6920542b",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:51.928Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "7427ba78-9094-4f76-903a-ee3d5b8fd218",
+                "requestPath": "/test-site/9c0743e5-ca1f-4ce7-a63c-617aaab5a3e7",
+                "requestId": "98ae08d9-0ecf-49bd-9e56-0bd735312b26",
+                "observed": true
+              }
+            },
+            {
+              "id": "28bb06d9-7165-4dcd-ac7a-e090804dbd16",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:52.877Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "7427ba78-9094-4f76-903a-ee3d5b8fd218",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "d6099451-8f80-4af7-b59f-a71dbc93cdc5",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:52.935Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "7427ba78-9094-4f76-903a-ee3d5b8fd218",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "826135c3-286e-44f5-b6a4-3a8548d7e3ed",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:53.031Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "7427ba78-9094-4f76-903a-ee3d5b8fd218",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "7427ba78-9094-4f76-903a-ee3d5b8fd218"
+      }
+    },
+    {
+      "fault": "timeout",
+      "state": {
+        "sessionId": "bb2d5cf1-d650-4d31-93aa-20abb7da7713",
+        "fault": "timeout",
+        "expiresAt": "2026-10-13T08:14:53.500Z",
+        "revision": "1c0762f4-2113-4761-8f70-d85c4cd6428b",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/bb2d5cf1-d650-4d31-93aa-20abb7da7713",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "84308996-d789-450f-9633-9420de976ef1",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/bb2d5cf1-d650-4d31-93aa-20abb7da7713",
+        "status": "failed",
+        "httpStatus": null,
+        "durationMs": 12016,
+        "startedAt": "2026-10-13T08:12:53.503Z",
+        "completedAt": "2026-10-13T08:13:05.521Z",
+        "error": "Website request timed out after 12 seconds.",
+        "message": "Website request timed out after 12 seconds.",
+        "assertions": [
+          {
+            "code": "REQUEST_COMPLETED",
+            "expected": "HTTPS response within 12 seconds",
+            "actual": "Website request timed out after 12 seconds.",
+            "passed": false
+          }
+        ],
+        "evidence": {
+          "responseBytes": 0,
+          "events": [
+            {
+              "id": "e502ab12-28f9-4038-97e8-2eb7732c6ef4",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:12:53.507Z",
+              "message": "The isolated test page received a real GET request with controlled fault timeout.",
+              "data": {
+                "fault": "timeout",
+                "revision": "1c0762f4-2113-4761-8f70-d85c4cd6428b",
+                "requestPath": "/test-site/bb2d5cf1-d650-4d31-93aa-20abb7da7713",
+                "requestId": "478764a7-1117-4e4d-bffe-e401a9e42edf",
+                "observed": true
+              }
+            }
+          ]
+        },
+        "fingerprint": "61b895a2397ff66e",
+        "labRevision": "1c0762f4-2113-4761-8f70-d85c4cd6428b",
+        "diagnosis": {
+          "source": "rules",
+          "category": "timeout",
+          "summary": "Controlled website failure detected: timeout.",
+          "observedFacts": [
+            "The website request did not return a complete response: Website request timed out after 12 seconds..",
+            "REQUEST_COMPLETED: expected HTTPS response within 12 seconds; observed Website request timed out after 12 seconds.."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated response handler deliberately delayed its response for 13.5 seconds, exceeding the 12-second monitoring deadline.",
+          "solutions": [
+            "Remove the controlled response delay and verify a completed response within 12 seconds.",
+            "For a real timeout, inspect slow requests, database queries, dependency latency and worker saturation; fix the bottleneck before increasing timeouts."
+          ],
+          "evidenceIds": [
+            "e502ab12-28f9-4038-97e8-2eb7732c6ef4"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "84308996-d789-450f-9633-9420de976ef1",
+        "verificationRunId": "d9b21c83-a753-4c06-ac06-982416491c8a",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "d9b21c83-a753-4c06-ac06-982416491c8a",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/bb2d5cf1-d650-4d31-93aa-20abb7da7713",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 1635,
+        "startedAt": "2026-10-13T08:13:05.634Z",
+        "completedAt": "2026-10-13T08:13:07.271Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "69677e2d-a221-4ea3-b0a0-512e63a5e818",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:05.640Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/bb2d5cf1-d650-4d31-93aa-20abb7da7713 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/bb2d5cf1-d650-4d31-93aa-20abb7da7713",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "3c7a499b-fad2-41e2-b433-0ace0699790a",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:05.634Z",
+              "message": "The matching controlled fault was removed for recovery verification.",
+              "data": {
+                "fault": "timeout",
+                "revision": "1c0762f4-2113-4761-8f70-d85c4cd6428b",
+                "restored": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "996fbc68-907b-44ba-b9b9-fe19bb4deaae",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:05.639Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "1c0762f4-2113-4761-8f70-d85c4cd6428b",
+                "requestPath": "/test-site/bb2d5cf1-d650-4d31-93aa-20abb7da7713",
+                "requestId": "b130f8ea-efc6-4a9c-9a2b-2c329ca7d6d2",
+                "observed": true
+              }
+            },
+            {
+              "id": "0442b166-a9f5-4421-9ee1-4c7a0a0d7ae9",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:06.201Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "1c0762f4-2113-4761-8f70-d85c4cd6428b",
+                "requestPath": "/test-site/bb2d5cf1-d650-4d31-93aa-20abb7da7713",
+                "requestId": "24738985-77b2-4e15-b9e3-bae00e76e8e4",
+                "observed": true
+              }
+            },
+            {
+              "id": "802381e5-c236-4649-a943-3e564c837bfa",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:06.665Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "1c0762f4-2113-4761-8f70-d85c4cd6428b",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "8c76fe5a-807e-4803-8978-79ddcd124a75",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:06.769Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "1c0762f4-2113-4761-8f70-d85c4cd6428b",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "f3dc77ed-22d9-4c9d-9260-7c798587f313",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:06.873Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "1c0762f4-2113-4761-8f70-d85c4cd6428b",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "1c0762f4-2113-4761-8f70-d85c4cd6428b"
+      }
+    },
+    {
+      "fault": "javascript_error",
+      "state": {
+        "sessionId": "210c3050-4ad5-440e-8f3d-70c4c5dca362",
+        "fault": "javascript_error",
+        "expiresAt": "2026-10-13T08:15:07.320Z",
+        "revision": "32d9ae95-8183-4843-aac9-2a1d0d33650d",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "0990a127-5dd2-4092-baa1-ddd61b3d075a",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362",
+        "status": "failed",
+        "httpStatus": 200,
+        "durationMs": 5089,
+        "startedAt": "2026-10-13T08:13:07.325Z",
+        "completedAt": "2026-10-13T08:13:12.416Z",
+        "error": null,
+        "message": "Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2376 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Browser action completes and visible business outcome changes",
+            "actual": "Browser did not satisfy BROWSER_LOGIN within its deadline.",
+            "passed": false
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "Controlled JavaScript initialization error",
+            "passed": false
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2376,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "b8084982-c11f-41fb-9839-dc496e75dc6a",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:07.330Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362",
+                "httpStatus": 200,
+                "responseBytes": 2376
+              }
+            },
+            {
+              "id": "a57b1657-e041-4a0c-9ff9-8c227fed352a",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:12.416Z",
+              "message": "An actual Chromium page action or navigation failed; inspect observed browser and network evidence."
+            },
+            {
+              "id": "5632f318-2b77-447a-a1b7-33e3ce3105c5",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:12.416Z",
+              "message": "Uncaught browser JavaScript error: Controlled JavaScript initialization error"
+            },
+            {
+              "id": "5d362ad1-b7f9-486f-8197-13f676d597d3",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:07.329Z",
+              "message": "The isolated test page received a real GET request with controlled fault javascript_error.",
+              "data": {
+                "fault": "javascript_error",
+                "revision": "32d9ae95-8183-4843-aac9-2a1d0d33650d",
+                "requestPath": "/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362",
+                "requestId": "b368f073-2c0c-40d8-be4b-84a87e4c65e3",
+                "observed": true
+              }
+            },
+            {
+              "id": "b7555edb-e450-4dd3-af91-aed3bd1a4f9b",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:07.952Z",
+              "message": "The isolated test page received a real GET request with controlled fault javascript_error.",
+              "data": {
+                "fault": "javascript_error",
+                "revision": "32d9ae95-8183-4843-aac9-2a1d0d33650d",
+                "requestPath": "/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362",
+                "requestId": "70ca578b-a952-433e-b42f-cf6aa2dbd4ce",
+                "observed": true
+              }
+            }
+          ]
+        },
+        "fingerprint": "5b62bc67ea67220d",
+        "labRevision": "32d9ae95-8183-4843-aac9-2a1d0d33650d",
+        "diagnosis": {
+          "source": "rules",
+          "category": "javascript_error",
+          "summary": "Controlled website failure detected: javascript error.",
+          "observedFacts": [
+            "A real website request returned HTTP 200 with 2376 response bytes.",
+            "BROWSER_LOGIN: expected Browser action completes and visible business outcome changes; observed Browser did not satisfy BROWSER_LOGIN within its deadline..",
+            "BROWSER_JAVASCRIPT: expected No uncaught browser JavaScript errors; observed Controlled JavaScript initialization error."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated page deliberately threw a JavaScript error during initialization.",
+          "solutions": [
+            "Remove the controlled JavaScript throw and repeat the actual browser journey.",
+            "For a real page, use the recorded page error and source maps to fix the exception, then verify the affected interactions."
+          ],
+          "evidenceIds": [
+            "b8084982-c11f-41fb-9839-dc496e75dc6a",
+            "a57b1657-e041-4a0c-9ff9-8c227fed352a",
+            "5632f318-2b77-447a-a1b7-33e3ce3105c5",
+            "5d362ad1-b7f9-486f-8197-13f676d597d3",
+            "b7555edb-e450-4dd3-af91-aed3bd1a4f9b"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "0990a127-5dd2-4092-baa1-ddd61b3d075a",
+        "verificationRunId": "0671612e-6945-4fe8-a66b-91460dd8021d",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "0671612e-6945-4fe8-a66b-91460dd8021d",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 2033,
+        "startedAt": "2026-10-13T08:13:12.642Z",
+        "completedAt": "2026-10-13T08:13:14.676Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "cc3498f6-11a3-402c-aa39-644e2ffde492",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:12.647Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "f86f97fa-39d1-4ca5-a2e1-6dba67aa2cb9",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:12.642Z",
+              "message": "The matching controlled fault was removed for recovery verification.",
+              "data": {
+                "fault": "javascript_error",
+                "revision": "32d9ae95-8183-4843-aac9-2a1d0d33650d",
+                "restored": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "7434a205-edaa-498e-acef-9ab79c2e11bd",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:12.646Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "32d9ae95-8183-4843-aac9-2a1d0d33650d",
+                "requestPath": "/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362",
+                "requestId": "f03c5187-e5c7-432c-a9b3-b4ae36a30af4",
+                "observed": true
+              }
+            },
+            {
+              "id": "ed72868d-2ca5-4bb7-9a54-187ffe3ed2df",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:13.110Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "32d9ae95-8183-4843-aac9-2a1d0d33650d",
+                "requestPath": "/test-site/210c3050-4ad5-440e-8f3d-70c4c5dca362",
+                "requestId": "3afb21c0-910f-4cea-87a2-611ccb6f4ce5",
+                "observed": true
+              }
+            },
+            {
+              "id": "32776fc9-9076-4c05-a0cd-8abcfcf50b38",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:14.116Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "32d9ae95-8183-4843-aac9-2a1d0d33650d",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "1b1b56a7-f28f-4bde-b92c-dff7a75af1d2",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:14.177Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "32d9ae95-8183-4843-aac9-2a1d0d33650d",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "e4539bb6-4e5e-42a7-88da-3e92cab626d5",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:14.261Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "32d9ae95-8183-4843-aac9-2a1d0d33650d",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "32d9ae95-8183-4843-aac9-2a1d0d33650d"
+      }
+    },
+    {
+      "fault": "button_broken",
+      "state": {
+        "sessionId": "e27fa726-9519-4559-bf3c-27d6d2405600",
+        "fault": "button_broken",
+        "expiresAt": "2026-10-13T08:15:14.703Z",
+        "revision": "20f4b454-c67c-4e51-884a-15b924570356",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/e27fa726-9519-4559-bf3c-27d6d2405600",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "4fe55ef7-e3b7-44cf-ab3b-b4fc87e1c753",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/e27fa726-9519-4559-bf3c-27d6d2405600",
+        "status": "failed",
+        "httpStatus": 200,
+        "durationMs": 4881,
+        "startedAt": "2026-10-13T08:13:14.708Z",
+        "completedAt": "2026-10-13T08:13:19.591Z",
+        "error": null,
+        "message": "Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "1379 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Browser action completes and visible business outcome changes",
+            "actual": "Browser did not satisfy BROWSER_LOGIN within its deadline.",
+            "passed": false
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 1379,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "994fb602-233f-4251-b016-43b439f5e3ce",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:14.717Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/e27fa726-9519-4559-bf3c-27d6d2405600 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/e27fa726-9519-4559-bf3c-27d6d2405600",
+                "httpStatus": 200,
+                "responseBytes": 1379
+              }
+            },
+            {
+              "id": "a6e98fb2-45d7-404e-a83e-c53b1d0fc2de",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:19.591Z",
+              "message": "An actual Chromium page action or navigation failed; inspect observed browser and network evidence."
+            },
+            {
+              "id": "8db63e07-60da-46b0-9b0b-3f6eff7dec62",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:14.715Z",
+              "message": "The isolated test page received a real GET request with controlled fault button_broken.",
+              "data": {
+                "fault": "button_broken",
+                "revision": "20f4b454-c67c-4e51-884a-15b924570356",
+                "requestPath": "/test-site/e27fa726-9519-4559-bf3c-27d6d2405600",
+                "requestId": "ec87c79e-69aa-4b18-9a02-35e77e57f071",
+                "observed": true
+              }
+            },
+            {
+              "id": "849f11b4-26f7-481e-b73f-b27a8c8d887a",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:15.175Z",
+              "message": "The isolated test page received a real GET request with controlled fault button_broken.",
+              "data": {
+                "fault": "button_broken",
+                "revision": "20f4b454-c67c-4e51-884a-15b924570356",
+                "requestPath": "/test-site/e27fa726-9519-4559-bf3c-27d6d2405600",
+                "requestId": "fd2f2ec5-295e-4b94-9eaa-d3a30424ca78",
+                "observed": true
+              }
+            }
+          ]
+        },
+        "fingerprint": "746184b979a5343b",
+        "labRevision": "20f4b454-c67c-4e51-884a-15b924570356",
+        "diagnosis": {
+          "source": "rules",
+          "category": "broken_interaction",
+          "summary": "Controlled website failure detected: broken interaction.",
+          "observedFacts": [
+            "A real website request returned HTTP 200 with 1379 response bytes.",
+            "BROWSER_LOGIN: expected Browser action completes and visible business outcome changes; observed Browser did not satisfy BROWSER_LOGIN within its deadline.."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated page deliberately omitted its button event handlers.",
+          "solutions": [
+            "Restore the controlled button event handlers and repeat sign-in, add-to-cart and confirmation.",
+            "For a real page, inspect handler registration, disabled controls and JavaScript initialization, then verify the resulting UI state."
+          ],
+          "evidenceIds": [
+            "994fb602-233f-4251-b016-43b439f5e3ce",
+            "a6e98fb2-45d7-404e-a83e-c53b1d0fc2de",
+            "8db63e07-60da-46b0-9b0b-3f6eff7dec62",
+            "849f11b4-26f7-481e-b73f-b27a8c8d887a"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "4fe55ef7-e3b7-44cf-ab3b-b4fc87e1c753",
+        "verificationRunId": "9e0d37ae-0291-4594-a682-50b930042c77",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "9e0d37ae-0291-4594-a682-50b930042c77",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/e27fa726-9519-4559-bf3c-27d6d2405600",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 1795,
+        "startedAt": "2026-10-13T08:13:19.673Z",
+        "completedAt": "2026-10-13T08:13:21.469Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "1c68c998-275c-43a1-aa94-0505846147b5",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:19.678Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/e27fa726-9519-4559-bf3c-27d6d2405600 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/e27fa726-9519-4559-bf3c-27d6d2405600",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "36d1f2e5-2ae7-4338-9bc6-9bbaffa30767",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:19.673Z",
+              "message": "The matching controlled fault was removed for recovery verification.",
+              "data": {
+                "fault": "button_broken",
+                "revision": "20f4b454-c67c-4e51-884a-15b924570356",
+                "restored": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "b7523208-1c7b-4c8a-aaac-f3d656f4a4b1",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:19.677Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "20f4b454-c67c-4e51-884a-15b924570356",
+                "requestPath": "/test-site/e27fa726-9519-4559-bf3c-27d6d2405600",
+                "requestId": "5eeb06d2-949a-4402-9923-d7c9eee4da5f",
+                "observed": true
+              }
+            },
+            {
+              "id": "d557b789-5ce4-4d48-a5f7-b731775f5464",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:20.030Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "20f4b454-c67c-4e51-884a-15b924570356",
+                "requestPath": "/test-site/e27fa726-9519-4559-bf3c-27d6d2405600",
+                "requestId": "ce6b1171-d8dc-47fd-8bd3-ac0c4af38aac",
+                "observed": true
+              }
+            },
+            {
+              "id": "be132568-ef4e-4a22-9ab2-063e39ac24bf",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:20.979Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "20f4b454-c67c-4e51-884a-15b924570356",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "e2fc6ec2-bbe8-4489-b161-5d8128fe3d75",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:21.042Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "20f4b454-c67c-4e51-884a-15b924570356",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "6922d145-0387-4703-9186-2e5a02cbd14c",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:21.111Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "20f4b454-c67c-4e51-884a-15b924570356",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "20f4b454-c67c-4e51-884a-15b924570356"
+      }
+    },
+    {
+      "fault": "login_401",
+      "state": {
+        "sessionId": "f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c",
+        "fault": "login_401",
+        "expiresAt": "2026-10-13T08:15:21.503Z",
+        "revision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "4ed4f963-f3a5-4b83-83ce-d53c4686772e",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c",
+        "status": "failed",
+        "httpStatus": 200,
+        "durationMs": 5341,
+        "startedAt": "2026-10-13T08:13:21.519Z",
+        "completedAt": "2026-10-13T08:13:26.861Z",
+        "error": null,
+        "message": "Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Browser action completes and visible business outcome changes",
+            "actual": "Browser did not satisfy BROWSER_LOGIN within its deadline.",
+            "passed": false
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "f222ce14-2879-4d83-9f6c-baa124ca7bbf",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:21.523Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "83aaffee-7b5f-4070-80c2-b893421566e0",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:26.861Z",
+              "message": "Browser received HTTP 401 at /test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c/api/login."
+            },
+            {
+              "id": "4f682868-53ca-4f8a-94aa-57e987f76232",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:26.861Z",
+              "message": "An actual Chromium page action or navigation failed; inspect observed browser and network evidence."
+            },
+            {
+              "id": "dcb7b7d6-3fb6-4d5b-80aa-8b3552841838",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:21.522Z",
+              "message": "The isolated test page received a real GET request with controlled fault login_401.",
+              "data": {
+                "fault": "login_401",
+                "revision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+                "requestPath": "/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c",
+                "requestId": "20717074-e5db-40e8-b5d7-3f95d8a7e059",
+                "observed": true
+              }
+            },
+            {
+              "id": "0c57eb42-4f3e-4f96-b102-09e82b7c8b4c",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:21.890Z",
+              "message": "The isolated test page received a real GET request with controlled fault login_401.",
+              "data": {
+                "fault": "login_401",
+                "revision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+                "requestPath": "/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c",
+                "requestId": "65c0c8a2-b156-4542-8416-a827f1b1885d",
+                "observed": true
+              }
+            },
+            {
+              "id": "beb1710e-4738-42f1-9837-f763dc9add8d",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:23.044Z",
+              "message": "Synthetic login request returned HTTP 401.",
+              "data": {
+                "fault": "login_401",
+                "revision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+                "endpoint": "login",
+                "httpStatus": 401,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": "746184b979a5343b",
+        "labRevision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+        "diagnosis": {
+          "source": "rules",
+          "category": "authentication",
+          "summary": "Controlled website failure detected: authentication.",
+          "observedFacts": [
+            "A real website request returned HTTP 200 with 2318 response bytes.",
+            "BROWSER_LOGIN: expected Browser action completes and visible business outcome changes; observed Browser did not satisfy BROWSER_LOGIN within its deadline.."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated synthetic sign-in endpoint deliberately returned HTTP 401.",
+          "solutions": [
+            "Restore the controlled synthetic sign-in response and verify the browser reaches Signed in.",
+            "For a real sign-in failure, inspect the auth response, token/session expiry, cookie settings and account permissions without exposing credentials."
+          ],
+          "evidenceIds": [
+            "f222ce14-2879-4d83-9f6c-baa124ca7bbf",
+            "83aaffee-7b5f-4070-80c2-b893421566e0",
+            "4f682868-53ca-4f8a-94aa-57e987f76232",
+            "dcb7b7d6-3fb6-4d5b-80aa-8b3552841838",
+            "0c57eb42-4f3e-4f96-b102-09e82b7c8b4c",
+            "beb1710e-4738-42f1-9837-f763dc9add8d"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "4ed4f963-f3a5-4b83-83ce-d53c4686772e",
+        "verificationRunId": "7a4c521f-9c70-4606-9249-c14bae0b16d3",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "7a4c521f-9c70-4606-9249-c14bae0b16d3",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 2207,
+        "startedAt": "2026-10-13T08:13:27.057Z",
+        "completedAt": "2026-10-13T08:13:29.266Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "904241d4-7729-485e-9035-71f6bdf35ada",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:27.074Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "ee7d4932-1f27-4222-b85b-c8a790fb18f0",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:27.057Z",
+              "message": "The matching controlled fault was removed for recovery verification.",
+              "data": {
+                "fault": "login_401",
+                "revision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+                "restored": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "012400f7-2cb2-4b69-87dc-7ba92d47e7bb",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:27.071Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+                "requestPath": "/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c",
+                "requestId": "c16c4794-0e9d-4b18-911d-da0e4a0baded",
+                "observed": true
+              }
+            },
+            {
+              "id": "36a66f7e-6a47-4b90-be5b-5d2be2ed837b",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:27.593Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+                "requestPath": "/test-site/f47b8e6f-49b5-4ffc-ab3b-35ac5d79421c",
+                "requestId": "6aff2a5d-5511-4e6d-8ab1-2b2930d3cbb4",
+                "observed": true
+              }
+            },
+            {
+              "id": "cac5a56d-4db8-4f67-8001-72fa1a97cffe",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:28.607Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "760469b7-4bbd-440c-b26d-029621b4e374",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:28.697Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "57395374-c701-40fc-885b-39bda6a08d59",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:28.764Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "4a040b6d-8333-44eb-9266-f5af9e53e5ed"
+      }
+    },
+    {
+      "fault": "payment_unavailable",
+      "state": {
+        "sessionId": "80be4d5f-27d8-45a6-b341-fd80cda02d67",
+        "fault": "payment_unavailable",
+        "expiresAt": "2026-10-13T08:15:29.319Z",
+        "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "9676ad44-9738-4ca9-8150-f1fabff6da92",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67",
+        "status": "failed",
+        "httpStatus": 200,
+        "durationMs": 5351,
+        "startedAt": "2026-10-13T08:13:29.328Z",
+        "completedAt": "2026-10-13T08:13:34.681Z",
+        "error": null,
+        "message": "Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Browser action completes and visible business outcome changes",
+            "actual": "Browser did not satisfy BROWSER_CONFIRMATION within its deadline.",
+            "passed": false
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "d22f641d-6326-4a41-b38a-6f51c2880447",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:29.338Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "f99bb5fe-5f9c-4c54-8293-ecd4f05bd887",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:34.681Z",
+              "message": "Browser received HTTP 503 at /test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67/api/confirmation."
+            },
+            {
+              "id": "fb7f17fa-af60-4de2-95c1-a5fa93d49c78",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:34.681Z",
+              "message": "An actual Chromium page action or navigation failed; inspect observed browser and network evidence."
+            },
+            {
+              "id": "3b2c62e4-7f56-456b-9b43-85a07d087411",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:29.337Z",
+              "message": "The isolated test page received a real GET request with controlled fault payment_unavailable.",
+              "data": {
+                "fault": "payment_unavailable",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "requestPath": "/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67",
+                "requestId": "9fd8be50-6dd0-4cba-8a1c-b98cf98200e6",
+                "observed": true
+              }
+            },
+            {
+              "id": "badafd4c-eec9-4d29-958c-26dc7502133c",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:29.836Z",
+              "message": "The isolated test page received a real GET request with controlled fault payment_unavailable.",
+              "data": {
+                "fault": "payment_unavailable",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "requestPath": "/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67",
+                "requestId": "b8e21a5d-3642-4236-bd60-bc726c1b4d31",
+                "observed": true
+              }
+            },
+            {
+              "id": "114025d6-18c2-45c0-82fa-b822cdaf266c",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:31.016Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "payment_unavailable",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "1f5b91d3-6b52-4e8d-af93-0c7779335452",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:31.079Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "payment_unavailable",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "cd8d5455-54cc-4ec6-bf5a-4d336f3d9054",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:31.185Z",
+              "message": "Synthetic confirmation request returned HTTP 503.",
+              "data": {
+                "fault": "payment_unavailable",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "endpoint": "confirmation",
+                "httpStatus": 503,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": "663c971c3acc8f0c",
+        "labRevision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+        "diagnosis": {
+          "source": "rules",
+          "category": "payment_dependency",
+          "summary": "Controlled website failure detected: payment dependency.",
+          "observedFacts": [
+            "A real website request returned HTTP 200 with 2318 response bytes.",
+            "BROWSER_CONFIRMATION: expected Browser action completes and visible business outcome changes; observed Browser did not satisfy BROWSER_CONFIRMATION within its deadline.."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated synthetic confirmation endpoint deliberately returned HTTP 503. No payment was attempted.",
+          "solutions": [
+            "Restore the controlled synthetic confirmation response and verify Order confirmed with zero real payments.",
+            "For a real payment failure, inspect provider status and request logs, reconcile the original transaction and preserve its idempotency key before retrying."
+          ],
+          "evidenceIds": [
+            "d22f641d-6326-4a41-b38a-6f51c2880447",
+            "f99bb5fe-5f9c-4c54-8293-ecd4f05bd887",
+            "fb7f17fa-af60-4de2-95c1-a5fa93d49c78",
+            "3b2c62e4-7f56-456b-9b43-85a07d087411",
+            "badafd4c-eec9-4d29-958c-26dc7502133c",
+            "114025d6-18c2-45c0-82fa-b822cdaf266c",
+            "1f5b91d3-6b52-4e8d-af93-0c7779335452",
+            "cd8d5455-54cc-4ec6-bf5a-4d336f3d9054"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "9676ad44-9738-4ca9-8150-f1fabff6da92",
+        "verificationRunId": "2f44f93f-d9e3-4ee6-943a-69e85e110969",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "2f44f93f-d9e3-4ee6-943a-69e85e110969",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 1488,
+        "startedAt": "2026-10-13T08:13:34.942Z",
+        "completedAt": "2026-10-13T08:13:36.432Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "2b84770a-dcc5-49bb-9529-808e1a69892c",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:34.951Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "d3dc78e5-e4f0-4c39-ba40-546290fedcb5",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:34.942Z",
+              "message": "The matching controlled fault was removed for recovery verification.",
+              "data": {
+                "fault": "payment_unavailable",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "restored": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "6fbcf426-4469-4aff-835c-0ec990afe693",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:34.949Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "requestPath": "/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67",
+                "requestId": "c7cea9f3-0ac3-4e8e-bc93-5320e1de9209",
+                "observed": true
+              }
+            },
+            {
+              "id": "649f482f-f95a-4e27-8c23-d38a63bac83f",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:35.418Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "requestPath": "/test-site/80be4d5f-27d8-45a6-b341-fd80cda02d67",
+                "requestId": "74b044f7-64f1-4364-83dd-799a17335d75",
+                "observed": true
+              }
+            },
+            {
+              "id": "8e4b4d08-7141-446a-9c2f-8abf2936c684",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:35.913Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "d974fcd9-d1ec-4a7b-b997-429199e878ef",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:35.976Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "f9371847-94bb-4119-8f72-0279f82cd477",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:36.043Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "5f46c81f-8be2-4baa-9615-208415a1d0a9",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "5f46c81f-8be2-4baa-9615-208415a1d0a9"
+      }
+    },
+    {
+      "fault": "database_unavailable",
+      "state": {
+        "sessionId": "ad5510c6-32d9-4541-87ed-a053a92c8866",
+        "fault": "database_unavailable",
+        "expiresAt": "2026-10-13T08:15:36.472Z",
+        "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866",
+        "maxDurationSeconds": 120,
+        "safety": {
+          "isolated": true,
+          "syntheticPayments": true
+        }
+      },
+      "failure": {
+        "id": "d12ad392-aa34-47e3-9966-f1e20c4ae42c",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866",
+        "status": "failed",
+        "httpStatus": 200,
+        "durationMs": 5376,
+        "startedAt": "2026-10-13T08:13:36.476Z",
+        "completedAt": "2026-10-13T08:13:41.853Z",
+        "error": null,
+        "message": "Website response or browser journey failed a configured assertion. Inspect its explanation and measured evidence.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Browser action completes and visible business outcome changes",
+            "actual": "Browser did not satisfy BROWSER_CART within its deadline.",
+            "passed": false
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "0669b116-1563-4614-9b2e-8f51d669160d",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:36.482Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "209e1745-0621-4d6b-aada-3c2d60fb4a55",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:41.853Z",
+              "message": "Browser received HTTP 503 at /test-site/ad5510c6-32d9-4541-87ed-a053a92c8866/api/catalog."
+            },
+            {
+              "id": "32cc73d0-e89e-431d-a68a-61708dea3ab2",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:41.853Z",
+              "message": "An actual Chromium page action or navigation failed; inspect observed browser and network evidence."
+            },
+            {
+              "id": "69b6bd10-49eb-4dc9-85bf-a7946b1b69e3",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:36.481Z",
+              "message": "The isolated test page received a real GET request with controlled fault database_unavailable.",
+              "data": {
+                "fault": "database_unavailable",
+                "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+                "requestPath": "/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866",
+                "requestId": "3f496505-a027-402f-bfed-3925b4a7012e",
+                "observed": true
+              }
+            },
+            {
+              "id": "f3d1474d-a6c5-44c8-b0d6-302a4af98d2b",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:36.978Z",
+              "message": "The isolated test page received a real GET request with controlled fault database_unavailable.",
+              "data": {
+                "fault": "database_unavailable",
+                "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+                "requestPath": "/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866",
+                "requestId": "a2726460-3573-4d02-9061-abbc56e52d77",
+                "observed": true
+              }
+            },
+            {
+              "id": "96e48e74-a5c4-4354-aa44-05a0d1e90dd1",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:38.042Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "database_unavailable",
+                "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "b7015291-8b17-4554-98b2-dee122cd6e06",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:38.133Z",
+              "message": "Synthetic catalog request returned HTTP 503.",
+              "data": {
+                "fault": "database_unavailable",
+                "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+                "endpoint": "catalog",
+                "httpStatus": 503,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": "8d03e5f034713478",
+        "labRevision": "0da20229-78f0-4113-9654-6224dd76071c",
+        "diagnosis": {
+          "source": "rules",
+          "category": "database_dependency",
+          "summary": "Controlled website failure detected: database dependency.",
+          "observedFacts": [
+            "A real website request returned HTTP 200 with 2318 response bytes.",
+            "BROWSER_CART: expected Browser action completes and visible business outcome changes; observed Browser did not satisfy BROWSER_CART within its deadline.."
+          ],
+          "possibleCauses": [],
+          "confirmedCause": "The isolated catalog endpoint deliberately emulated a database dependency outage with HTTP 503; the real database remained untouched.",
+          "solutions": [
+            "Restore the controlled synthetic catalog response and verify that add-to-cart shows one item.",
+            "For a real dependency failure, inspect database connectivity, connection pools, migrations and query errors; restore the dependency before repeating the journey."
+          ],
+          "evidenceIds": [
+            "0669b116-1563-4614-9b2e-8f51d669160d",
+            "209e1745-0621-4d6b-aada-3c2d60fb4a55",
+            "32cc73d0-e89e-431d-a68a-61708dea3ab2",
+            "69b6bd10-49eb-4dc9-85bf-a7946b1b69e3",
+            "f3d1474d-a6c5-44c8-b0d6-302a4af98d2b",
+            "96e48e74-a5c4-4354-aa44-05a0d1e90dd1",
+            "b7015291-8b17-4554-98b2-dee122cd6e06"
+          ]
+        },
+        "incidentStatus": "open"
+      },
+      "recovery": {
+        "runId": "d12ad392-aa34-47e3-9966-f1e20c4ae42c",
+        "verificationRunId": "cc92f258-d10a-406d-993e-2b5dd7331159",
+        "status": "verified"
+      },
+      "verification": {
+        "id": "cc92f258-d10a-406d-993e-2b5dd7331159",
+        "targetId": "bizplus-fault-lab",
+        "url": "http://127.0.0.1:3012/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866",
+        "status": "passed",
+        "httpStatus": 200,
+        "durationMs": 2060,
+        "startedAt": "2026-10-13T08:13:42.013Z",
+        "completedAt": "2026-10-13T08:13:44.075Z",
+        "error": null,
+        "message": "Website response and the actual synthetic browser journey passed.",
+        "assertions": [
+          {
+            "code": "HTTP_STATUS",
+            "expected": "HTTP 200",
+            "actual": "HTTP 200",
+            "passed": true
+          },
+          {
+            "code": "EXPECTED_CONTENT",
+            "expected": "BizPlus test site ready",
+            "actual": "Expected content found",
+            "passed": true
+          },
+          {
+            "code": "RESPONSE_PRESENT",
+            "expected": "Non-empty response body",
+            "actual": "2318 bytes",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_PAGE_LOAD",
+            "expected": "HTTP 200 document",
+            "actual": "200",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_LOGIN",
+            "expected": "Signed in after pressing login",
+            "actual": "Signed in",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CART",
+            "expected": "Cart count 1 after pressing add product",
+            "actual": "1",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_CONFIRMATION",
+            "expected": "Synthetic order confirmed after pressing checkout",
+            "actual": "Order confirmed",
+            "passed": true
+          },
+          {
+            "code": "BROWSER_JAVASCRIPT",
+            "expected": "No uncaught browser JavaScript errors",
+            "actual": "No uncaught errors",
+            "passed": true
+          }
+        ],
+        "evidence": {
+          "responseBytes": 2318,
+          "title": "BizPlus isolated test website",
+          "excerpt": "BizPlus isolated test website BizPlus test site ready This session-isolated website makes synthetic requests. No real account, order, database outage or payment is created. Controlled errors expire after two minutes. Test storefront Sign in to test account Signed out Demo item Add demo item Cart: 0 Simulate order confi",
+          "events": [
+            {
+              "id": "dd554dbf-bac3-4980-9344-32a809e8f5ca",
+              "kind": "response",
+              "timestamp": "2026-10-13T08:13:42.021Z",
+              "message": "Real GET http://127.0.0.1:3012/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866 returned HTTP 200.",
+              "data": {
+                "url": "http://127.0.0.1:3012/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866",
+                "httpStatus": 200,
+                "responseBytes": 2318
+              }
+            },
+            {
+              "id": "20f22264-dc53-4d4b-8949-70bdf7f219ab",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:42.013Z",
+              "message": "The matching controlled fault was removed for recovery verification.",
+              "data": {
+                "fault": "database_unavailable",
+                "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+                "restored": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "8591358f-8c4b-48fb-b819-55c751a36edd",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:42.020Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+                "requestPath": "/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866",
+                "requestId": "ee54cdd8-0ada-4533-af78-aff93b2d6a20",
+                "observed": true
+              }
+            },
+            {
+              "id": "b24f9c72-4bb7-484e-a7c7-af7a33312b02",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:42.488Z",
+              "message": "The isolated test page received a real GET request with controlled fault healthy.",
+              "data": {
+                "fault": "healthy",
+                "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+                "requestPath": "/test-site/ad5510c6-32d9-4541-87ed-a053a92c8866",
+                "requestId": "81fd2091-d974-4050-a295-bc240a073fb8",
+                "observed": true
+              }
+            },
+            {
+              "id": "5c15f3e6-a8d6-4ddd-a819-0682060fcacf",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:43.519Z",
+              "message": "Synthetic login request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+                "endpoint": "login",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "7986c8d7-a8a8-4363-9cf1-01e310564e9a",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:43.610Z",
+              "message": "Synthetic catalog request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+                "endpoint": "catalog",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            },
+            {
+              "id": "f83649e0-0ac8-4744-9af9-bb6d55c53f97",
+              "kind": "log",
+              "timestamp": "2026-10-13T08:13:43.677Z",
+              "message": "Synthetic confirmation request returned HTTP 200.",
+              "data": {
+                "fault": "healthy",
+                "revision": "0da20229-78f0-4113-9654-6224dd76071c",
+                "endpoint": "confirmation",
+                "httpStatus": 200,
+                "observed": true,
+                "synthetic": true,
+                "realPayments": 0
+              }
+            }
+          ]
+        },
+        "fingerprint": null,
+        "labRevision": "0da20229-78f0-4113-9654-6224dd76071c"
+      }
+    }
+  ],
+  "sessionIsolation": true,
+  "healthPreserved": {
+    "status": "ok",
+    "app": "BizPlus AI",
+    "instanceId": "ee449ba4-f82d-49a4-a51d-e6bd972061d0",
+    "instanceStartedAt": "2026-10-13T08:12:04.610Z",
+    "historyPolicy": "local",
+    "diagnosis": "rules"
+  },
+  "completedAt": "2026-10-13T08:13:44.123Z"
+}
