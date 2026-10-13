@@ -363,6 +363,9 @@ main { padding:32px; max-width:1664px; }
   .live-diagnosis-summary,.live-observer-summary { padding:0 20px 20px; }
   .live-repair-actions { padding:20px; flex-wrap:wrap; }
   .live-verification { margin:20px; }
+  .live-verification { display:grid; grid-template-columns:32px minmax(0,1fr); gap:12px; align-items:start; }
+  .live-verification-icon { width:32px; }
+  .live-verification>.badge { grid-column:2; margin-left:0; justify-self:start; }
   .live-trace-list { padding:0 20px 20px; }
   .live-trace-list pre { margin-left:0; }
   .live-observer-limitations { margin:0 20px 20px; }
