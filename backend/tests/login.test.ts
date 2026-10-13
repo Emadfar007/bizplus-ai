@@ -71,19 +71,28 @@ test('manual correct recovery resolves the owned incident and preserves the orig
     const open = await runtime.store.getIncident(incidentId, session); assert.equal(open?.status, 'open'); assert.equal(open?.resolvedAt, null);
     assert.equal(open?.manualRecovery?.verification.httpStatus, 401);
     const automatic = await api(runtime, session, `/api/incidents/${incidentId}/recover`, { approved: true, action: 'resume_receipt_worker' });
-    assert.equal(automatic.status, 409); assert.equal((await automatic.json()).code, 'RECOVERY_UNSUPPORTED');
+    assert.equal(automatic.status, 409);
+    const blockedRecovery = await automatic.json() as { code: string; incidentId: string };
+    assert.equal(blockedRecovery.code, 'RECOVERY_UNSUPPORTED'); assert.ok(blockedRecovery.incidentId); assert.notEqual(blockedRecovery.incidentId, incidentId);
+    const blockedIncident = await runtime.store.getIncident(blockedRecovery.incidentId, session);
+    assert.equal(blockedIncident?.application?.source, 'api'); assert.equal(blockedIncident?.application?.httpStatus, 409);
+    assert.equal(blockedIncident?.application?.path, '/api/incidents/:id/recover'); assert.equal(blockedIncident?.login, undefined);
+    assert.equal(blockedIncident?.diagnosis.recommendedAction, null); assert.equal(blockedIncident?.status, 'open');
     const recovered = await login(runtime, session, { ...valid, incidentId });
     assert.equal(recovered.response.status, 200); assert.equal(recovered.result.message, 'Login successful'); assert.equal(recovered.result.recovery?.status, 'verified');
     assert.equal(recovered.result.recovery?.actor, 'human'); assert.equal(recovered.result.recovery?.verification.httpStatus, 200);
     const resolved = await (await api(runtime, session, `/api/incidents/${incidentId}`)).json() as Incident;
     assert.equal(resolved.status, 'resolved'); assert.ok(resolved.resolvedAt); assert.equal(resolved.recovery, null);
     const metrics = await (await api(runtime, session, '/api/metrics')).json() as Metrics;
-    assert.equal(metrics.verifiedRecoveries, 1); assert.equal(metrics.openIncidents, 0); assert.equal(metrics.failedRuns, 1);
+    assert.equal(metrics.verifiedRecoveries, 1); assert.equal(metrics.openIncidents, 1); assert.equal(metrics.failedRuns, 1);
+    assert.equal((await runtime.store.getIncident(blockedRecovery.incidentId, session))?.status, 'open');
     assert.deepEqual(resolved.evidence.slice(0, originalEvidence.length), originalEvidence);
     assert.deepEqual(await runtime.store.getRun(rejected.result.runId, session), originalRun);
     const repeated = await login(runtime, session, { ...valid, incidentId });
     assert.equal(repeated.response.status, 200); assert.equal(repeated.result.recovery?.id, recovered.result.recovery?.id);
-    assert.equal((await runtime.store.listRuns(session)).length, 1);
+    const runsAfterRecovery = await runtime.store.listRuns(session);
+    assert.equal(runsAfterRecovery.length, 2); assert.equal(runsAfterRecovery.filter(run => run.scenario === 'manual_login').length, 1);
+    assert.equal(runsAfterRecovery.filter(run => run.scenario === 'application_error').length, 1);
     const resolvedSnapshot = await runtime.store.getIncident(incidentId, session);
     const badAfterRecovery = await login(runtime, session, { ...valid, password: 'wrong-after-resolution', incidentId });
     assert.equal(badAfterRecovery.response.status, 401); assert.equal(badAfterRecovery.result.recovery, undefined);
@@ -93,7 +102,9 @@ test('manual correct recovery resolves the owned incident and preserves the orig
     const prior = await runtime.store.getIncident(incidentId, session);
     // relatedIncidentIds is computed at read time and now includes the new rejection.
     assert.deepEqual({ ...prior, relatedIncidentIds: [] }, { ...resolvedSnapshot, relatedIncidentIds: [] });
-    assert.equal((await runtime.store.listRuns(session)).length, 2);
+    const finalRuns = await runtime.store.listRuns(session);
+    assert.equal(finalRuns.length, 3); assert.equal(finalRuns.filter(run => run.scenario === 'manual_login').length, 2);
+    assert.equal(finalRuns.filter(run => run.scenario === 'application_error').length, 1);
     assert.equal((await runtime.store.getRun(badAfterRecovery.result.runId, session))?.steps[0]?.httpStatus, 401);
   });
 });
@@ -110,10 +121,21 @@ test('a successful separate login does not silently resolve an earlier rejection
 test('login recovery is session isolated and rejects non-login incidents or invented recovery controls', async () => {
   await withRuntime(async (runtime, session) => {
     const failure = await login(runtime, session, { ...valid, password: 'wrong' });
+    const originalBeforeForeignRequest = await runtime.store.getIncident(failure.result.incidentId!, session);
     const other = randomUUID();
     const foreign = await login(runtime, other, { ...valid, incidentId: failure.result.incidentId });
-    assert.equal(foreign.response.status, 404); assert.equal((await runtime.store.listRuns(other)).length, 0);
-    assert.equal((await runtime.store.listIncidents(other)).incidents.length, 0);
+    assert.equal(foreign.response.status, 404); assert.ok(foreign.result.incidentId); assert.notEqual(foreign.result.incidentId, failure.result.incidentId);
+    const foreignRuns = await runtime.store.listRuns(other); const foreignIncidents = await runtime.store.listIncidents(other);
+    assert.equal(foreignRuns.length, 1); assert.equal(foreignRuns[0]?.scenario, 'application_error');
+    assert.equal(foreignIncidents.incidents.length, 1); const foreignIncident = foreignIncidents.incidents[0]!;
+    assert.equal(foreignIncident.id, foreign.result.incidentId); assert.equal(foreignIncident.login, undefined); assert.equal(foreignIncident.manualRecovery, undefined);
+    assert.equal(foreignIncident.application?.source, 'api'); assert.equal(foreignIncident.application?.code, 'NOT_FOUND');
+    assert.equal(foreignIncident.application?.path, '/api/login'); assert.equal(foreignIncident.application?.httpStatus, 404);
+    const foreignHistory = JSON.stringify({ result: foreign.result, runs: foreignRuns, incidents: foreignIncidents });
+    assert.ok(!foreignHistory.includes(failure.result.incidentId!)); assert.ok(!foreignHistory.includes(valid.password));
+    assert.ok(!foreignHistory.includes(`"${valid.username}"`));
+    assert.equal(await runtime.store.getIncident(failure.result.incidentId!, other), null);
+    assert.deepEqual(await runtime.store.getIncident(failure.result.incidentId!, session), originalBeforeForeignRequest);
     const incident = (await runtime.store.getIncident(failure.result.incidentId!, session))!;
     await runtime.store.saveIncident(session, { ...incident, workflowId: 'commerce-checkout', login: undefined });
     assert.equal((await login(runtime, session, { ...valid, incidentId: incident.id })).response.status, 409);

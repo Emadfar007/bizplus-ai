@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, FileSearch, LayoutDashboard, Loader2, LockKeyhole, ShieldCheck, TriangleAlert } from 'lucide-react';
 import type { LoginConfig, LoginResult } from '@bizplus/shared';
 import { loginApi } from '../services/login';
+import { reportError } from '../services/errors';
 import '../login.css';
 
 export interface LoginFormProps {
@@ -54,6 +55,7 @@ export function LoginForm({ session, source = 'login', incidentId, labRevision, 
     setFieldErrors(validation);
     if (validation.username || validation.password) {
       (validation.username ? usernameRef : passwordRef).current?.focus();
+      void reportError(session, { source: 'browser', code: 'BROWSER_VALIDATION_ERROR', path: window.location.pathname });
       return;
     }
     const requestGeneration = generation.current;

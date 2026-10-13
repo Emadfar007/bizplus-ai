@@ -1,0 +1,15 @@
+.pending-errors { margin-bottom:24px; padding-bottom:24px; }
+.pending-errors>p,.pending-errors>ul { margin:0 24px 20px; color:var(--muted); font-size:14px; line-height:24px; }
+.pending-errors>ul { list-style:none; padding:0; }
+.pending-errors li { padding:12px 0; border-bottom:1px solid var(--line); }
+.pending-errors li strong { display:block; color:var(--text); font-weight:500; }
+.pending-errors li span { display:block; overflow-wrap:anywhere; }
+.pending-errors>.secondary-button { margin-left:24px; }
+.application-incident-details { display:grid; gap:10px; padding:0 24px 20px; font-size:13px; color:var(--muted); }
+.application-incident-details strong { color:var(--text); margin-left:8px; font-weight:500; }
+.action-panel>.primary-button { display:flex; margin:0 24px 20px; }
+.application-incident-note { color:var(--muted); font-size:13px; line-height:22px; padding:0 24px 24px; }
+.application-review { padding-bottom:24px; margin-bottom:24px; }
+.application-review>p { color:var(--muted); padding:0 24px 24px; line-height:24px; }
+.application-review>.primary-button,.application-review>.text-button { margin:0 24px 20px; }
+@media(max-width:480px) { .pending-errors>p,.pending-errors>ul { margin-left:20px; margin-right:20px; } .application-incident-details { padding-left:20px; padding-right:20px; } }

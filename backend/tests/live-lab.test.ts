@@ -152,7 +152,7 @@ test('Login rejection exercise presents a human credential form rather than an a
     const legacy = await fetch(`${h.runtime.baseUrl}/test-site/${h.session}/api/login`);
     assert.equal(legacy.status, 405);
     assert.equal((await legacy.json()).code, 'MANUAL_LOGIN_REQUIRED');
-    assert.deepEqual((await h.call('/api/incidents')).data.incidents, [], 'Viewing the form or old GET must never fabricate a credential incident.');
+    assert.ok((await h.call('/api/incidents')).data.incidents.every((incident: {login?:unknown}) => !incident.login), 'Viewing the form or old GET must never fabricate a credential incident.');
   } finally { await h.runtime.close(); }
 });
 
@@ -165,7 +165,7 @@ test('A reachable manual login form cannot resolve an earlier failed browser int
     const result = await h.call(`/api/live/runs/${original.id}/verify`,{approved:true});
     assert.equal(result.data.status,'failed');
     assert.equal((await h.call(`/api/live/runs/${original.id}`)).data.incidentStatus,'open');
-    assert.deepEqual((await h.call('/api/incidents')).data.incidents,[],'No credential attempt should be fabricated by this check');
+    assert.ok((await h.call('/api/incidents')).data.incidents.every((incident: {login?:unknown}) => !incident.login),'No credential attempt should be fabricated by this check');
   } finally { await h.runtime.close(); }
 });
 

@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Check, CheckCircle2, Clock3, ExternalLink, FileSearch, Globe2, Loader2, Play, Radio, RefreshCw, ShieldCheck, Timer, TriangleAlert, X } from 'lucide-react';
 import type { LiveFault, LiveLabState, LiveRun, LiveTarget } from '@bizplus/shared';
 import type { Workspace } from '../hooks/useWorkspace';
@@ -12,9 +13,13 @@ import '../live-workflow.css';
 const LatencyChart = lazy(() => import('../components/LatencyChart'));
 function hostname(url: string) { try { return new URL(url).hostname; } catch { return url; } }
 function message(cause: unknown, fallback: string) { return cause instanceof Error ? cause.message : fallback; }
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export default function LiveTests({ workspace }: { workspace: Workspace }) {
   const session = workspace.session;
+  const [searchParams] = useSearchParams();
+  const linkedRun = searchParams.get('run');
+  const requestedRunId = linkedRun && UUID.test(linkedRun) ? linkedRun.toLowerCase() : null;
   const [targets, setTargets] = useState<LiveTarget[]>([]);
   const [runs, setRuns] = useState<LiveRun[]>([]);
   const [lab, setLab] = useState<LiveLabState | null>(null);
@@ -77,15 +82,33 @@ export default function LiveTests({ workspace }: { workspace: Workspace }) {
       setSelectedTarget(previous => result.targets.some(item => item.id === previous) ? previous : result.targets.find(item => item.id === 'bizplus-fault-lab')?.id || result.targets[0]?.id || '');
     }
     if (results[1].status === 'fulfilled') {
-      setRuns(results[1].value.runs);
-      if (!selectedIdRef.current && results[1].value.runs[0]) { const first = results[1].value.runs[0]; selectedIdRef.current = first.id; setRunId(first.id); setSelectedRun(first); }
+      const saved = results[1].value.runs;
+      setRuns(saved);
+      const id = selectedIdRef.current || saved[0]?.id;
+      if (id) {
+        selectedIdRef.current = id; setRunId(id);
+        const matching = saved.find(item => item.id === id);
+        if (matching) { setSelectedRun(matching); setSelectedTarget(matching.targetId); }
+        else {
+          try {
+            const detail = await liveApi.run(session,id);
+            if (current() && selectedIdRef.current === id) { setSelectedRun(detail); setSelectedTarget(detail.targetId); }
+          } catch (cause) { if (current() && selectedIdRef.current === id) setError(message(cause,'The linked live check is unavailable in this session.')); }
+        }
+      }
     }
+    if (!current()) return;
     if (results[2].status === 'fulfilled') setLab(results[2].value);
     const failure = results.find(result => result.status === 'rejected');
     if (failure?.status === 'rejected') setError(message(failure.reason, 'The live test setup is unavailable.'));
     setLoading(false);
   }, [session, current]);
-  useEffect(() => { if (workspace.connection === 'ready') void load(); }, [workspace.connection, load]);
+  useEffect(() => {
+    if (!requestedRunId) return;
+    selectedIdRef.current = requestedRunId;
+    setRunId(requestedRunId); setSelectedRun(null); setAuto(false);
+  }, [requestedRunId,session]);
+  useEffect(() => { if (workspace.connection === 'ready') void load(); }, [workspace.connection, load,requestedRunId]);
   useEffect(() => {
     void refreshObserver();
     const timer = setInterval(() => { if (!document.hidden) void refreshObserver(); }, 15000);
@@ -194,9 +217,10 @@ export default function LiveTests({ workspace }: { workspace: Workspace }) {
     </section><section className="panel live-result"><div className="panel-header"><h2>The actual response</h2>{selectedRun ? <Badge status={selectedRun.status}/> : <Badge status="idle">{action ? 'Starting' : 'Ready'}</Badge>}</div>
       {selectedRun ? <><div className="live-result-url"><Globe2 size={15}/><code>{selectedRun.url}</code><a href={selectedRun.url} target="_blank" rel="noreferrer" aria-label="Open tested target"><ExternalLink size={14}/></a></div><div className="live-response-overview"><div><span>HTTP STATUS</span><strong className={selectedRun.status === 'passed' ? 'cyan' : selectedRun.status === 'failed' ? 'danger-text' : ''}>{selectedRun.httpStatus ?? '—'}</strong></div><div><span>CHECK DURATION</span><strong>{selectedRun.completedAt ? duration(selectedRun.durationMs) : 'Checking…'}</strong></div><div><span>RESPONSE SIZE</span><strong>{selectedRun.completedAt ? `${selectedRun.evidence.responseBytes.toLocaleString()} B` : '—'}</strong></div></div><p className="live-result-message">{selectedRun.message || 'The server is checking the approved website…'}</p>{selectedRun.error ? <p className="live-result-error"><TriangleAlert size={14}/>{selectedRun.error}</p> : null}<div className="live-result-assertions">{selectedRun.assertions.map(assertion => <div key={assertion.code} className={assertion.passed ? 'passed' : 'failed'}>{assertion.passed ? <CheckCircle2 size={17}/> : <X size={17}/>}<span><strong>{assertion.code.replace(/_/g, ' ').toLowerCase()}</strong><small>Expected: {assertion.expected}<br/>Observed: {assertion.actual}</small></span></div>)}</div><div className="panel-footer"><span>{time(selectedRun.startedAt)} · Website and configured journey checks</span><span>RUN {shortId(selectedRun.id)}</span></div></> : <div className="live-response-empty"><h3>{action ? 'Starting a live check…' : 'Ready for your first check.'}</h3><p>{action ? 'The server is preparing the selected website checks.' : 'The status, duration and assertions appear here after a real request.'}</p><div className="live-response-overview"><div><span>HTTP STATUS</span><strong>—</strong></div><div><span>CHECK DURATION</span><strong>—</strong></div><div><span>RESPONSE SIZE</span><strong>—</strong></div></div></div>}
     </section></div>
+    {selectedRun?.investigationIncidentId ? <div className="feedback notice"><FileSearch size={18}/><span>This live check is recorded in Investigation.</span><Link className="text-button" to={`/incidents/${selectedRun.investigationIncidentId}`}>Open Investigation <ArrowUpRight size={15}/></Link></div> : null}
     {selectedRun?.diagnosis ? <LiveInvestigation run={selectedRun} verification={verification} canRestore={canRestore} busy={active} connected={connected} onRecover={() => void verify(true)} onVerify={() => void verify(false)} onSelect={id => void select(id)}/> : null}
     {selectedRun ? <LiveTracePanel run={selectedRun}/> : null}
-    <LiveObserver observer={observer} error={observerError} onRefresh={() => void refreshObserver()}/>
+    <LiveObserver observer={observer} error={observerError} investigationIncidents={workspace.incidentList.incidents} onRefresh={() => void refreshObserver()}/>
     <div className="live-secondary-grid"><section className="panel trend-panel"><div className="panel-header"><div><SectionLabel>LIVE PERFORMANCE HISTORY</SectionLabel><h2>Check duration</h2></div><span className="small-meta">{completed.length} completed checks</span></div>{points.length ? <Suspense fallback={<div className="chart-loading"><Loader2 size={21} className="spin"/></div>}><LatencyChart points={points}/></Suspense> : <EmptyState icon={Timer} title="Measure your first baseline">Charts populate from completed live requests and journeys.</EmptyState>}</section><section className="panel"><div className="panel-header"><div><SectionLabel>SESSION EXECUTIONS</SectionLabel><h2>Recent live checks</h2></div><button className="text-button" onClick={() => void refresh()}><RefreshCw size={13}/> Refresh</button></div>{runs.length ? <div className="runs-list live-runs-list">{runs.slice(0, 12).map(run => <button key={run.id} aria-pressed={run.id === selectedRun?.id} aria-label={`Inspect ${run.status} check from ${time(run.startedAt)}, ${run.httpStatus === null ? 'no HTTP status yet' : `HTTP ${run.httpStatus}`}`} className={`run-item ${run.id === selectedRun?.id ? 'selected' : ''}`} onClick={() => void select(run.id)}><span className={`run-status-icon ${run.status}`}>{run.status === 'passed' ? <Check size={15}/> : run.status === 'failed' ? <X size={15}/> : <Loader2 size={15} className="spin"/>}</span><span className="run-description"><strong>{targets.find(item => item.id === run.targetId)?.name || hostname(run.url)}</strong><small>{time(run.startedAt)} · {run.httpStatus === null ? run.status : `HTTP ${run.httpStatus}`}{run.incidentStatus === 'resolved' ? ' · Recovery verified' : ''}</small></span><span className="run-time">{run.completedAt ? duration(run.durationMs) : 'Running'}</span><ArrowUpRight size={15}/></button>)}</div> : <EmptyState icon={Radio} title="No live checks yet">The isolated test website lets you run real checks and deliberate faults safely.</EmptyState>}</section></div>
     {selectedRun?.completedAt ? <section className="panel live-evidence"><div className="panel-header"><div><SectionLabel>RESPONSE EVIDENCE</SectionLabel><h2>{selectedRun.evidence.title || 'Captured response excerpt'}</h2></div>{selectedRun.fingerprint ? <span className="live-fingerprint"><FileSearch size={13}/>{selectedRun.fingerprint}</span> : null}</div><pre>{selectedRun.evidence.excerpt || 'No response body was captured for this request.'}</pre><div className="panel-footer"><span>Response excerpts are displayed as text.</span><span>{lastUpdated ? `SYNCED ${time(lastUpdated.toISOString())}` : 'Awaiting refresh'}</span></div></section> : null}
   </div>;

@@ -1,5 +1,6 @@
 import type { CommerceCheckout, CommerceConfig, CommerceOrder, CommercePaymentVerification, Product } from '@bizplus/shared';
-import { request } from './api';
+import { request, RequestError } from './api';
+import { currentErrorReportingSession, reportError } from './errors';
 
 export const commerceApi = {
   products: (session: string) => request<Product[]>('/api/shop/products', session),
@@ -20,7 +21,7 @@ export interface RazorpayInstance { open(): void; close(): void; on(event: 'paym
 type RazorpayConstructor = new (options: RazorpayOptions) => RazorpayInstance;
 type RazorpayWindow = Window & { Razorpay?: RazorpayConstructor };
 let scriptPromise: Promise<RazorpayConstructor> | null = null;
-export function loadRazorpay(): Promise<RazorpayConstructor> {
+export function loadRazorpay(session = currentErrorReportingSession()): Promise<RazorpayConstructor> {
   const loaded = (window as RazorpayWindow).Razorpay;
   if (loaded) return Promise.resolve(loaded);
   if (scriptPromise) return scriptPromise;
@@ -29,7 +30,13 @@ export function loadRazorpay(): Promise<RazorpayConstructor> {
     const script = existing || document.createElement('script');
     let timer: ReturnType<typeof setTimeout>;
     const cleanup = () => { clearTimeout(timer); script.removeEventListener('load', success); script.removeEventListener('error', failure); };
-    const failure = () => { cleanup(); scriptPromise = null; script.remove(); reject(new Error('Razorpay checkout could not load. Check your connection and retry the same order.')); };
+    const failure = () => {
+      cleanup(); scriptPromise = null; script.remove();
+      const error = new RequestError('Razorpay checkout could not load. Check your connection and retry the same order.', 0, 'PAYMENT_CHECKOUT_LOAD_FAILED');
+      error.reportedToInvestigation = true;
+      void reportError(session, { source: 'payment', code: 'PAYMENT_CHECKOUT_LOAD_FAILED', path: '/shop' }).then(result => { error.incidentId = result.incidentId; });
+      reject(error);
+    };
     const success = () => { const constructor = (window as RazorpayWindow).Razorpay; if (!constructor) { failure(); return; } cleanup(); resolve(constructor); };
     script.addEventListener('load', success, { once: true });
     script.addEventListener('error', failure, { once: true });

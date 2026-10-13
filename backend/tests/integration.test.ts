@@ -108,7 +108,17 @@ test('approval, action allowlist, fixed workflow, private sandbox, and session o
     assert.equal((await api(runtime, otherSession, `/api/runs/${run.id}`)).status, 404);
     assert.equal((await api(runtime, otherSession, `/api/incidents/${run.incidentId}`)).status, 404);
     assert.equal((await api(runtime, otherSession, `/api/incidents/${run.incidentId}/recover`, approval)).status, 404);
-    const otherMetrics = await (await api(runtime, otherSession, '/api/metrics')).json() as Metrics; assert.equal(otherMetrics.totalRuns, 0);
+    const otherMetrics = await (await api(runtime, otherSession, '/api/metrics')).json() as Metrics;
+    assert.equal(otherMetrics.totalRuns, 0); assert.equal(otherMetrics.failedRuns, 0); assert.equal(otherMetrics.openIncidents, 3);
+    const otherHistory = await runtime.store.listIncidents(otherSession);
+    assert.equal(otherHistory.incidents.length, 3);
+    assert.deepEqual(new Set(otherHistory.incidents.map(incident => incident.application?.path)),
+      new Set(['/api/runs/:id', '/api/incidents/:id', '/api/incidents/:id/recover']));
+    assert.ok(otherHistory.incidents.every(incident => incident.application?.source === 'api' && incident.application.httpStatus === 404
+      && incident.application.code === 'NOT_FOUND' && incident.login === undefined && incident.recovery === null));
+    const exposed = JSON.stringify({ history: otherHistory, runs: await runtime.store.listRuns(otherSession) });
+    for (const privateId of [run.id, run.incidentId, run.orderId, run.transactionId]) if (privateId) assert.ok(!exposed.includes(privateId));
+    assert.equal(await runtime.store.getRun(run.id, otherSession), null); assert.equal(await runtime.store.getIncident(run.incidentId!, otherSession), null);
     const unrelated = await runScenario(runtime, otherSession, 'healthy'); assert.equal(unrelated.status, 'passed'); assert.equal(runtime.store.getIncident(run.incidentId!, session)?.status, 'open');
     const denied = await api(runtime, session, '/api/metrics', undefined, { Origin: 'https://unapproved.example' }); assert.equal(denied.status, 403);
     const allowed = await api(runtime, session, '/api/metrics', undefined, { Origin: 'http://localhost:5173' }); assert.equal(allowed.headers.get('Access-Control-Allow-Origin'), 'http://localhost:5173');
@@ -131,10 +141,19 @@ test('failed recovery verification keeps incident open and safe approval can be 
 test('one active run per session while another session can run independently', async () => {
   await withRuntime(async (runtime, session) => {
     const first = await api(runtime, session, '/api/runs', { scenario: 'healthy' }); assert.equal(first.status, 202);
+    const firstResult = await first.json() as { runId: string }; assert.ok(firstResult.runId);
     const duplicate = await api(runtime, session, '/api/runs', { scenario: 'checkout_500' }); assert.equal(duplicate.status, 409);
+    const duplicateResult = await duplicate.json() as { code: string; incidentId: string };
+    assert.equal(duplicateResult.code, 'RUN_ACTIVE'); assert.ok(duplicateResult.incidentId);
+    const duplicateIncident = await runtime.store.getIncident(duplicateResult.incidentId, session);
+    assert.equal(duplicateIncident?.application?.source, 'api'); assert.equal(duplicateIncident?.application?.httpStatus, 409);
+    assert.equal(duplicateIncident?.application?.path, '/api/runs'); assert.equal(duplicateIncident?.diagnosis.recommendedAction, null);
     const second = await runScenario(runtime, randomUUID(), 'checkout_500'); assert.equal(second.status, 'failed'); assert.equal(second.paymentCount, 0);
     await runtime.engine.drain();
-    assert.equal(runtime.store.listRuns(session)[0]?.status, 'passed');
+    const completedFirst = await runtime.store.getRun(firstResult.runId, session);
+    assert.equal(completedFirst?.scenario, 'healthy'); assert.equal(completedFirst?.status, 'passed');
+    assert.equal((await runtime.store.getRun(duplicateIncident!.runId, session))?.scenario, 'application_error');
+    assert.equal((await runtime.store.getRun(duplicateIncident!.runId, session))?.status, 'failed');
   }, { sandboxLatencyMs: 20 });
 });
 

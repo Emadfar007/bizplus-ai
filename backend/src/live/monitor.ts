@@ -7,6 +7,7 @@ import type { DataStore } from '../database/types.js';
 import { fetchPublicPage, publicHttpsUrl, type PublicFetcher } from './network.js';
 import { FaultLab, LAB_TARGET_ID, type LabOptions } from './lab.js';
 import { diagnoseLiveRun } from './diagnosis.js';
+import type { ErrorReporter } from '../incidents/reporting.js';
 
 export const OWNED_TARGET: LiveTarget = { id: 'bizplus-public-api', name: 'BizPlus public API', url: 'https://bizplus-ai-api.onrender.com/health', expectedStatus: 200, containsText: '"status":"ok"' };
 export const OWNED_READY_TARGET: LiveTarget = { id: 'bizplus-dependencies', name: 'BizPlus database and payment readiness', url: 'https://bizplus-ai-api.onrender.com/ready', expectedStatus: 200, containsText: '"status":"ready"' };
@@ -35,7 +36,7 @@ export class LiveMonitor {
   readonly lab: FaultLab;
   private internalOrigin = '';
   private publicOrigin: string | undefined;
-  constructor(private store: DataStore, readonly targets: LiveTarget[], private fetcher: PublicFetcher = fetchPublicPage, private options: Pick<LiveMonitorOptions, 'browserProbe' | 'lab' | 'monitoring'> = {}) { this.lab = new FaultLab(options.lab); }
+  constructor(private store: DataStore, readonly targets: LiveTarget[], private fetcher: PublicFetcher = fetchPublicPage, private options: Pick<LiveMonitorOptions, 'browserProbe' | 'lab' | 'monitoring' | 'errorReporter'> = {}) { this.lab = new FaultLab(options.lab); }
   setBaseUrl(localBaseUrl: string, publicOrigin?: string) {
     const local = new URL(localBaseUrl);
     if (local.protocol !== 'http:' || local.hostname !== '127.0.0.1' || !local.port || local.pathname !== '/' || local.search || local.username || local.password) throw new Error('The internal lab origin must be the server-minted loopback listener.');
@@ -124,6 +125,7 @@ export class LiveMonitor {
         run.fingerprint = createHash('sha256').update(JSON.stringify([target.id, isLab ? '/test-site/:session' : target.url,run.httpStatus,run.diagnosis.category,run.assertions.filter(item => !item.passed).map(item => item.code)])).digest('hex').slice(0,16);
       }
       await this.store.saveLiveRun(session, run);
+      await this.reportFailure(session, run);
     }
   }
   async recover(session: string, runId: string, restore: boolean): Promise<LiveRecoveryResponse> {
@@ -149,13 +151,50 @@ export class LiveMonitor {
       original.evidence.events ??= [];
       original.evidence.events.push({ id: randomUUID(), kind: 'recovery', timestamp: original.recovery.completedAt, message: status === 'verified' ? 'A fresh request and configured browser checks passed; this incident is resolved.' : 'Fresh verification failed; this incident remains open.', data: { verificationRunId: verification.id, status, restoredLabOnly: restore, realPayments: 0 } });
       await this.store.saveLiveRun(session, original);
+      if (status === 'verified' && this.options.errorReporter) {
+        const reported = await this.reportFailure(session, original);
+        if (reported) await this.options.errorReporter.resolve(session, reported.incidentId, { source: 'live', verificationRunId: verification.id });
+      }
       return { runId, verificationRunId: verification.id, status };
     } finally { this.actions.delete(session); }
+  }
+  private async reportFailure(session: string, run: LiveRun) {
+    if (run.status !== 'failed' || !this.options.errorReporter) return null;
+    if (run.investigationIncidentId) {
+      const existing = await this.store.getIncident(run.investigationIncidentId,session);
+      if (existing?.application?.source === 'live') return { incidentId:existing.id,runId:existing.runId,created:false,occurrenceCount:existing.application.occurrenceCount,code:existing.application.code };
+    }
+    // Only measured status and a server-owned path cross into the unified inbox.
+    // Response bodies, browser messages and network exception text stay out of reports.
+    const reported = await this.options.errorReporter.report(session, {
+      source: 'live', code: 'LIVE_CHECK_FAILED', eventId: run.id, liveRunId: run.id,
+      path: run.targetId === LAB_TARGET_ID ? '/test-site/:session' : new URL(run.url).pathname,
+      observedAt: run.completedAt ?? run.startedAt,
+      ...(run.diagnosis?.category === 'authentication' ? { requiresManualLogin: true } : {}),
+      ...(run.httpStatus === null ? {} : { httpStatus: run.httpStatus }),
+    });
+    const current = await this.store.getLiveRun(run.id,session);
+    if (current) {
+      current.investigationIncidentId = reported.incidentId;
+      await this.store.saveLiveRun(session,current);
+      run.investigationIncidentId = reported.incidentId;
+    }
+    return reported;
+  }
+  async syncKnownFailures(session: string): Promise<void> {
+    if (!this.options.errorReporter) return;
+    // Restarts can preserve terminal failures that predate the unified reporter.
+    for (const run of await this.store.listLiveRuns(session)) {
+      const reported = await this.reportFailure(session, run);
+      if (reported && run.recovery?.status === 'verified' && run.diagnosis?.category !== 'authentication') {
+        await this.options.errorReporter.resolve(session, reported.incidentId, { source:'live',verificationRunId:run.recovery.verificationRunId });
+      }
+    }
   }
   async drain(): Promise<void> { await Promise.allSettled(this.active.values()); }
 }
 export type BrowserProbe = (session: string) => Promise<{ assertions: Assertion[]; evidence: LiveEvidence[] }>;
-export interface LiveMonitorOptions { targets?: LiveTarget[]; fetcher?: PublicFetcher; browserProbe?: BrowserProbe; lab?: LabOptions; monitoring?: LiveMonitoring }
+export interface LiveMonitorOptions { targets?: LiveTarget[]; fetcher?: PublicFetcher; browserProbe?: BrowserProbe; lab?: LabOptions; monitoring?: LiveMonitoring; errorReporter?: ErrorReporter }
 export function registerLiveMonitor(app: Express, store: DataStore, options: LiveMonitorOptions = {}) {
   const monitor = new LiveMonitor(store, options.targets ?? parseTargets(process.env.LIVE_TARGETS), options.fetcher, options);
   monitor.lab.register(app);

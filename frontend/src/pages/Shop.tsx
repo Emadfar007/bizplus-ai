@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Check, CheckCircle2, Loader2, LockKeyhole, Minus, Plus, ReceiptText, RefreshCw, ShieldCheck, ShoppingBag, ShoppingCart, TriangleAlert, X } from 'lucide-react';
 import type { CommerceConfig, CommerceOrder, CommercePaymentVerification, Product } from '@bizplus/shared';
 import type { Workspace } from '../hooks/useWorkspace';
 import { Badge, EmptyState, SectionLabel, shortId, time } from '../components/UI';
 import { commerceApi, loadRazorpay, type RazorpayInstance } from '../services/commerce';
+import { RequestError } from '../services/api';
+import { reportError } from '../services/errors';
 
 interface CartState { items: Record<string, number>; checkoutKey: string | null; orderId: string | null }
 const MAX_CART_ITEMS = 10;
@@ -152,7 +155,7 @@ export default function Shop({ workspace }: { workspace: Workspace }) {
     const nextQuantity = Math.max(0, Math.min(5, (items[id] || 0) + change));
     if (nextQuantity === items[id]) return;
     const totalItems = Object.values(items).reduce((sum, itemQuantity) => sum + itemQuantity, 0);
-    if (nextQuantity > (items[id] || 0) && totalItems >= MAX_CART_ITEMS) { setError('Your test cart can contain up to 10 items. Remove an item before adding another.'); return; }
+    if (nextQuantity > (items[id] || 0) && totalItems >= MAX_CART_ITEMS) { setError('Your test cart can contain up to 10 items. Remove an item before adding another.'); void reportError(session,{source:'browser',code:'BROWSER_VALIDATION_ERROR',path:'/shop'}); return; }
     if (nextQuantity) items[id] = nextQuantity; else delete items[id];
     const next = { items, checkoutKey: Object.keys(items).length ? crypto.randomUUID() : null, orderId: null };
     cartRef.current = next; setCart(next); setError(null); setNotice(null);
@@ -192,12 +195,20 @@ export default function Shop({ workspace }: { workspace: Workspace }) {
       const next = { ...cartRef.current, orderId: result.order.id }; cartRef.current = next; setCart(next);
       if (result.mode !== 'test' || !result.keyId.startsWith('rzp_test_')) throw new Error('This storefront accepts Razorpay Test Mode only. The server configuration needs a test key.');
       if (!result.order.razorpayOrderId || result.order.status === 'provider_unknown' || result.order.status === 'creating') throw new Error('The provider order is not ready. Keep this order and refresh its status; another payment order will not be created automatically.');
-      const Razorpay = await loadRazorpay();
+      const Razorpay = await loadRazorpay(session);
       if (!current()) return;
       const instance = new Razorpay({ key: result.keyId, amount: result.order.amountMinor, currency: result.order.currency, name: 'BizPlus Select', description: 'Test purchase · no live charges', order_id: result.order.razorpayOrderId, theme: { color: '#248b80' }, handler: response => { void verify(result.order, response); }, modal: { ondismiss: () => { if (!current() || verifying.current) return; setPaymentOpen(false); setBusy(false); requestBusy.current = false; setNotice('Checkout closed. Your pending order is saved; retrying the unchanged cart reuses the same order.'); void refreshOrders(); } } });
-      instance.on('payment.failed', response => { if (current()) setError(response.error?.description || 'This payment attempt failed. You can retry in checkout or close it and resume the same saved order.'); });
+      instance.on('payment.failed', () => {
+        if (!current()) return;
+        setError('This test payment failed. Open Investigation for the captured error, or retry the same saved order yourself.');
+        void reportError(session,{source:'payment',code:'PAYMENT_FAILED',path:'/shop'});
+      });
       paymentRef.current = instance; setPaymentOpen(true); setBusy(false); instance.open();
-    } catch (cause) { if (current()) { setError(cause instanceof Error ? cause.message : 'Checkout could not start.'); requestBusy.current = false; setBusy(false); setPaymentOpen(false); } }
+    } catch (cause) { if (current()) {
+      setError(cause instanceof Error ? cause.message : 'Checkout could not start.');
+      if (!(cause instanceof RequestError && cause.reportedToInvestigation)) void reportError(session,{source:'payment',code:'PAYMENT_CHECKOUT_LOAD_FAILED',path:'/shop'});
+      requestBusy.current = false; setBusy(false); setPaymentOpen(false);
+    } }
   }
   const purchaseStage = cart.orderId || paymentOpen || busy ? 2 : selectedOrder?.status === 'paid' && quantity === 0 ? 3 : 1;
   return <div className="shop-page">
@@ -211,7 +222,7 @@ export default function Shop({ workspace }: { workspace: Workspace }) {
       <span>{quantity} {quantity === 1 ? 'item' : 'items'} · {money(subtotal)}</span>
       <a className="primary-button" href="#shopping-cart">View cart</a>
     </div>
-    {error ? <div className="feedback error" role="alert"><TriangleAlert size={20}/><span>{error}</span><button className="text-button" onClick={() => void load()}>Refresh</button><button className="icon-button" aria-label="Dismiss storefront error" onClick={() => setError(null)}><X size={20}/></button></div> : null}
+    {error ? <div className="feedback error" role="alert"><TriangleAlert size={20}/><span>{error}</span><Link className="text-button" to="/incidents">Open Investigation</Link><button className="text-button" onClick={() => void load()}>Refresh</button><button className="icon-button" aria-label="Dismiss storefront error" onClick={() => setError(null)}><X size={20}/></button></div> : null}
     {notice ? <div className="feedback notice" role="status"><CheckCircle2 size={20}/><span>{notice}</span><button className="icon-button" aria-label="Dismiss storefront message" onClick={() => setNotice(null)}><X size={20}/></button></div> : null}
     <ol className="shop-purchase-guide" aria-label="Test purchase progress">
       <li className={purchaseStage >= 1 ? 'current' : ''} aria-current={purchaseStage === 1 ? 'step' : undefined}>1&nbsp; Choose products</li>

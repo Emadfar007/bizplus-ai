@@ -1,5 +1,6 @@
 import type { LoginConfig, LoginRequest, LoginResult } from '@bizplus/shared';
-import { API_BASE, request, RequestError } from './api';
+import { API_BASE, captureRequestError, request, RequestError } from './api';
+import { linkedIncidentId, notifyApiReachable } from './errors';
 
 // A rejected login is a completed test with an incident, so retain its response.
 async function submit(session: string, payload: LoginRequest): Promise<LoginResult> {
@@ -13,13 +14,13 @@ async function submit(session: string, payload: LoginRequest): Promise<LoginResu
       body: JSON.stringify(payload),
     });
     const result = await response.json().catch(() => null);
+    notifyApiReachable(session);
     if (response.ok && result?.status === 'successful') return result as LoginResult;
-    if (response.status === 401 && result?.status === 'rejected' && result?.code === 'LOGIN_REJECTED') return result as LoginResult;
-    throw new RequestError(result?.error || `The login service returned HTTP ${response.status}.`, response.status, result?.code);
+    if (response.status === 401 && result?.status === 'rejected' && result?.code === 'LOGIN_REJECTED' && linkedIncidentId(result.incidentId)) return result as LoginResult;
+    throw new RequestError(result?.error || `The login service returned HTTP ${response.status}.`, response.status, result?.code, linkedIncidentId(result?.incidentId));
   } catch (cause) {
-    if (cause instanceof RequestError) throw cause;
-    if (cause instanceof DOMException && cause.name === 'AbortError') throw new RequestError('The login service took too long to respond. Please try again.', 0, 'TIMEOUT');
-    throw new RequestError('The login service could not be reached. Check the backend connection and try again.', 0, 'NETWORK');
+    const failure = cause instanceof RequestError ? cause : cause instanceof DOMException && cause.name === 'AbortError' ? new RequestError('The login service took too long to respond. Please try again.', 0, 'TIMEOUT') : new RequestError('The login service could not be reached. Check the backend connection and try again.', 0, 'NETWORK');
+    throw await captureRequestError(failure, '/api/login', session);
   } finally { clearTimeout(timer); }
 }
 

@@ -117,9 +117,9 @@ export class Store implements DataStore {
       COALESCE(SUM(CASE WHEN status='passed' THEN 1 ELSE 0 END),0) AS passedRuns,
       COALESCE(SUM(CASE WHEN status='failed' THEN 1 ELSE 0 END),0) AS failedRuns,
       COALESCE(AVG(CASE WHEN status IN ('passed','failed') THEN json_extract(data,'$.durationMs') END),0) AS averageDurationMs
-      FROM runs WHERE session_id=?`).get(session) as { totalRuns: number; passedRuns: number; failedRuns: number; averageDurationMs: number };
+      FROM runs WHERE session_id=? AND COALESCE(json_extract(data,'$.workflowId'),'')<>'application-errors'`).get(session) as { totalRuns: number; passedRuns: number; failedRuns: number; averageDurationMs: number };
     const incidents = this.db.prepare(`SELECT COALESCE(SUM(CASE WHEN status<>'resolved' THEN 1 ELSE 0 END),0) AS openIncidents,
-      COALESCE(SUM(CASE WHEN json_extract(data,'$.recovery.status')='verified' OR json_extract(data,'$.manualRecovery.status')='verified' THEN 1 ELSE 0 END),0) AS verifiedRecoveries,
+      COALESCE(SUM(CASE WHEN json_extract(data,'$.recovery.status')='verified' OR json_extract(data,'$.manualRecovery.status')='verified' OR (status='resolved' AND json_extract(data,'$.application.verification.source') IN ('live','observer')) THEN 1 ELSE 0 END),0) AS verifiedRecoveries,
       COALESCE(AVG(CASE WHEN json_extract(data,'$.recovery.status')='verified' THEN json_extract(data,'$.recovery.durationMs') WHEN json_extract(data,'$.manualRecovery.status')='verified' THEN json_extract(data,'$.manualRecovery.durationMs') END),0) AS averageRecoveryMs
       FROM incidents WHERE session_id=?`).get(session) as { openIncidents: number; verifiedRecoveries: number; averageRecoveryMs: number };
     return { ...runs, ...incidents, averageDurationMs: Math.round(runs.averageDurationMs), averageRecoveryMs: Math.round(incidents.averageRecoveryMs) };

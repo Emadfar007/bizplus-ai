@@ -1,10 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import type { Express } from 'express';
-import type { Assertion } from '@bizplus/shared';
+import type { Assertion, ObserverCheckKey } from '@bizplus/shared';
 import type { DataStore } from './database/types.js';
 import type { CommerceOptions } from './commerce/routes.js';
 import { razorpayTransport } from './commerce/razorpay.js';
 import { publicHttpsUrl } from './live/network.js';
+import type { ErrorReporter } from './incidents/reporting.js';
 
 export interface ObserverOptions { url?: string; token?: string; allowLocal?: boolean }
 export function observerConnection(options: ObserverOptions = {}) {
@@ -49,7 +50,93 @@ export function observerConnection(options: ObserverOptions = {}) {
   };
 }
 
-export function registerObservability(app: Express, store: DataStore, commerce: CommerceOptions, observer: ReturnType<typeof observerConnection>) {
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const observerPaths: Record<string, string> = {
+  availability: '/health', readiness: '/ready', storefront: '/shop',
+  storefront_browser: '/api/live/observer/storefront-browser', synthetic_workflow: '/api/live/observer/synthetic-workflow',
+};
+type ObserverCheck = { id: string; key: ObserverCheckKey; status: 'passed' | 'failed' | 'monitor_error'; completedAt: string; assertions: Assertion[] };
+function checkedSnapshot(value: Record<string, unknown>): ObserverCheck[] {
+  if (!Array.isArray(value.checks) || value.checks.length > 20) throw new Error('Invalid observer check snapshot.');
+  return value.checks.map((candidate: unknown) => {
+    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) throw new Error('Invalid observer check.');
+    const item = candidate as Record<string, unknown>;
+    if (typeof item.id !== 'string' || !UUID.test(item.id) || typeof item.key !== 'string' || !Object.hasOwn(observerPaths, item.key) || !['passed','failed','monitor_error'].includes(String(item.status)) || typeof item.completedAt !== 'string' || !Number.isFinite(Date.parse(item.completedAt)) || !Array.isArray(item.assertions) || item.assertions.length > 30 || item.assertions.some((assertion: unknown) => !assertion || typeof assertion !== 'object' || Array.isArray(assertion) || typeof (assertion as Assertion).code !== 'string' || !/^[A-Z0-9_]{1,80}$/.test((assertion as Assertion).code) || typeof (assertion as Assertion).passed !== 'boolean')) throw new Error('Invalid observer check.');
+    if (item.status === 'passed' && (!item.assertions.length || item.assertions.some((assertion: unknown) => !(assertion as Assertion).passed))) throw new Error('Unverified observer pass.');
+    if (item.status === 'failed' && (!item.assertions.length || item.assertions.every((assertion: unknown) => (assertion as Assertion).passed))) throw new Error('Unverified observer failure.');
+    return { ...item, completedAt:new Date(item.completedAt).toISOString() } as unknown as ObserverCheck;
+  });
+}
+
+export interface ObservabilityOptions { errorReporter?: ErrorReporter; observerCacheMs?: number }
+export function registerObservability(app: Express, store: DataStore, commerce: CommerceOptions, observer: ReturnType<typeof observerConnection>, options: ObservabilityOptions = {}) {
+  const unavailableEvents = new Map<string, string>();
+  type ObservedSnapshot = { available:true; snapshot:Record<string,unknown>; checks:ObserverCheck[] } | { available:false };
+  let observerCache: { expires:number; result:ObservedSnapshot } | null = null;
+  let observerRead: Promise<ObservedSnapshot> | null = null;
+  async function readObserver(): Promise<ObservedSnapshot> {
+    if (!observer) return {available:false};
+    if (observerCache && Date.now() < observerCache.expires) return observerCache.result;
+    observerRead ??= (async (): Promise<ObservedSnapshot> => {
+      try {
+        const snapshot = await observer.request('/api/status');
+        return {available:true,snapshot,checks:checkedSnapshot(snapshot)};
+      } catch { return {available:false}; }
+    })().then(result => { observerCache = {expires:Date.now()+Math.min(60_000,Math.max(0,options.observerCacheMs ?? 15_000)),result}; return result; }).finally(() => { observerRead = null; });
+    return observerRead;
+  }
+  async function importObserverSnapshot(session: string, snapshot: Record<string, unknown>, checks: ObserverCheck[]) {
+    const reporter = options.errorReporter;
+    if (!reporter) return;
+    // Import preserved history before latest checks. A main-app outage can end before
+    // the app next reaches the observer, so latest checks alone lose that failure.
+    if (Array.isArray(snapshot.incidents)) for (const candidate of snapshot.incidents.slice(0,100).reverse()) {
+      if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) continue;
+      const incident = candidate as Record<string, unknown>;
+      if (typeof incident.id !== 'string' || !UUID.test(incident.id) || typeof incident.key !== 'string' || !Object.hasOwn(observerPaths,incident.key) || typeof incident.openedAt !== 'string' || !Number.isFinite(Date.parse(incident.openedAt)) || !['open','resolved'].includes(String(incident.status))) continue;
+      const key = incident.key as ObserverCheckKey;
+      const latest = checks.find(item => item.key === key);
+      const knownFailure = latest?.status !== 'passed' ? latest : undefined;
+      // Historical synthetic failures do not retain their failed assertion. Require
+      // human review when authentication may have failed instead of inventing proof.
+      const requiresManualLogin = knownFailure ? knownFailure.assertions.some(item => !item.passed && /LOGIN|AUTH/.test(item.code)) : key === 'synthetic_workflow';
+      await reporter.report(session, {
+        source:'observer', code:incident.failureKind === 'monitor_error' ? 'OBSERVER_MONITOR_ERROR' : 'OBSERVER_CHECK_FAILED',
+        path:observerPaths[key], eventId:incident.id, observerCheckId:incident.id, observerIncidentId:incident.id, observerCheckKey:key,
+        // Resolved history.lastSeenAt is the successful check time, not failure time.
+        observedAt:new Date(incident.status === 'open' && typeof incident.lastSeenAt === 'string' && Number.isFinite(Date.parse(incident.lastSeenAt)) ? incident.lastSeenAt : incident.openedAt).toISOString(), ...(requiresManualLogin ? {requiresManualLogin:true} : {}),
+      });
+    }
+    for (const check of checks) if (check.status !== 'passed') {
+      await reporter.report(session, {
+        source:'observer', code:check.status === 'monitor_error' ? 'OBSERVER_MONITOR_ERROR' : 'OBSERVER_CHECK_FAILED',
+        path:observerPaths[check.key], eventId:check.id, observerCheckId:check.id, observerCheckKey:check.key,
+        observedAt:check.completedAt,
+        ...(check.assertions.some(item => !item.passed && /LOGIN|AUTH/.test(item.code)) ? {requiresManualLogin:true} : {}),
+      });
+    }
+    const now = new Date().toISOString();
+    for (const incident of (await store.listIncidents(session)).incidents) {
+      const context = incident.application;
+      if (incident.status === 'resolved' || context?.source !== 'observer' || context.requiresManualLogin) continue;
+      if (context.code === 'OBSERVER_UNAVAILABLE') {
+        // The status request just succeeded. This verifies observer connectivity,
+        // independently of whether any monitored website check is passing.
+        await reporter.resolve(session, incident.id, {source:'observer',observerCheckId:randomUUID()});
+        continue;
+      }
+      const check = checks.find(item => item.key === context.observerCheckKey);
+      if (!check || check.status !== 'passed' || check.id === context.observerCheckId || check.completedAt <= context.lastSeenAt || check.completedAt > now || check.assertions.some(item => !item.passed)) continue;
+      // An open history record newer than the latest check is contradictory/stale
+      // data, even if its UUID has already been imported. Keep the issue open.
+      if (Array.isArray(snapshot.incidents) && snapshot.incidents.some(candidate => {
+        if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return false;
+        const historical = candidate as Record<string,unknown>;
+        return historical.key === check.key && historical.status === 'open' && typeof historical.lastSeenAt === 'string' && Date.parse(historical.lastSeenAt) >= Date.parse(check.completedAt);
+      })) continue;
+      await reporter.resolve(session, incident.id, {source:'observer',observerCheckId:check.id});
+    }
+  }
   // Readiness runs actual dependency reads. Its response never contains provider data or credentials.
   let cached: { expires: number; report: Record<string, unknown>; status: number } | null = null;
   let checking: Promise<{ report: Record<string, unknown>; status: number }> | null = null;
@@ -82,11 +169,27 @@ export function registerObservability(app: Express, store: DataStore, commerce: 
     }
     response.setHeader('Cache-Control','no-store'); response.status(cached!.status).json(cached!.report);
   });
-  return function registerObserverProxy() {
+  async function synchronize(session: string) {
+    if (!observer) return { enabled:false, available:false, message:'An independent observer has not been connected.' };
+    const result = await readObserver();
+    if (!result.available) {
+      if (options.errorReporter) {
+        // A lost observer is a monitoring failure. It establishes no website outage.
+        if (!unavailableEvents.has(session)) unavailableEvents.set(session,randomUUID());
+        await options.errorReporter.report(session, { source:'observer',code:'OBSERVER_UNAVAILABLE',path:'/api/live/observer',eventId:unavailableEvents.get(session) });
+        if (unavailableEvents.size > 1000) unavailableEvents.delete(unavailableEvents.keys().next().value!);
+      }
+      return { enabled:true, available:false, url:observer.url, message:'The independent observer is unavailable or waking. Open its direct dashboard to inspect its status.' };
+    }
+    if (options.errorReporter) await importObserverSnapshot(session,result.snapshot,result.checks);
+    unavailableEvents.delete(session);
+    return { ...result.snapshot, enabled:true, available:true, url:observer.url };
+  }
+  const registerObserverProxy = function () {
     app.get('/api/live/observer', async (_request,response) => {
-      if (!observer) { response.json({ enabled:false, available:false, message:'An independent observer has not been connected.' }); return; }
-      try { response.json({ ...(await observer.request('/api/status')), enabled:true, available:true, url:observer.url }); }
-      catch { response.json({ enabled:true, available:false, url:observer.url, message:'The independent observer is unavailable or waking. Open its direct dashboard to inspect its status.' }); }
+      response.json(await synchronize(String(response.locals.session)));
     });
   };
+  registerObserverProxy.syncKnownFailures = async (session:string): Promise<void> => { await synchronize(session); };
+  return registerObserverProxy;
 }

@@ -10,6 +10,8 @@ export interface LiveRun {
   id: string; targetId: string; url: string; status: 'queued' | 'running' | 'passed' | 'failed'; httpStatus: number | null; durationMs: number; startedAt: string; completedAt: string | null; error: string | null; message: string; assertions: Assertion[];
   evidence: { responseBytes: number; title?: string; excerpt?: string; events?: LiveEvidence[] };
   fingerprint: string | null; diagnosis?: LiveDiagnosis; incidentStatus?: 'open' | 'resolved'; recovery?: LiveRecovery; labRevision?: string;
+  /** Stable link to the unified Investigation record; avoids replaying imported failures. */
+  investigationIncidentId?: string;
 }
 export interface LiveLabState { sessionId: string; fault: LiveFault; expiresAt: string | null; revision: string; targetId: 'bizplus-fault-lab'; url: string; maxDurationSeconds: number; safety: { isolated: true; syntheticPayments: true } }
 export interface LiveMonitoring { enabled: boolean; intervalSeconds: number; scope: 'recent-sessions' | 'independent-owned-targets'; independentObserver: boolean }

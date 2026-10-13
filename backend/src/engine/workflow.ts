@@ -211,7 +211,7 @@ export class Engine {
   }
 
   async metrics(session: string): Promise<Metrics> {
-    const runs = await this.store.listRuns(session); const completed = runs.filter(r => r.status === 'passed' || r.status === 'failed');
+    const runs = await this.store.listRuns(session); const completed = runs.filter(r => r.workflowId !== 'application-errors' && (r.status === 'passed' || r.status === 'failed'));
     const aggregate = await this.store.metricsAggregates(session); const completedCount = aggregate.passedRuns + aggregate.failedRuns;
     return { ...aggregate, successRate: completedCount ? Math.round(aggregate.passedRuns / completedCount * 1000) / 10 : 0,
       recentRuns: runs.slice(0, 20), chart: completed.slice(0, 30).reverse().map(r => ({ runId: r.id, timestamp: r.createdAt, durationMs: r.durationMs, passed: r.status === 'passed' })),

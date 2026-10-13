@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Health, IncidentList, Metrics, Run, Scenario, Workflow } from '@bizplus/shared';
 import { api, newSession, readSession, RequestError } from '../services/api';
+import { linkedIncidentId, setErrorReportingSession } from '../services/errors';
 
 const EMPTY_INCIDENTS: IncidentList = { incidents: [], groups: [] };
 function keepCompletedRun(previous: Run | null, current: Run): Run {
@@ -30,6 +31,8 @@ export function useWorkspace() {
   sessionRef.current = session;
   runIdRef.current = runId;
   const isCurrentSession = useCallback((id: string, generation?: number) => sessionRef.current === id && (generation === undefined || sessionGeneration.current === generation), []);
+
+  useEffect(() => { setErrorReportingSession(session); }, [session]);
 
   useEffect(() => {
     const generation = sessionGeneration.current;
@@ -86,6 +89,34 @@ export function useWorkspace() {
       }
     }
   }, [session, isCurrentSession]);
+
+  useEffect(() => {
+    if (connection !== 'ready') return;
+    const generation = sessionGeneration.current;
+    const seen = new Set<string>();
+    let cancelled = false;
+    let refreshing = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const reported = (event: Event) => {
+      const detail: unknown = (event as CustomEvent).detail;
+      if (!detail || typeof detail !== 'object') return;
+      const report = detail as { session?: unknown; incidentId?: unknown };
+      const incidentId = linkedIncidentId(report.incidentId);
+      if (report.session !== session || !incidentId || !isCurrentSession(session, generation) || seen.has(incidentId)) return;
+      seen.add(incidentId);
+      if (seen.size > 128) seen.delete(seen.values().next().value!);
+      // Coalesce bursts. Events caused by this read never recursively trigger it.
+      if (refreshing || timer || cancelled) return;
+      timer = setTimeout(() => {
+        timer = undefined;
+        if (cancelled || !isCurrentSession(session, generation)) return;
+        refreshing = true;
+        void refresh().finally(() => { refreshing = false; });
+      }, 150);
+    };
+    window.addEventListener('bizplus:incident-reported', reported);
+    return () => { cancelled = true; if (timer) clearTimeout(timer); window.removeEventListener('bizplus:incident-reported', reported); };
+  }, [connection, session, refresh, isCurrentSession]);
 
   useEffect(() => {
     if (connection !== 'ready') return;
