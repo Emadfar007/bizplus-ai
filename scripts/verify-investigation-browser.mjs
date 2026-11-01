@@ -89,7 +89,7 @@ try {
   const l=await fixture('/live-tests');
   const introduced=await l.call('/api/live/lab',{fault:'missing_content',approved:true}); assert.equal(introduced.status,200);
   const started=await l.call('/api/live/runs',{targetId:'bizplus-fault-lab'}); assert.equal(started.status,202);
-  const live=await until(async()=>(await l.call(`/api/live/runs/${started.data.runId}`)).data,x=>x.status==='failed','controlled live check');
+  const live=await until(async()=>(await l.call(`/api/live/runs/${started.data.runId}`)).data,x=>x.status==='failed'&&!!x.investigationIncidentId,'controlled live check and saved Investigation link');
   assert.equal(live.httpStatus,200); assert.ok(live.investigationIncidentId);
   const original=(await l.call(`/api/incidents/${live.investigationIncidentId}`)).data;
   assert.equal(original.application.source,'live'); assert.equal(original.status,'open');
@@ -142,8 +142,8 @@ try {
   const n=await fixture('/shop');
   await n.page.route('**/api/shop/products',route=>route.abort());
   await n.page.reload();
-  const network=await until(n.incidents,x=>x.some(i=>i.application?.code==='API_NETWORK_ERROR'),'API network failure');
-  assert.equal(network.find(i=>i.application?.code==='API_NETWORK_ERROR').application.path,'/api/shop/products');
+  const network=await until(n.incidents,x=>x.some(i=>i.application?.code==='API_NETWORK_ERROR'&&i.application.path==='/api/shop/products'),'storefront API network failure');
+  assert.ok(network.some(i=>i.application?.code==='API_NETWORK_ERROR'&&i.application.path==='/api/shop/products'));
   report.checks.push({flow:'Failed storefront fetch -> API network error saved in Investigation',passed:true});
   await n.context.close();
 
