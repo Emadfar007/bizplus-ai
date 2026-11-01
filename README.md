@@ -4,7 +4,7 @@ Business transaction monitoring with evidence and approved recovery.
 
 BizPlus AI tests a small shop through login, inventory, cart, simulated checkout, and order confirmation. It catches the demo's key failure: HTTP 200 returns even though the customer has no order confirmation. An operator can inspect the evidence, approve resuming the paused confirmation worker, and verify the original order without creating another payment.
 
-Source repository: [Emadfar007/bizplus-ai](https://github.com/Emadfar007/bizplus-ai) (private).
+Source repository: [Emadfar007/bizplus-ai](https://github.com/Emadfar007/bizplus-ai) (public). Private recovery files belong in the separate [cloud backup repository](https://github.com/Emadfar007/bizplus-ai-cloud-backup), never in this source repository.
 
 The complete frontend and API are live on **Render**: [dashboard](https://bizplus-ai-api.onrender.com), [storefront](https://bizplus-ai-api.onrender.com/shop), and [live tests](https://bizplus-ai-api.onrender.com/live-tests). See [verification results](docs/verification-results.md) for the tested scope and current database limitation.
 
@@ -24,11 +24,15 @@ An actual ₹599 Razorpay Test Mode purchase was completed through the **public 
 
 **Live tests** at `/live-tests` send bounded HTTPS GET requests to configured owned websites. The default target is the deployed BizPlus Render `/health` URL. Results retain measured latency, status/content assertions, a short text excerpt, and failure fingerprints. A 30-second toggle runs only while the page is visible. It checks HTTP responses; it does not automate browser logins or payments on third-party stores.
 
-`DATABASE_URL` selects PostgreSQL as the primary store for monitoring, live tests, and shop orders. The private schema, strict TLS, restart persistence, and SQLite migration were tested against an actual local PostgreSQL instance. **The hosted Supabase migration remains pending a valid PostgreSQL connection string.** See [database setup and migration](backend/database.md). The current local presentation explicitly uses SQLite until this setting is corrected.
+`DATABASE_URL` selects Supabase PostgreSQL as the hosted primary store for monitoring, login incidents, live tests, and shop orders. The November 2026 migration preserved and verified 1,189 local records, including separate observer archives. Database credentials stay in Render environment variables; tables use a private schema with RLS and no browser roles. See [cloud migration](docs/cloud-migration.md) and [database operation](backend/database.md). Local presentation commands remain optional and explicitly use SQLite.
 
 ## Run locally on Windows
 
-Install Node.js 24, then open PowerShell in the repository root. The project pins Node 24.19.0 and uses its built-in SQLite API.
+For the installed local app, double-click the **BizPlus AI** desktop shortcut or `Start BizPlus AI.vbs` in the repository root. It starts the engine hidden when necessary, waits for readiness, then opens `http://127.0.0.1:3024/login` in your default browser. Repeat launches reuse the running engine, which stays running after you close the browser. It does not install a Windows startup task or service. Typing the local URL alone cannot start a stopped engine; use the shortcut. The optional command is `npm.cmd run start:app` from the repository root.
+
+The launcher requires Node.js 24, installed dependencies, and the app built for port 3024. It reports missing prerequisites or incompatible frontend output with setup instructions; see [local app setup](docs/manual-login.md#local-preview).
+
+For development, install Node.js 24, then open PowerShell in the repository root. The project pins Node 24.19.0 and uses its built-in SQLite API.
 
 ```powershell
 npm.cmd ci
@@ -66,7 +70,7 @@ See [the two-minute script](docs/demo-script.md), [architecture](docs/architectu
 - [Current requirements PDF](<artifacts/deliverables/BizPlus AI Commerce Requirements.pdf>)
 - [Editable seven-slide pitch](<artifacts/deliverables/BizPlus AI Commerce Pitch.pptx>)
 
-The measured results come from actual local and public replays, and the deck uses captured application screenshots. The earlier MVP documents remain in `artifacts/deliverables` as historical releases. The current package clearly marks Supabase setup as pending.
+The measured results come from actual local and public replays, and the deck uses captured application screenshots. Earlier deliverables are historical releases and can describe the former pending Supabase setup; use [cloud migration](docs/cloud-migration.md) for the current database state.
 
 ## Deploy the complete app to Render
 
@@ -79,7 +83,8 @@ Use one private GitHub repository containing all three workspaces. Import `rende
 | Node version | `24.19.0` |
 | Health check | `/health` |
 | `NODE_ENV` | `production` |
-| `HISTORY_POLICY` | `temporary` |
+| `DATABASE_URL` | Backend-only Supabase PostgreSQL connection string |
+| `DATABASE_CA_CERT` | Verified Supabase CA certificate |
 | `DATABASE_PATH` | `.local/bizplus.sqlite` within the backend working directory |
 | `SERVE_FRONTEND` | `true` |
 | `VITE_API_BASE_URL` | `https://bizplus-ai-api.onrender.com` |
@@ -88,7 +93,7 @@ Use one private GitHub repository containing all three workspaces. Import `rende
 
 The API listens on `0.0.0.0` and uses Render's `PORT`. `SERVE_FRONTEND=true` makes the repository-root backend build compile the shared contracts, backend, and frontend, then serves frontend assets and known SPA routes from the same public origin. Direct `/shop`, `/live-tests`, and investigation-route refreshes work. API, sandbox, private-file, and unknown paths keep their own responses.
 
-SQLite initializes its schema on startup. Free Render storage is temporary, so hosted history can reset after sleep, restart, or deployment. The UI displays this policy and instance changes. Supabase PostgreSQL is supported but is not connected to this deployment yet. Add a verified PostgreSQL `DATABASE_URL` through Render's environment settings before migrating; the HTTPS Supabase API URL does not work as a database connection. Local SQLite provides the offline sandbox fallback.
+The hosted deployment uses Supabase PostgreSQL, so its application history does not depend on Render's temporary filesystem or a running laptop. The HTTPS Supabase API address is not a PostgreSQL connection string. Local SQLite remains an optional offline fallback. Free hosting can still need time to wake.
 
 The committed `.npmrc` includes development dependencies during installation so TypeScript can compile even when the host sets `NODE_ENV=production`. The current connector-created service uses Render's default TCP health check; configure its Health Check Path as `/health` in the [service settings](https://dashboard.render.com/web/srv-db6sad0m7kps73b684jg/settings). The Blueprint already specifies this path.
 
@@ -132,7 +137,7 @@ Recovery changes `open` to `recovering`, verifies the original order, and resolv
 
 Run the test and build commands above. Then use the browser through the frontend URL to check healthy and failed runs, approved recovery, metrics, mobile layout, direct route refresh, separate sessions, and temporary history after a hosted restart. The release evidence is in `docs/verification-results.md` when populated by the final verification run.
 
-The private repository excludes secrets, dependency folders, and SQLite runtime files. Keep synthetic data in the sandbox and review the repository before sharing access.
+The source repository excludes secrets, dependency folders, and SQLite runtime files. The complete encrypted recovery archive is in the private cloud backup repository. Keep synthetic data in the sandbox and review source before publishing it.
 
 ## Prototype limits
 

@@ -23,16 +23,21 @@ A live page check can report that the form is reachable, but it explicitly does 
 
 ## Local preview
 
-Run from the repository root:
+Double-click the **BizPlus AI** desktop shortcut, or `Start BizPlus AI.vbs` in the repository root. The launcher starts the engine hidden when needed, waits for the API and login page to be ready, then opens `http://127.0.0.1:3024/login` in your default browser. Opening it again reuses the running engine. Closing the browser leaves the engine running; no Windows login startup task or service is installed.
+
+Typing the local URL in a browser cannot start a stopped engine. Use the shortcut to start it. From PowerShell in the repository root, `npm.cmd run start:app` performs the same launch.
+
+Node.js 24, installed dependencies, and a frontend built for port 3024 are required. For initial setup or when the launcher reports missing or incompatible build output, run:
 
 ```powershell
+npm.cmd ci
 $env:SERVE_FRONTEND = 'true'
 $env:VITE_API_BASE_URL = 'http://127.0.0.1:3024'
 npm.cmd run build:backend
-node scripts/local-login-fixture.mjs
+npm.cmd run start:app
 ```
 
-Open `http://127.0.0.1:3024/login`. This loopback presentation instance uses its own `.local/manual-login-demo.sqlite` and does not replace existing application processes or databases.
+This loopback presentation instance uses its own `.local/manual-login-demo.sqlite`. The launcher validates prerequisites and reports a conflicting port without stopping another application.
 
 ## Verification
 

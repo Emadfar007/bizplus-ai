@@ -1,10 +1,18 @@
 import type { Health, Incident, IncidentList, Metrics, RecoveryResult, Run, Scenario, Workflow } from '@bizplus/shared';
 import { linkedIncidentId, notifyApiReachable, reportError, setErrorReportingSession } from './errors';
+import { sessionFromHandoff } from './session-handoff';
 
 export const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001').replace(/\/$/, '');
 const SESSION_KEY = 'bizplus.demo-session.v1';
 let memorySession: string | null = null;
 export function readSession(): string {
+  const restored = sessionFromHandoff(window.location.hash);
+  if (restored) {
+    memorySession = restored; setErrorReportingSession(restored);
+    try { localStorage.setItem(SESSION_KEY, restored); } catch { /* Retain the restored session in memory. */ }
+    try { window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`); } catch { /* The fragment contains only a demo session UUID. */ }
+    return restored;
+  }
   try {
     const existing = localStorage.getItem(SESSION_KEY);
     if (existing && /^[0-9a-f-]{36}$/i.test(existing)) { memorySession = existing; setErrorReportingSession(existing); return existing; }

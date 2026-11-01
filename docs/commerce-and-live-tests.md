@@ -6,6 +6,11 @@ The storefront and live checks extend the original injected-failure demo. Their 
 
 Keep credentials in the ignored `.local/integrations.env` file. Node loads this file before normal backend startup; deployment environment variables take precedence.
 
+The Windows desktop launcher also reads the Razorpay settings from this file for
+the local app on port 3024. It loads only payment settings and retains the local
+SQLite database and human-controlled login. After changing saved keys, restart
+the local engine; reopening the shortcut reuses an already running engine.
+
 ```dotenv
 RAZORPAY_KEY_ID=your_test_key_id
 RAZORPAY_KEY_SECRET=your_test_key_secret

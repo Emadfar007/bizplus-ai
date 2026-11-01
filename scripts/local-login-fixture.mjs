@@ -1,4 +1,5 @@
 import { startServer } from '../backend/dist/app.js';
+import { readLocalPaymentConfig } from './local-payment-config.mjs';
 
 // An isolated local presentation instance: no existing application process or
 // database is replaced, and the login uses the public synthetic demo account.
@@ -9,6 +10,7 @@ process.env.CORS_ORIGIN = `http://127.0.0.1:${port}`;
 delete process.env.PUBLIC_APP_URL;
 const runtime = await startServer({
   port, host: '127.0.0.1', databasePath: '.local/manual-login-demo.sqlite',
+  commerce: readLocalPaymentConfig(),
   observer: { url: undefined },
 });
 console.log(`BizPlus manual login demo: http://127.0.0.1:${port}/login`);

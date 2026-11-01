@@ -12,9 +12,11 @@ services:
       - key: NODE_ENV
         value: production
       - key: HISTORY_POLICY
-        value: temporary
-      - key: DATABASE_PATH
-        value: .local/bizplus.sqlite
+        value: cloud
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_CA_CERT
+        sync: false
       - key: SERVE_FRONTEND
         value: "true"
       - key: VITE_API_BASE_URL
